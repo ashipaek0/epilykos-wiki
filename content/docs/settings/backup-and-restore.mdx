@@ -7,6 +7,8 @@ icon: DatabaseBackup
 Your settings, layouts, metrics and history live in one database file. **Settings → Backup and
 restore** downloads it, restores it, and keeps automatic snapshots.
 
+![Settings → Backup and restore](/images/settings-backup.webp)
+
 ## Download a backup
 
 Press **Download backup** to save the whole database as one file.
@@ -45,5 +47,11 @@ copies are kept. Press **Restore** on one to roll back to it. **Refresh snapshot
 If a snapshot fails or none is recent, Epilykos sends the **Automatic snapshot failed** or
 **Automatic snapshot overdue** event; see [Notifications](/settings/notifications).
 
+## Database health
+
+**Database health and backups** shows when a backup was last downloaded and the result of the last
+database check. **Check the database now** runs a check straight away; it also runs one minute after
+an unclean stop, and weekly.
+
 A monthly reminder asks you to download a backup; daily snapshots don't count, as they stay on the
-same card or disk. The reminder can be put off for seven days.
+same card or disk. **Remind me about backups in 7 days** puts it off.

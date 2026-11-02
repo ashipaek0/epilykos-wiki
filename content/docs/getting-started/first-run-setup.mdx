@@ -18,6 +18,8 @@ Settings.
 
 The admin password protects Settings and the layout editor. The dashboard itself stays open to view.
 
+![The setup wizard's password step](/images/setup-password.webp)
+
 - **No password set yet:** the first person to open the wizard chooses it (at least 4 characters). Open
   the wizard yourself right after the first start.
 - **Docker with `SETTINGS_PASSWORD` set:** the wizard asks for that password instead. See
@@ -35,6 +37,8 @@ Pick what Epilykos should read from, then fill in each connection:
 | Inverter | WiFi or Bluetooth dongle, Modbus-TCP, RS485 (Modbus-RTU), RS232 serial |
 | Battery | BMS over Bluetooth (scans for nearby batteries), BMS over RS485 / RS232 |
 | Home automation and other | Home Assistant, MQTT, REST API |
+
+![The setup wizard's Sources step, with the seven steps listed on the left](/images/setup-sources.webp)
 
 Testing a connection is optional; a failed test won't stop you continuing. Tuya devices are added
 later in Settings. Each source type is explained under [Data sources](/data-sources).
@@ -55,9 +59,9 @@ totals. Leave any you don't have empty.
 
 Choose a starting layout:
 
-- **Everything**: system overview, today's totals, energy charts, forecast, grid, savings and
-  history. Remove what you don't need later.
-- **Simple**: just the system overview, today's totals and your savings.
+- **Everything** (8 cards): system overview, today's totals, energy charts, forecast, grid, savings
+  and history. Remove what you don't need later.
+- **Simple** (3 cards): just the system overview, today's totals and your savings.
 
 </Step>
 <Step>
