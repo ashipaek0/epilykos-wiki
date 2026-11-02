@@ -4,4 +4,65 @@ description: Install updates, restart and shut down.
 icon: RefreshCw
 ---
 
-This page is being written.
+## Updates
+
+**Settings → Updates** shows which build is running and whether a newer one is out. There are two
+kinds:
+
+- **A new release**: new features and fixes, with the list of changes.
+- **Security updates**: the released image is rebuilt every Monday so the base system and the bundled
+  tools (Node.js, Tailscale, cloudflared, Python packages) get their fixes. Nothing changes in how
+  Epilykos works.
+
+Epilykos checks once a day and sends the **Update available** notification once per build. Turn the
+daily check off on the same page, or with `UPDATE_CHECK=off`. The check downloads a small file listing
+the latest builds; nothing about your install is sent. **Check now** checks straight away.
+
+### Installing an update
+
+| Install | How |
+| --- | --- |
+| **Docker, with the Docker socket mounted** | **Update now** asks for your admin password, downloads the new image and restarts Epilykos on it with the same settings, volumes and devices. If the new version doesn't report healthy within three minutes, the previous one is started again and the page says so. |
+| **Docker, without the socket** | The page shows the commands: `docker compose pull`, then `docker compose up -d`. |
+| **EpilykosOS** | The box installs signed Epilykos releases itself, and goes back to the previous version if the new one isn't healthy. |
+
+The Docker socket gives Epilykos full control of Docker on that computer; leave its line out of the
+compose file if you don't want that. See [Install with Docker](/getting-started/install-docker#one-click-updates).
+
+### Automatic installation (EpilykosOS)
+
+**Install updates automatically** is off by default. Turning it on asks for your admin password and
+needs the daily check. Only a verified, signed release is installed. A failed update is rolled back
+and not retried automatically; you can retry it by hand. Turning the daily check off pauses automatic
+installation.
+
+### EpilykosOS system updates
+
+When an EpilykosOS system update is offered, the box installs it into its spare system slot while
+monitoring keeps running; nothing changes until you restart. If the new system doesn't start
+properly, the box goes back to the previous one by itself.
+
+## System
+
+**Settings → System** shows on Docker and on EpilykosOS.
+
+### Restart
+
+**Restart** stops Epilykos cleanly and starts it again; the page reloads when it's back.
+
+- **Docker with the socket mounted:** Docker restarts the container.
+- **Docker without the socket:** Epilykos stops, and the container's restart policy
+  (`restart: unless-stopped` in the compose file) starts it again.
+
+### EpilykosOS only
+
+| Section | What it does |
+| --- | --- |
+| **Power** | **Restart** or **Shut down** the whole box. After shutting down, unplug the power once the green light on the board stops flashing. |
+| **Time and storage** | The SD card size, the site time zone and the network clock. Cards under 32 GB warn; 64 GB is recommended. The clock can be corrected from the browser. Changing the time zone restarts Epilykos. |
+| **Bluetooth devices** | **Pair a Bluetooth device** opens a five-minute pairing window for devices that need a PIN or passkey. **Forget** removes a pairing. |
+| **SSH maintenance login** | Off by default. When on, log in as `epilykos` (which can use `sudo`) with a password of at least 8 characters, or public keys. Root can never log in over SSH. |
+| **Factory reset** | Erases everything the box keeps and restarts it as if newly flashed. See [Password and factory reset](/epilykos-os/password-and-reset). |
+
+Epilykos also checks its database one minute after an unclean stop, and weekly, without blocking the
+dashboard. It reports problems; it doesn't repair them.

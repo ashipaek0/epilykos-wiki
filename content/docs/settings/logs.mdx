@@ -4,4 +4,38 @@ description: Read logs, turn on debug logging and save a diagnostics file.
 icon: ScrollText
 ---
 
-This page is being written.
+**Settings → Logs** shows what Epilykos is doing right now. Tokens, passwords and keys are hidden, so
+logs are safe to share when asking for help.
+
+## Recent lines
+
+Filter by level (**All lines**, **Warnings and errors**, **Errors only**), by source, or search. **Live**
+keeps the list following new lines.
+
+## How much to log
+
+| Level | What it records |
+| --- | --- |
+| **Errors only** | Only errors. |
+| **Errors and warnings** | Errors and warnings. |
+| **Normal** | The usual amount. |
+| **Normal and web requests** | Also every web request. |
+| **Debug (everything, for troubleshooting)** | Everything, including the Bluetooth helper. |
+
+It applies straight away, with no restart. **Debug** turns itself back off after 30 minutes.
+
+`LOG_LEVEL` in the compose file sets the level Epilykos starts with; a level chosen here overrides it.
+
+## Download log and Diagnostics file
+
+- **Download log** saves the log file.
+- **Diagnostics file** saves recent lines and your settings with secrets hidden. Send it when asking
+  for help.
+
+To diagnose a problem: set **Debug**, reproduce the problem, then download the diagnostics file.
+
+## Where logs go
+
+On Docker, Epilykos writes rotating log files under `logs/` inside the container, and to the
+container's output (`docker logs epilykos`). `LOG_TO_FILE=false` keeps only the container output. On
+EpilykosOS, the system journal collects the logs.

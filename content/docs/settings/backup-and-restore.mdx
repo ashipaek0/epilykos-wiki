@@ -4,4 +4,46 @@ description: Download backups, restore them and keep saved passwords.
 icon: DatabaseBackup
 ---
 
-This page is being written.
+Your settings, layouts, metrics and history live in one database file. **Settings → Backup and
+restore** downloads it, restores it, and keeps automatic snapshots.
+
+## Download a backup
+
+Press **Download backup** to save the whole database as one file.
+
+Saved passwords and tokens (Solcast, MQTT, Home Assistant, Tuya, notifications and so on) are inside
+it, locked with a key that stays on the box. Restored onto a different box they can't be read, so
+they'd have to be entered again. To carry them across, switch on **Protect saved passwords with a
+passphrase** before downloading and choose a passphrase (8 to 256 characters). The saved passwords in
+that file are then locked with the passphrase instead of the box's key.
+
+<Callout type="warn" title="The passphrase can't be recovered">
+  It isn't stored anywhere. Keep it with the backup file, somewhere other than the box itself.
+</Callout>
+
+A backup copied off the box is your real protection: daily snapshots live on the same card or disk.
+
+## Restore
+
+Press **Restore from file…** and pick a backup. It replaces everything with the backup.
+
+If the file was made with a passphrase, Epilykos asks for it after the upload and then locks the
+passwords again with the new box's own key. A wrong passphrase is refused and asked for again; nothing
+is replaced until the right one is given or the restore is cancelled. **Restore without saved
+passwords** restores everything else and leaves them empty if the passphrase is lost.
+
+What a backup doesn't include:
+
+- **Two-step sign-in**: a restored box starts with it off.
+- **Tailscale state**: connect remote access again.
+
+## Automatic snapshots
+
+A verified, compressed snapshot of the database is taken every day, and the two newest successful
+copies are kept. Press **Restore** on one to roll back to it. **Refresh snapshots** reloads the list.
+
+If a snapshot fails or none is recent, Epilykos sends the **Automatic snapshot failed** or
+**Automatic snapshot overdue** event; see [Notifications](/settings/notifications).
+
+A monthly reminder asks you to download a backup; daily snapshots don't count, as they stay on the
+same card or disk. The reminder can be put off for seven days.

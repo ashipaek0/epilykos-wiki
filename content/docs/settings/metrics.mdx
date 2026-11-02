@@ -1,7 +1,75 @@
 ---
 title: Metrics
-description: Name, combine and check the readings your sources produce.
+description: Metric roles, the battery estimate, combined metrics and the list of every reading.
 icon: Gauge
 ---
 
-This page is being written.
+**Settings → Metrics** lists every value Epilykos records, and says which ones play each role in
+charts and cards.
+
+## Metric roles
+
+Tell Epilykos which of your metrics is solar power, home use, battery, grid, generator and so on. The
+power chart, history, daily and monthly tables, energy cards and savings use these roles. The setup
+wizard fills them in for you.
+
+The roles and typical metric names are listed in
+[Core concepts](/getting-started/core-concepts#metric-roles).
+
+## Battery estimate
+
+For inverters with no link to the battery's BMS, whose own battery % is a guess from voltage.
+Epilykos counts the current going in and out of the battery through every inverter, and sets the
+charge to 100% each time the battery is full.
+
+Turn on **Count the battery's charge**, then fill in:
+
+| Field | What to enter |
+| --- | --- |
+| **Type** | The battery chemistry (LiFePO4 by default). |
+| **System voltage** | 12, 24 or 48 V. Epilykos says what your inverters report. |
+| **Capacity (Ah)** | The whole bank, at system voltage: two 200 Ah packs in parallel are 400 Ah. |
+| **Charge efficiency** | Share of the charge that stays in the battery, 0.5 to 1. |
+| **Cells in series** | Leave empty for the usual count at this voltage. Set it for other packs, for example 15 for some 48 V LiFePO4. |
+| **Battery current (+ while charging)** | The metric with the battery current. |
+| **Battery voltage** | The metric with the battery voltage. With more than one inverter, separate them with commas; the readings are averaged. |
+
+**When it counts as full:** **Full at or above (V)**, **With the current settled within (A)** (charging
+has tapered off to this or less) and **For (minutes)**. When all three hold, the charge is set to 100%.
+
+**Reset at low voltage under a light load** (optional): **Low voltage at or below (V)** **Means a
+charge of (%)**.
+
+You can also set the charge by hand. When it first starts, the estimate begins from the battery
+voltage. Turn on **Use it as Battery %** to have the estimate fill the battery SOC role.
+
+## Combined metrics
+
+Add up readings from several inverters, MPPTs or batteries, or work out energy from power. Each result
+is a new metric you can pick in roles and cards. Press **Add combined metric** and choose a
+calculation:
+
+| Calculation | What it does |
+| --- | --- |
+| **Add up** | All inputs added together, for example PV1 + PV2 of each inverter. |
+| **Average** | The average of the inputs. |
+| **Lowest** / **Highest** | The lowest or highest of the inputs. |
+| **Subtract** | The first input minus the others, for example load minus solar. |
+| **Multiply** | Inputs multiplied, for example voltage × current = power. |
+| **Weighted average** | Each input counts by its weight, for example battery charge weighted by capacity. |
+| **Scale** | One input × factor + offset, for example Wh to kWh with factor 0.001. |
+| **Energy today from power** | kWh so far today from a power reading. Resets at midnight. |
+| **Lifetime energy from power** | A kWh total that only goes up. Set a starting value to match a meter. |
+| **Today's increase of a counter** | How much a lifetime counter (for example total kWh) went up since midnight. |
+
+Sums and averages can be shown split into their parts on cards. Switch a combined metric off to stop
+computing it.
+
+Several BMS packs that make up one battery go in a
+[battery bank](/data-sources/bms#battery-banks) instead; its `bank_` metrics can be used here too.
+
+## All metrics
+
+Everything your sources and combined metrics report, newest reading first, with the current value,
+when it was last updated and its unit. Metrics with no reading yet are listed last. Use the filter to
+find one; select metrics you no longer use and press **Delete selected** to remove them.

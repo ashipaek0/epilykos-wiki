@@ -4,4 +4,70 @@ description: Send your solar data to PVOutput.org.
 icon: Upload
 ---
 
-This page is being written.
+**Settings → Uploads** sends your data to [PVOutput.org](https://pvoutput.org), a free service for
+sharing and comparing solar output.
+
+## Connect your PVOutput system
+
+<Steps>
+<Step>
+
+In PVOutput, open **Settings**: turn on **API Access**, and note your **API Key** and your system's
+**System Id**.
+
+</Step>
+<Step>
+
+In Epilykos, turn on **Upload to PVOutput** and enter the **API key** and **System ID**.
+
+</Step>
+<Step>
+
+Press **Test connection**. It also detects the **Time zone**; enter it yourself if needed, for
+example `Africa/Lagos`.
+
+</Step>
+<Step>
+
+Choose **Upload every** 5, 10 or 15 minutes (match your PVOutput system's status interval), and enter
+the **System size** in W.
+
+</Step>
+</Steps>
+
+## Metric mapping
+
+Pick the Epilykos metric for each PVOutput value:
+
+| PVOutput value | What to map |
+| --- | --- |
+| **v1 Energy Generated** | Cumulative daily solar generation, for example `daily_solar_kwh`. |
+| **v2 Power Generated (W)** | Solar output in watts, for example `solar_power`. |
+| **v3 Energy Consumed** | Cumulative daily consumption, for example `daily_consumption`. |
+| **v4 Power Consumed (W)** | Load in watts, for example `load_power`. |
+| **v5 Temperature (°C)** | Ambient or inverter temperature. |
+| **v6 Voltage (V)** | Grid or mains voltage. |
+
+Epilykos energy metrics are in kWh; the unit selector next to v1 and v3 sets what PVOutput receives.
+
+## Upload mode
+
+- **Cumulative (c1)**: daily running totals. Right for most inverters.
+- **Net data (n)**: v2 and v4 are net export and import. Only if your inverter reports net metering
+  values.
+
+## Upload queue and backfill
+
+Uploads that fail (no internet, PVOutput down) wait in the **Upload queue** and are sent later. **View
+queue** shows what's waiting. **Run backfill** finds gaps and uploads them. On a free PVOutput account
+each status is sent on its own, so a large backlog can take several hours.
+
+## PVOutput alerts
+
+PVOutput can send its notifications to Epilykos. Enter a **Webhook URL** such as
+`https://energy.example.com/api/pvoutput/webhook` here, and use the same URL as the notification
+callback in your PVOutput settings. It has to be a public address that PVOutput's servers can reach;
+see [Network and remote access](/settings/network-and-remote-access).
+
+The address only accepts calls while uploads are on, for your own system ID, and at most 10 a minute.
+Alerts arrive as the **PVOutput alert received** event in [Notifications](/settings/notifications).

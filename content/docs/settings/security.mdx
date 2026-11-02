@@ -4,4 +4,72 @@ description: The admin password and two-step sign-in.
 icon: Lock
 ---
 
-This page is being written.
+The dashboard is open to anyone who can reach it. The admin password protects Settings, the layout
+editor, the card showcase, the Controls page and the REST API. **Settings → Security** adds two-step
+sign-in.
+
+## The admin password
+
+It is set in the first step of the [setup wizard](/getting-started/first-run-setup).
+
+- **To change it:** sign in, open `/setup` and set a new password in the first step. **Generate a
+  strong password** makes one for you.
+- **Docker with `SETTINGS_PASSWORD`:** the password comes from the compose file and can't be changed
+  in the app. Change it there and run `docker compose up -d`.
+- **Forgotten:** on EpilykosOS, see [Password and factory reset](/epilykos-os/password-and-reset). On
+  Docker, set `SETTINGS_PASSWORD` under `environment:` in the compose file.
+
+The wizard accepts passwords of 4 characters or more. Choose a long one: opening Epilykos to the
+internet with Tailscale Funnel or a Cloudflare Tunnel requires at least 12 characters.
+
+## Two-step sign-in
+
+**Two-step sign-in** adds a 6-digit code from an authenticator app (Google Authenticator, Microsoft
+Authenticator, 1Password and similar) after the admin password. It works without internet and costs
+nothing.
+
+<Steps>
+<Step>
+
+Turn on the switch and enter your password. Scan the QR code, then type the code the app shows.
+
+</Step>
+<Step>
+
+Save the **10 recovery codes** shown once. Each signs you in once if you lose the phone. **New recovery
+codes** replaces them.
+
+</Step>
+<Step>
+
+Signing in is then password, then code (or a recovery code). Turning it off, or making new recovery
+codes, asks for your password and a current code.
+
+</Step>
+</Steps>
+
+Things to know:
+
+- Codes only match when the box's clock is within about a minute of your phone's. A box without
+  internet can drift: when a code fails, the sign-in page shows the box's time, and a recovery code
+  always works.
+- A code works once, so a seen code can't be replayed, and five wrong codes send you back to the
+  password.
+- The setting lives in `data/two-step.json`, with its secret encrypted by the app's encryption key. A
+  database backup doesn't carry it, so a restored box starts with two-step sign-in off.
+
+## Locked out of two-step sign-in
+
+Any password reset also switches two-step sign-in off:
+
+- **EpilykosOS:** put `dashboard-password.txt` on the boot drive, or run
+  `sudo epilykos-reset-password` on the console. See
+  [Password and factory reset](/epilykos-os/password-and-reset).
+- **Docker:** turn on the `environment:` block in `docker-compose.yaml`, add `- RESET_TWO_STEP=true`
+  under it, run `docker compose up -d`, then remove the line again.
+
+## Saved passwords and tokens
+
+Passwords and tokens you save in Settings (Solcast, MQTT, Home Assistant, Tuya, notification channels,
+the Cloudflare token and so on) are stored encrypted with a key kept in `data/encryption-key`. See
+[Backup and restore](/settings/backup-and-restore) for moving them to another box.

@@ -4,4 +4,102 @@ description: Alerts and reports by push, Telegram, Discord, ntfy or webhook.
 icon: Bell
 ---
 
-This page is being written.
+**Settings → Notifications** sends alerts on any metric or event, and scheduled reports, to your
+devices, Telegram, Discord, ntfy or a webhook. It is admin-only. Bot tokens, webhook URLs,
+Authorization headers and push keys are stored encrypted.
+
+Set up at least one **channel** (where messages go), then add **rules** (what to send).
+
+## Channels
+
+| Channel | Setup |
+| --- | --- |
+| **Push to devices** | Notifications on the phones, tablets and computers where you turn push on. One channel can target all devices or only the ones you choose. |
+| **Telegram** | Message [@BotFather](https://t.me/BotFather), send `/newbot` and paste the token. Message your bot (or add it as an admin of your channel or group and post there), then press **Find chat**. |
+| **Discord** | Paste a channel webhook URL. Optionally **Mention @here on critical alerts**. |
+| **ntfy** | [ntfy.sh](https://ntfy.sh) or your own ntfy server, with its phone app. Turn on **Server is on my local network** for a LAN server. |
+| **Webhook** | The alert is POSTed as JSON to Home Assistant, n8n, Node-RED or your own script. An Authorization header can be added. |
+
+Each channel has a test button.
+
+### Push needs HTTPS
+
+Push notifications need Epilykos on an `https://` address: Tailscale and Cloudflare Tunnel both give
+you one, see [Network and remote access](/settings/network-and-remote-access). On iPhone and iPad, add
+Epilykos to the Home Screen first; see [Install as an app](/dashboard/app-and-network).
+
+### Telegram commands
+
+Turn on **Answer commands in this chat** to ask the bot `/status`, `/today`, `/yesterday` or
+`/forecast`. Only that chat gets answers.
+
+### Webhook payload
+
+The JSON has `source`, `title`, `message`, `severity`, `tag`, `url` and `timestamp`, plus `event` or
+`rule`.
+
+## Rules
+
+Start from a ready-made rule or build your own:
+
+| Ready-made | What it does |
+| --- | --- |
+| **Grid outage** | When the grid goes off. Critical, so it gets through quiet hours. |
+| **Grid restored** | When the grid comes back, with how long it was off. |
+| **Battery low** | When the battery charge stays under 20% for 5 minutes. |
+| **Source offline** | When a source stops answering, and when it's back. |
+| **Data stopped updating** | When a metric has had no new value for 15 minutes. |
+| **Forecast unavailable** | When Solcast or Open-Meteo can't be reached. |
+| **Evening summary** | Today's solar, usage, grid and savings at 21:00. |
+| **Low solar tomorrow** | A warning in the evening when tomorrow looks poor. |
+
+Each rule picks its channels and a severity (**Critical**, **Warning** or **Info**).
+
+### Metric rules
+
+Watch a metric: above, below or equal to a value (text works too, for example a grid status of
+`off`), changing, or not updating for N minutes. Options:
+
+- **For at least (minutes)**: ignore short spikes.
+- **Resolve margin**: how far back it has to come before the alert clears. Below 20 with margin 5
+  resolves above 25.
+- A back-to-normal message when it clears.
+- **Remind me every (minutes)** while it lasts.
+- A cooldown between alerts.
+
+### Event rules
+
+Watch one event, or a group with a wildcard such as `source.*`:
+
+| Event | When |
+| --- | --- |
+| `grid.off` | The grid status metric went off. |
+| `grid.on` | The grid came back, with the outage length. |
+| `source.offline` | A polled source failed 3 polls in a row. |
+| `source.online` | An offline source answered again. |
+| `mqtt.disconnected` / `mqtt.connected` | An MQTT broker connection dropped, or came back. |
+| `pvoutput.alert` | PVOutput sent an alert to the webhook. |
+| `forecast.unavailable` | Solcast (for example its daily quota running out) or Open-Meteo couldn't be reached. |
+| `backup.snapshot_failed` | The daily database snapshot couldn't be written. |
+| `backup.snapshot_overdue` | No recent automatic snapshot is available. |
+| `update.available` | A newer Epilykos build is out. Sent once per build. |
+| `system.started` | Epilykos started, after an update, a reboot or a crash. |
+
+### Scheduled reports
+
+At a set time on chosen weekdays:
+
+- a **daily energy summary**, for today or yesterday;
+- the **solar forecast**, for tomorrow or today, optionally only when it's below N kWh (a "poor solar
+  day ahead" warning);
+- the **live status**.
+
+Scheduled reports are sent during quiet hours too.
+
+## Quiet hours and history
+
+**Quiet hours** hold back everything except critical alerts. Every delivery is listed under
+**History**.
+
+Rule state (what's firing, cooldowns, the last scheduled run) survives restarts, so a restart neither
+repeats an alert nor sends a report twice.
