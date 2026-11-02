@@ -11,6 +11,7 @@ import { metaSchema, pageSchema } from "fumapress/adapters/mdx/schema";
 import { Image } from "fumapress/image";
 import { createDocsLayoutPage } from "fumapress/layouts/docs";
 import { linkValidationPlugin } from "fumapress/plugins/link-validation";
+import { oramaSearchPlugin } from "fumapress/plugins/orama-search";
 
 // "/" locally, "/epilykos-wiki/" on GitHub Pages (set by the deploy workflow).
 const basePath = process.env.BASE_PATH ?? "/";
@@ -109,6 +110,11 @@ const config = defineConfig({
   )
   // The link validator requests app paths without the base path, which throws under BASE_PATH
   // (fumapress 1.6.2). Local builds validate links; base-path builds are crawled by check:site.
-  .plugins(linkValidationPlugin({ ignored: () => basePath !== "/" }));
+  .plugins(
+    linkValidationPlugin({ ignored: () => basePath !== "/" }),
+    // Replaces the preset's FlexSearch: its static index was 6.6 MB for this site, Orama's 1.4 MB,
+    // and every visitor downloads it on their first search.
+    oramaSearchPlugin(),
+  );
 
 export default config;
