@@ -1,58 +1,61 @@
 ---
 title: Layout editor
-description: Arrange cards, build several dashboards and switch between desktop and mobile layouts.
+description: Arrange cards, build several dashboards, and choose what opens on computers and phones.
 icon: LayoutGrid
 ---
 
-Open the layout editor with **Edit layout** on the dashboard, or at `/editor`; it needs sign-in.
-Changes save as you go, and **Done** takes you back to the dashboard.
+To change what's on your dashboard, press **Edit layout** on the dashboard or go to `/editor` (you'll
+need to be signed in). Everything you change is saved as you go, and **Done** takes you back to the
+dashboard.
 
 ![The layout editor: the block library on the left, the layout in the middle and the block settings on the right](/images/editor.webp)
 
 ## Add and arrange cards
 
-- The **block library** is on the left. Search it, then drag a block onto the layout, or select a
-  block in the layout and press Enter on a library entry to add it below.
-- **Move** a card by dragging it, or select it and use the arrow keys. The layout is a 12-column
-  grid.
-- **Resize** by dragging any edge or corner, or select a card and press Shift + arrow keys.
-- **Duplicate** a card with the copy icon in its toolbar; **Delete** removes the selected card.
-- **Undo** with Ctrl + Z and **redo** with Ctrl + Shift + Z.
+- The **block library** is on the left. Search it, then drag a block onto the layout. Or select a
+  card on the layout and press Enter on a library entry to drop the new one just below it.
+- **Move** a card by dragging it, or select it and use the arrow keys. The layout is a grid 12
+  columns wide.
+- **Resize** a card by dragging any edge or corner, or select it and press Shift + an arrow key.
+- **Duplicate** a card with the copy icon in its toolbar, and press **Delete** to remove the selected
+  card.
+- Made a mistake? **Undo** with Ctrl + Z and **redo** with Ctrl + Shift + Z.
 
 ## Card settings
 
-Select a card to open its settings, in three tabs:
+Select a card to see its settings, which are split over three tabs:
 
-| Tab | What it sets |
+| Tab | What it's for |
 | --- | --- |
 | **Data** | Which metrics the card shows. |
 | **Style** | Colours, transparency, font size and the card's own display options. |
-| **Layout** | Its size on the grid. |
+| **Layout** | How big it is on the grid. |
 
-Any card type can appear several times, each with its own metrics. Most energy cards use your
-[metric roles](/getting-started/core-concepts#metric-roles) when you don't pick metrics on the card.
+You can use the same type of card as many times as you like, each with its own metrics. Most energy
+cards fall back on your [metric roles](/getting-started/core-concepts#metric-roles) when you don't
+pick metrics yourself.
 
-The block library and what each card needs are in [Cards and the showcase](/dashboard/cards).
+[Cards and the showcase](/dashboard/cards) describes every card in the library and what it needs.
 
 ## Several dashboards
 
-The dashboard menu at the top left lists your dashboards. From it you can make a **New dashboard**,
-**Rename…**, **Duplicate** or **Delete dashboard…**, for example to have "Overview", "Battery" and "TV
-display".
+The dashboard menu at the top left lists all your dashboards. From there you can create a **New
+dashboard**, **Rename…** one, **Duplicate** it or **Delete dashboard…**, so you could have, say, an
+"Overview", a "Battery" view and a "TV display".
 
-Which dashboard opens on computers and which on phones is set in
+You choose which dashboard opens on computers and which on phones in
 [Settings → Appearance](/settings/appearance).
 
-The **Controls page** is also in this menu. It holds the switch, button, selector, slider and knob
-cards; see [Device controls](/dashboard/controls).
+The same menu also has the **Controls page**, which is where the switch, button, selector, slider and
+knob cards go; see [Device controls](/dashboard/controls).
 
 ## Import and export
 
-**Import / export** in the toolbar:
+**Import / export** in the toolbar lets you save your layouts or bring in someone else's:
 
-- **Export all dashboards** downloads every dashboard's layout as one JSON file.
-- **Import from file…** reads such a file. Choose **Append** to add its dashboards to yours, or
-  **Replace** to swap yours for them. The import can be undone.
+- **Export all dashboards** downloads every dashboard's layout as a single JSON file.
+- **Import from file…** reads such a file back in. Choose **Append** to add its dashboards to yours, or
+  **Replace** to swap yours for them. If you change your mind, you can undo the import.
 
-A layout file only holds the layouts. Metric names in it have to exist on the Epilykos you import it
-into.
+A layout file only contains the layouts, not your readings. For the cards to show anything, the
+metric names they use have to exist on the Epilykos you import them into.

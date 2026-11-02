@@ -1,19 +1,23 @@
 ---
 title: RS232 serial
-description: Read inverters that speak their own serial protocol.
+description: Read inverters that talk over a serial cable in their own protocol.
 icon: Cable
 ---
 
-The **RS232 serial** source reads inverters over a USB-to-serial adapter, using ASCII query and
-response or binary protocols.
+Some inverters don't speak Modbus. They talk over a serial cable in a protocol of their own, either
+plain text commands or a binary format. The **RS232 serial** source handles these: connect the
+inverter to the computer running Epilykos with a USB-to-serial adapter, pick your inverter's profile,
+and Epilykos takes care of the rest.
 
 ## What you need
 
-- A USB-to-serial adapter with a working driver (CH340, FTDI, CP2102), or the cable supplied with the
-  inverter.
-- Permission to use the port. On Docker, pass the adapter in and add `dialout`; see
-  [Install with Docker](/getting-started/install-docker#usb-serial-adapters). Without Docker:
-  `sudo usermod -a -G dialout $USER`, then log out and back in.
+- A USB-to-serial adapter with a working driver (CH340, FTDI and CP2102 chips are the common ones),
+  or the cable that came with your inverter.
+- Permission to use the serial port:
+  - **On Docker**, pass the adapter into the container and add the `dialout` group. See
+    [Install with Docker](/getting-started/install-docker#usb-serial-adapters).
+  - **Without Docker**, add your user to `dialout` with `sudo usermod -a -G dialout $USER`, then log
+    out and back in.
 
 ## Protocols
 
@@ -21,62 +25,79 @@ response or binary protocols.
 | --- | --- | --- | --- |
 | Voltronic QPIGS | Voltronic, Axpert, Infinisolar, MUST, Sako | `Voltronic / Axpert (QPIGS ASCII)`, `Infinisolar (Voltronic QPIGS)` | 2400 8N1 |
 | Phocos | Phocos Any-Grid PSW-H, firmware 06.11 or later | `Phocos Any-Grid PSW-H (RS-232 / RS-485)` | 2400 8N1 |
-| Victron VE.Direct | SmartSolar, BMV, MultiPlus, with a VE.Direct cable | `Victron VE.Direct` | 19200 8N1, streaming |
-| SolaX AA55 (binary) | SolaX X1 / X3 series, with a USB-to-TTL adapter | `SolaX Pocket USB (AA55 Binary)` | 9600 8N1 |
+| Victron VE.Direct | SmartSolar, BMV and MultiPlus, with a VE.Direct cable | `Victron VE.Direct` | 19200 8N1, streaming |
+| SolaX AA55 (binary) | SolaX X1 and X3 series, with a USB-to-TTL adapter | `SolaX Pocket USB (AA55 Binary)` | 9600 8N1 |
 | Modbus-RTU | For example the Anern EVO4200L over RS-485 | `Anern EVO4200L (24V Hybrid, Modbus RTU)` | 2400 8N1 |
+
+"2400 8N1" means 2400 baud, 8 data bits, no parity and 1 stop bit.
 
 ## Set up an RS232 device
 
 <Steps>
 <Step>
 
-In **Settings → Sources**, add an **RS232 device** and give it a name.
+In **Settings → Sources**, add an **RS232 device** and give it a name you'll recognise.
 
 </Step>
 <Step>
 
-Pick the serial port. Ports are detected automatically. Set the baud rate and the other serial
-settings to the profile's (table above).
+Pick the serial port. Epilykos lists the ports it finds, so you usually just choose yours from the
+list. Then set the baud rate and the other serial settings to match the profile (see the table
+above).
 
 </Step>
 <Step>
 
-Pick the profile, then press **📥 Load Profile Fields** and give each field a metric name.
-**📋 Fetch Profile Entities** lists every field; **+ Add Mapping** adds one row.
+Pick the profile and press **📥 Load Profile Fields**. Each row is one reading; keep the suggested
+metric name or type your own. If you want every field the profile knows about, use
+**📋 Fetch Profile Entities**, and **+ Add Mapping** adds a single row by hand.
 
 </Step>
 <Step>
 
-Press **Test RS232**, then **Save changes**.
+Press **Test RS232** to check that the inverter answers, then **Save changes**.
 
 </Step>
 </Steps>
 
-**Read all RS232 devices every … seconds** (30 by default) sets how often they are read.
+**Read all RS232 devices every … seconds** controls how often Epilykos asks. The default is every 30
+seconds.
 
 ## Phocos Any-Grid
 
-Phocos's own protocol, read-only. Every read gets the live readings, PV power, operating mode, the
-fault code with its name, status flags (MPPT, charging, battery state, AC input and output), totals and
-set charging currents. Now and then it also reads the ratings and settings (charger priority as
-CSO / SNU / OSO, battery type and so on), the unit's defaults, available charging currents, date and
-time, serial number and firmware (main, display and Bluetooth).
+Epilykos speaks Phocos's own serial protocol, so it can read a Phocos Any-Grid PSW-H directly
+(firmware 06.11 or newer). It only reads: nothing on the inverter is ever changed from here.
 
-Up to nine paralleled units are read as `unit1_…` to `unit9_…`. Map a unit's fields to have it
-asked; a unit that is not there is left alone for a while. The inverters number themselves and the
-numbering can change when they restart, so follow each unit by its serial number.
+On every read you get what's happening right now: the live readings and PV power, the operating mode,
+any fault code (with its name, so you don't have to look it up), and status flags that tell you
+whether the MPPT is tracking, the battery is charging, and AC power is coming in or going out. You
+also get the running totals and the charging currents the inverter is set to.
+
+Less often, Epilykos also picks up the things that rarely change: the ratings and settings (such as
+the charger priority, shown as CSO, SNU or OSO, and the battery type), the factory defaults, the
+charging currents you can choose from, the inverter's date and time, its serial number, and the
+firmware versions of its main board, display and Bluetooth module.
+
+### Several inverters in parallel
+
+If you run up to nine inverters in parallel, each one's readings get their own prefix, from
+`unit1_…` to `unit9_…`. Epilykos only asks a unit for data once you've mapped at least one of its
+fields, and if a unit doesn't answer, it stops asking for a while before trying again.
+
+The inverters number themselves, and those numbers can change after a restart. To be sure which
+physical inverter you're looking at, go by its serial number rather than its unit number.
 
 <Callout type="warn">
-  Use the cable supplied with the inverter. Other cables can damage it.
+  Use the cable that came with the inverter. Other cables can damage it.
 </Callout>
 
-For the same inverter over Bluetooth, see
+To read the same inverter over Bluetooth instead, see
 [Inverter dongles](/data-sources/inverter-dongles#phocos-any-grid-over-bluetooth).
 
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| Permission denied | No permission for the serial port | Add `dialout` (see above). |
-| No ports found | Adapter unplugged or not passed into the container | Check `ls /dev/ttyUSB*` and reseat the cable; on Docker, check `devices:`. |
-| Read timeout | Wrong baud rate | Match the profile: 2400 (Voltronic), 9600 (SolaX), 19200 (VE.Direct). |
+| Permission denied | Epilykos isn't allowed to use the serial port | Add the `dialout` group, as described above. |
+| No ports found | The adapter is unplugged, or not passed into the container | Check `ls /dev/ttyUSB*` and reseat the cable. On Docker, check the `devices:` lines. |
+| Read timeout | The baud rate doesn't match | Use the profile's speed: 2400 for Voltronic, 9600 for SolaX, 19200 for VE.Direct. |

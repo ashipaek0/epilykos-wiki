@@ -4,97 +4,101 @@ description: Fixes for the problems people run into most.
 icon: LifeBuoy
 ---
 
-## Getting more detail
+## Start with the logs
 
-Before anything else, look at **Settings → Logs**. For a hard problem, set **How much to log** to
-**Debug**, make the problem happen, then download the **Diagnostics file**: it has recent log lines
-and your settings with secrets hidden, safe to share when asking for help. See [Logs](/settings/logs).
+Before anything else, have a look at **Settings → Logs**. For a stubborn problem, set **How much to
+log** to **Debug**, make the problem happen again, then download the **Diagnostics file**. It contains
+the recent log lines and your settings, with every secret blanked out, so it's safe to share when you
+ask for help. See [Logs](/settings/logs).
 
-On Docker, `docker compose logs -f` shows the same log from the host.
+On Docker, `docker compose logs -f` shows the same log from the computer itself.
 
-## Can't reach the dashboard
+## You can't reach the dashboard
 
-| Symptom | Fix |
+| What you see | What to do |
 | --- | --- |
-| `epilykos.local` doesn't open (EpilykosOS) | Try the Pi's IP address from your router. If no device can reach another on your network, turn off the router's "AP isolation" or "client isolation" and restart it, or plug the Pi into Ethernet. See [Wi-Fi setup](/epilykos-os/wifi-setup). |
-| The box can't find your Wi-Fi | The Pi 3B only sees 2.4 GHz networks, and channels 12 and 13 only once it knows its country. See [Wi-Fi setup](/epilykos-os/wifi-setup). |
-| Nothing on port 3000 (Docker) | Check the container is running with `docker compose ps`, and read `docker compose logs`. |
-| `EACCES` on `/app/data` or `SQLITE_CANTOPEN` at start | Fixed in current images, which make `./data` writable themselves. On an older image: `sudo chown -R 1000:1000 ./data`, then `docker compose up -d`. |
-| Live updates fail: *closed before connection is established* | Unregister the app's old service worker and reload. Behind a reverse proxy, check its [WebSocket settings](/settings/network-and-remote-access#reverse-proxy). |
+| `epilykos.local` won't open (EpilykosOS) | Try the Pi's IP address from your router instead. If devices on your network can't reach each other at all, turn off the router's "AP isolation" or "client isolation" setting and restart it, or connect the Pi with an Ethernet cable. See [Wi-Fi setup](/epilykos-os/wifi-setup). |
+| The box can't find your Wi-Fi | The Pi 3B only sees 2.4 GHz networks, and won't see channels 12 or 13 until it knows its country. See [Wi-Fi setup](/epilykos-os/wifi-setup). |
+| Nothing answers on port 3000 (Docker) | Check that the container is running with `docker compose ps`, and read `docker compose logs`. |
+| `EACCES` on `/app/data` or `SQLITE_CANTOPEN` when it starts | Current images fix this themselves. On an older image, run `sudo chown -R 1000:1000 ./data`, then `docker compose up -d`. |
+| Live updates stop, with *closed before connection is established* | Clear the app's old background worker (in your browser's site data for the Epilykos address) and reload. If you use a reverse proxy, check its [WebSocket settings](/settings/network-and-remote-access#reverse-proxy). |
 
 ## Signing in
 
-| Symptom | Fix |
+| What you see | What to do |
 | --- | --- |
-| The wizard says Epilykos is already set up, but you never set a password | Someone else opened the wizard first. See [If someone else set the password first](/getting-started/first-run-setup#if-someone-else-set-the-password-first). |
-| `SETTINGS_PASSWORD` in `.env` is ignored (Docker) | The compose file doesn't load `.env` into the container. Put it under `environment:` instead. See [Install with Docker](/getting-started/install-docker). |
-| Forgot the password | EpilykosOS: [Password and factory reset](/epilykos-os/password-and-reset). Docker: set `SETTINGS_PASSWORD` under `environment:`. |
-| A two-step code never matches | Compare the box's clock with your phone's (the failed-code message shows it). Use a recovery code, or see [Locked out of two-step sign-in](/settings/security#locked-out-of-two-step-sign-in). |
-| Settings don't save | Your session has expired: sign out and sign in again. |
+| The wizard says Epilykos is already set up, but you never chose a password | Someone else got there first. See [If someone else set the password first](/getting-started/first-run-setup#if-someone-else-set-the-password-first). |
+| `SETTINGS_PASSWORD` in a `.env` file is ignored (Docker) | The compose file doesn't pass `.env` into the container. Put the password under `environment:` instead; see [Install with Docker](/getting-started/install-docker). |
+| You've forgotten the password | On EpilykosOS, see [Password and factory reset](/epilykos-os/password-and-reset). On Docker, set `SETTINGS_PASSWORD` under `environment:`. |
+| A two-step code is never accepted | Compare the box's clock with your phone's (the error message shows the box's time). Use a recovery code, or see [Locked out of two-step sign-in](/settings/security#locked-out-of-two-step-sign-in). |
+| Settings won't save | Your session has probably expired; sign out and sign back in. |
+| Remote access won't switch on | Your admin password is shorter than 12 characters. Set a longer one; see [Security](/settings/security). |
 
 ## No data, or the wrong data
 
-| Symptom | Fix |
+| What you see | What to do |
 | --- | --- |
-| Nothing on the dashboard | Check that at least one source is enabled and reading: **Settings → Metrics → All metrics** shows the last reading of each metric. |
-| A card shows zeros or nothing | The metric name on the card must match exactly what the source writes. |
-| Charts are empty | History builds up from the first readings; wait two or three read cycles (60 to 90 seconds). Energy charts and tables also need the [metric roles](/getting-started/core-concepts#metric-roles). |
-| The grid status card shows nothing | Set the [grid status metric](/settings/prices-and-savings#grid-status) to the metric that is 1 / on when the grid is up. |
-| Savings look low after choosing a generator method | The generator price is 0: set it in [Prices and savings](/settings/prices-and-savings). |
+| Nothing at all on the dashboard | Check that at least one source is switched on and reading: **Settings → Metrics → All metrics** shows when each metric last changed. |
+| A card shows zeros or nothing | The metric picked on the card has to match exactly what the source writes. |
+| The charts are empty | History builds up from the first readings, so give it two or three cycles (60 to 90 seconds). The energy charts and tables also need your [metric roles](/getting-started/core-concepts#metric-roles). |
+| The grid status card shows nothing | Set the [grid status metric](/settings/prices-and-savings#grid-status) to the metric that reads 1 or `on` while the grid is up. |
+| Savings look too low after choosing a generator option | The generator price is still 0; set it in [Prices and savings](/settings/prices-and-savings). |
 | The generator is missing from charts and costs | Map **Generator power** and **Daily generator energy** in [Metric roles](/settings/metrics#metric-roles). |
-| Daily totals roll over at the wrong hour | The time zone is wrong. Docker: set `TZ` or mount `/etc/localtime` (the startup log line shows the active time zone). EpilykosOS: **Settings → System → Time and storage**. |
-| The battery % jumps around | If your inverter guesses the charge from voltage, try the [battery estimate](/settings/metrics#battery-estimate). |
+| Daily totals roll over at the wrong time | The time zone is wrong. On Docker, set `TZ` or mount `/etc/localtime` (the first log lines show the active time zone). On EpilykosOS, use **Settings → System → Time and storage**. |
+| The battery percentage jumps around | If your inverter guesses the charge from the voltage, try the [battery estimate](/settings/metrics#battery-estimate). |
 
 ## Modbus
 
-| Symptom | Likely cause | Fix |
+| What you see | Likely cause | What to do |
 | --- | --- | --- |
-| Connection refused | Wrong IP or port | Check the address answers (`ping <ip>`) and port 502 is open. |
-| Timeout | Wrong unit ID | Most inverters use unit ID 1. |
-| No data | Unmapped registers | **Load Profile Registers** and give each register a metric name. |
-| CRC / checksum errors | Baud rate mismatch | 9600 for most inverters, 2400 for Voltronic. |
+| Connection refused | The IP address or port is wrong | Check that the address answers (`ping <ip>`) and that port 502 is open. |
+| Timeout | The unit ID is wrong | Most inverters use unit ID 1. |
+| No data | The registers aren't mapped | Press **Load Profile Registers** and give every register a metric name. |
+| CRC or checksum errors | The baud rate doesn't match | Most inverters use 9600; Voltronic uses 2400. |
 
-More in [Modbus](/data-sources/modbus#troubleshooting).
+There's more on the [Modbus](/data-sources/modbus#troubleshooting) page.
 
 ## Serial ports (RS232, RS-485, wired BMS)
 
-| Symptom | Fix |
+| What you see | What to do |
 | --- | --- |
-| No ports found | Check `ls /dev/ttyUSB*` and reseat the cable. On Docker, pass the adapter in with `devices:`. |
-| Permission denied | Docker: add `dialout` under `group_add:`. Without Docker: `sudo usermod -a -G dialout $USER`, then log out and back in. |
-| Read timeout | Wrong baud rate: 2400 (Voltronic), 9600 (SolaX), 19200 (VE.Direct). |
+| No ports are found | Check `ls /dev/ttyUSB*` and reseat the cable. On Docker, pass the adapter in with `devices:`; on Docker Desktop, attach it with USB/IP first. |
+| Permission denied | On Docker, add `dialout` under `group_add:`. Without Docker, run `sudo usermod -a -G dialout $USER`, then log out and back in. |
+| Reads time out | The baud rate is wrong: 2400 for Voltronic, 9600 for SolaX, 19200 for VE.Direct. |
 
-See [Install with Docker](/getting-started/install-docker#usb-serial-adapters).
+See [Install with Docker](/getting-started/install-docker#usb-serial-adapters) for passing adapters
+into the container.
 
 ## Dongles
 
-| Symptom | Likely cause | Fix |
+| What you see | Likely cause | What to do |
 | --- | --- | --- |
-| Timeout | Dongle not reachable | Check its Wi-Fi signal and ping its IP. |
-| Checksum mismatch | Wrong serial number | Serials are case-sensitive and must match the sticker exactly. |
-| No data | Wrong profile | Solarman is not Felicity TCP: match the profile to your inverter. |
-| No data from a Growatt stick (Docker) | Port 5279 isn't published | Add `- "5279:5279"` under `ports:`. |
+| Timeout | Epilykos can't reach the dongle | Check its Wi-Fi signal and ping its IP address. |
+| Checksum mismatch | The serial number is wrong | Type it exactly as on the sticker; upper and lower case matter. |
+| No data | The wrong profile is selected | Pick the profile for your inverter: a Solarman stick is not a Felicity TCP dongle. |
+| No data from a Growatt stick (Docker) | Port 5279 isn't published | Add `- "5279:5279"` under `ports:` and run `docker compose up -d`. |
 
 ## Bluetooth
 
-| Symptom | Fix |
+| What you see | What to do |
 | --- | --- |
 | *Bluetooth unavailable: mount the host D-Bus socket* | Add `- /run/dbus:/run/dbus:ro` to the volumes and recreate the container. |
-| *D-Bus denied access to BlueZ* | Add the host's `bluetooth` group ID under `group_add:` (`getent group bluetooth`). On Ubuntu, also keep `security_opt: apparmor=unconfined`. |
-| No adapter, or the adapter is off | Check `bluetoothctl show` on the host; `rfkill unblock bluetooth` and `bluetoothctl power on`. |
-| A scan finds no devices | Move the adapter closer (about 10 m range), close the vendor's app, and scan again. On a Raspberry Pi 3, a USB Bluetooth adapter is more reliable than the onboard radio. |
-| A pack is found but not recognised | Set its type next to the MAC address. See [Battery BMS](/data-sources/bms). |
+| *D-Bus denied access to BlueZ* | Add the host's `bluetooth` group ID under `group_add:` (`getent group bluetooth` tells you what it is). On Ubuntu, keep `security_opt: apparmor=unconfined` too. |
+| There's no adapter, or it's switched off | Check `bluetoothctl show` on the computer; `rfkill unblock bluetooth` and `bluetoothctl power on` usually sort it out. |
+| A scan finds nothing | Move the adapter closer (Bluetooth reaches about 10 metres), close the battery's phone app, and scan again. On a Raspberry Pi 3, a USB Bluetooth adapter is more reliable than the built-in one. |
+| A pack is found but not recognised | Set its type next to the MAC address; see [Battery BMS](/data-sources/bms). |
+| Bluetooth doesn't work on Docker Desktop | That's expected; see [Bluetooth on Docker Desktop](/getting-started/install-docker#bluetooth-on-docker-desktop). |
 
 ## MQTT
 
-| Symptom | Likely cause | Fix |
+| What you see | Likely cause | What to do |
 | --- | --- | --- |
-| Connection refused | Broker not running, or wrong port | `systemctl status mosquitto`; the default port is 1883. |
-| Auth failure | Wrong username or password | Check the credentials in your broker's configuration. |
-| No data | Nothing published on the topic | Watch the broker with `mosquitto_sub -t "#" -v`. |
-| A value shows as text | The topic carries JSON | Each topic must carry a single value. See [MQTT](/data-sources/mqtt#one-value-per-topic). |
+| Connection refused | The broker isn't running, or the port is wrong | Check `systemctl status mosquitto`; the usual port is 1883. |
+| Authentication fails | The username or password is wrong | Check them against your broker's configuration. |
+| No data | Nothing is being published on the topic | Watch the broker with `mosquitto_sub -t "#" -v`. |
+| A value shows up as text | The topic carries a JSON message | Each topic needs to carry a single value; see [MQTT](/data-sources/mqtt#one-value-per-topic). |
 
 ## Still stuck?
 
-Open an issue on [GitHub](https://github.com/ashipaek0/Epilykos/issues) with the diagnostics file
-attached.
+Open an issue on [GitHub](https://github.com/ashipaek0/Epilykos/issues), and attach the diagnostics
+file.

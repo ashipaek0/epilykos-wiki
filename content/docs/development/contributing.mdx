@@ -1,37 +1,39 @@
 ---
 title: Contributing
-description: Report problems, propose changes to Epilykos, and improve this wiki.
+description: Report problems, suggest changes to Epilykos, and help improve this wiki.
 icon: GitPullRequest
 ---
 
 ## Report a problem
 
-Open an issue on [GitHub](https://github.com/ashipaek0/Epilykos/issues). Attach the **Diagnostics
-file** from **Settings → Logs**: it has recent log lines and your settings with secrets hidden. See
-[Logs](/settings/logs).
+Open an issue on [GitHub](https://github.com/ashipaek0/Epilykos/issues), and attach the **Diagnostics
+file** from **Settings → Logs**. It contains the recent log lines and your settings with all secrets
+blanked out, which makes problems much quicker to track down. See [Logs](/settings/logs).
 
 ## Pull requests to Epilykos
 
-- Branch names describe the change: `fix/…`, `feat/…`, `chore/…`.
-- Keep pull requests short: what changed in a line or two, the bug if it fixes one, the files edited
-  or added, and the reason if it isn't obvious.
-- No tool or assistant attribution: no co-author or session trailers in commit messages, and no
-  "generated with" footers or links in pull request titles, bodies or comments.
-- Run `npm test` before opening the pull request. See the [Development guide](/development/development-guide).
+- Name your branch after the change: `fix/…`, `feat/…` or `chore/…`.
+- Keep the description short: what changed in a line or two, the bug if it fixes one, the files you
+  edited or added, and why, if it isn't obvious.
+- Leave out any tool or assistant attribution: no co-author or session lines in commit messages, and
+  no "generated with" footers or links in the pull request.
+- Run `npm test` before you open it; see the [Development guide](/development/development-guide).
+- If the change affects what people see or do, update the matching page of this wiki too.
 
 ## Improve this wiki
 
-The wiki lives in [ashipaek0/epilykos-wiki](https://github.com/ashipaek0/epilykos-wiki), built with
-[Fumapress](https://press.fumadocs.dev). Each page is an MDX file under `content/docs/`; the sidebar
-order comes from the `meta.json` files next to them. Images go in `public/images/`.
+The wiki lives in [ashipaek0/epilykos-wiki](https://github.com/ashipaek0/epilykos-wiki) and is built
+with [Fumapress](https://press.fumadocs.dev). Each page is an MDX file under `content/docs/`, the
+sidebar order comes from the `meta.json` files next to them, and images go in `public/images/`.
 
 ```bash
 npm install
 npm run dev        # http://localhost:1337
-npm run build      # fails on broken internal links
+npm run build      # stops with an error if an internal link is broken
 ```
 
-The [Supported hardware](/data-sources/supported-hardware) page is generated from an Epilykos checkout:
+The [Supported hardware](/data-sources/supported-hardware) page is generated from an Epilykos checkout,
+so after profiles change, regenerate it with:
 
 ```bash
 npm run gen:hardware -- ../Epilykos

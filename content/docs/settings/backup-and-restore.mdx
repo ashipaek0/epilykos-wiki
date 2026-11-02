@@ -1,57 +1,62 @@
 ---
 title: Backup and restore
-description: Download backups, restore them and keep saved passwords.
+description: Download backups, restore them, and keep your saved passwords.
 icon: DatabaseBackup
 ---
 
-Your settings, layouts, metrics and history live in one database file. **Settings → Backup and
-restore** downloads it, restores it, and keeps automatic snapshots.
+Your settings, layouts, metrics and history all live in one database file. **Settings → Backup and
+restore** lets you download it, restore it, and roll back to one of the automatic snapshots.
 
 ![Settings → Backup and restore](/images/settings-backup.webp)
 
 ## Download a backup
 
-Press **Download backup** to save the whole database as one file.
+Press **Download backup** to save the whole database as a single file.
 
-Saved passwords and tokens (Solcast, MQTT, Home Assistant, Tuya, notifications and so on) are inside
-it, locked with a key that stays on the box. Restored onto a different box they can't be read, so
-they'd have to be entered again. To carry them across, switch on **Protect saved passwords with a
-passphrase** before downloading and choose a passphrase (8 to 256 characters). The saved passwords in
-that file are then locked with the passphrase instead of the box's key.
+The passwords and tokens you've saved (for Solcast, MQTT, Home Assistant, Tuya, notifications and so
+on) are inside that file, locked with a key that stays on this box. That means if you restore the file
+onto a different box, those passwords can't be unlocked and you'd have to type them in again.
+
+To take them with you, switch on **Protect saved passwords with a passphrase** before downloading, and
+choose a passphrase of 8 to 256 characters. The saved passwords in that file are then locked with your
+passphrase instead of the box's key.
 
 <Callout type="warn" title="The passphrase can't be recovered">
   It isn't stored anywhere. Keep it with the backup file, somewhere other than the box itself.
 </Callout>
 
-A backup copied off the box is your real protection: daily snapshots live on the same card or disk.
+A backup copied off the box is your real safety net: the daily snapshots live on the same card or disk
+as everything else.
 
 ## Restore
 
-Press **Restore from file…** and pick a backup. It replaces everything with the backup.
+Press **Restore from file…** and pick a backup. Everything is replaced with what's in the backup.
 
-If the file was made with a passphrase, Epilykos asks for it after the upload and then locks the
-passwords again with the new box's own key. A wrong passphrase is refused and asked for again; nothing
-is replaced until the right one is given or the restore is cancelled. **Restore without saved
-passwords** restores everything else and leaves them empty if the passphrase is lost.
+If the backup was made with a passphrase, Epilykos asks for it after the upload, then locks the
+passwords again with the new box's own key. A wrong passphrase is refused and you're asked again, and
+nothing is replaced until you give the right one or cancel. If you've lost the passphrase, **Restore
+without saved passwords** restores everything else and leaves the saved passwords empty.
 
-What a backup doesn't include:
+A few things a backup doesn't include:
 
-- **Two-step sign-in**: a restored box starts with it off.
-- **Tailscale state**: connect remote access again.
+- **Two-step sign-in**: a restored box starts with it switched off.
+- **Tailscale**: you'll need to connect remote access again.
 
 ## Automatic snapshots
 
-A verified, compressed snapshot of the database is taken every day, and the two newest successful
-copies are kept. Press **Restore** on one to roll back to it. **Refresh snapshots** reloads the list.
+Every day, Epilykos takes a compressed snapshot of the database and checks that it's sound, and it
+keeps the two newest good ones. Press **Restore** next to a snapshot to roll back to it, or **Refresh
+snapshots** to update the list.
 
-If a snapshot fails or none is recent, Epilykos sends the **Automatic snapshot failed** or
-**Automatic snapshot overdue** event; see [Notifications](/settings/notifications).
+If a snapshot fails, or there hasn't been a recent one, Epilykos raises the **Automatic snapshot
+failed** or **Automatic snapshot overdue** event; you can choose to be told in
+[Notifications](/settings/notifications).
 
 ## Database health
 
-**Database health and backups** shows when a backup was last downloaded and the result of the last
-database check. **Check the database now** runs a check straight away; it also runs one minute after
-an unclean stop, and weekly.
+**Database health and backups** shows when you last downloaded a backup, and the result of the last
+database check. **Check the database now** runs a check straight away. Epilykos also checks
+automatically a minute after an unexpected stop (a power cut, say), and once a week.
 
-A monthly reminder asks you to download a backup; daily snapshots don't count, as they stay on the
-same card or disk. **Remind me about backups in 7 days** puts it off.
+Once a month, a reminder asks you to download a backup; the daily snapshots don't count, because they
+stay on the same card or disk. **Remind me about backups in 7 days** puts it off for a week.

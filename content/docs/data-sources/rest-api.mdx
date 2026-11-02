@@ -1,11 +1,12 @@
 ---
 title: REST API
-description: Read values from any HTTP API that returns JSON.
+description: Read values from any web API that returns JSON.
 icon: Globe
 ---
 
-The **REST API** source reads any HTTP(S) address that returns JSON, on your LAN (for example
-`http://192.168.1.50/status`) or on the internet, and turns fields of the response into metrics.
+The **REST API** source reads any web address that returns JSON, whether it's a device on your own
+network (for example `http://192.168.1.50/status`) or a service on the internet, and turns parts of
+the response into metrics.
 
 ## Set it up
 
@@ -17,14 +18,14 @@ In **Settings → Sources**, press **+ Add REST source** and give it a name.
 </Step>
 <Step>
 
-Enter the URL. If the API needs a key, it has to be part of the URL, for example
+Enter the address. If the API needs a key, include it in the address itself, for example
 `https://api.example.com/v1/data?key=…`.
 
 </Step>
 <Step>
 
-Press **📋 Fetch Fields** to list the fields in the response, or **+ Add Mapping** to add one by hand:
-a JSON path and a metric name. **Test Path** shows the value a path reads.
+Press **📋 Fetch Fields** to see every value in the response, or **+ Add Mapping** to add one yourself
+with its JSON path and a metric name. **Test Path** shows what a path currently reads.
 
 </Step>
 <Step>
@@ -34,11 +35,12 @@ a JSON path and a metric name. **Test Path** shows the value a path reads.
 </Step>
 </Steps>
 
-**Read all REST sources every … seconds** (60 by default, 5 at least) sets how often they're read.
+**Read all REST sources every … seconds** controls how often they're read: every 60 seconds by default,
+and no more often than every 5.
 
 ## JSON paths
 
-Paths use dots, and list items by number:
+A path is written with dots between the names, and list items are picked by their number:
 
 | Response | Path |
 | --- | --- |
@@ -48,7 +50,8 @@ Paths use dots, and list items by number:
 
 ## Limits
 
-- Requests are plain `GET`s with a 10-second timeout; custom headers aren't supported.
-- Addresses on your LAN are allowed. Loopback (`localhost`, `127.0.0.1`), link-local and cloud
-  metadata addresses are blocked, so an API on the same computer as Epilykos has to be reached by its
-  LAN address.
+- Epilykos fetches the address with a plain `GET` and waits up to 10 seconds; it can't send extra
+  headers.
+- Addresses on your local network are fine. Loopback addresses (`localhost`, `127.0.0.1`), link-local
+  addresses and cloud metadata addresses are blocked, so an API on the same computer as Epilykos has to
+  be reached through its network address instead.

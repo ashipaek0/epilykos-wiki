@@ -4,13 +4,13 @@ description: Subscribe to MQTT topics and turn them into metrics.
 icon: Radio
 ---
 
-The **MQTT** source subscribes to topics on any broker (Mosquitto, EMQX and so on) and stores each
-message as a metric value.
+The **MQTT** source subscribes to topics on your MQTT broker (Mosquitto, EMQX and the like) and saves
+each message it receives as a metric value.
 
 ## What you need
 
-- The broker URL, for example `mqtt://192.168.1.50:1883`.
-- A username and password if the broker needs them. They are stored encrypted.
+- The broker's address, for example `mqtt://192.168.1.50:1883`.
+- A username and password, if your broker needs them. They're stored encrypted.
 
 ## Set it up
 
@@ -22,18 +22,18 @@ In **Settings → Sources**, press **+ Add MQTT broker** and give it a name.
 </Step>
 <Step>
 
-Enter the broker URL and, if needed, the username and password. Press **Test Broker**.
+Enter the broker's address and, if needed, the username and password, then press **Test Broker**.
 
 </Step>
 <Step>
 
-Press **🔍 Discover Topics** to see what is being published, or type topics yourself. **Test Topic**
-waits for the next message on one topic and shows it.
+Press **🔍 Discover Topics** to see what's being published, or type in the topics yourself. **Test
+Topic** waits for the next message on a topic and shows you what arrived.
 
 </Step>
 <Step>
 
-Press **+ Add Metric Mapping** for each value: pick a metric name and enter its topic. Then **Save
+Press **+ Add Metric Mapping** for each value, pick a metric name, and enter its topic. Then **Save
 changes**.
 
 </Step>
@@ -41,22 +41,23 @@ changes**.
 
 ## One value per topic
 
-Each mapped topic must carry a single value, such as `1234` or `on`. The message is stored exactly as
-it arrives: a JSON message (like Tasmota's `tele/…/SENSOR`) is stored as text, not split into fields,
-and won't chart. Publish the values on their own topics, or read the device with the
-[REST API](/data-sources/rest-api) source instead.
+Each topic you map needs to carry a single value, such as `1234` or `on`, because Epilykos saves the
+message exactly as it arrives. A JSON message (like Tasmota's `tele/…/SENSOR`) is saved as one long
+piece of text rather than split into fields, so it won't show up on a chart. Have the device publish
+each value on its own topic, or read it with the [REST API](/data-sources/rest-api) source instead.
 
-Topics are matched exactly; wildcards (`+`, `#`) aren't used for mappings.
+Topics have to match exactly; wildcards (`+` and `#`) don't work in mappings.
 
 ## Alerts
 
-Epilykos sends the **MQTT broker drops** and **reconnects** events when an established connection
-is lost and comes back. Use them in [Notifications](/settings/notifications).
+When an established connection to the broker drops, and again when it comes back, Epilykos raises the
+**MQTT broker disconnected** and **MQTT broker reconnected** events. You can be told about them in
+[Notifications](/settings/notifications).
 
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| Connection refused | Broker not running, or wrong port | Check the broker is running (`systemctl status mosquitto`). The default port is 1883. |
-| Auth failure | Wrong username or password | Check the credentials in your broker's configuration. |
-| No data | Nothing is published on the topic | Watch the broker with `mosquitto_sub -t "#" -v` to see what's published. |
+| Connection refused | The broker isn't running, or the port is wrong | Check that the broker is running (`systemctl status mosquitto`). The usual port is 1883. |
+| Authentication fails | The username or password is wrong | Check them against your broker's configuration. |
+| No data | Nothing is being published on the topic | Watch everything the broker receives with `mosquitto_sub -t "#" -v`. |

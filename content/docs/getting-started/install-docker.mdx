@@ -4,22 +4,24 @@ description: Run Epilykos with Docker Compose on any system that runs Docker.
 icon: Container
 ---
 
-Epilykos is published as a Docker image, `irunmole/epilykos:latest`, for 64-bit x86 and ARM (`amd64`
-and `arm64`). It runs wherever Docker does, on a computer that stays on: Windows or macOS with Docker
-Desktop, a Linux PC or server, a NAS, or a Raspberry Pi with a 64-bit OS.
+Epilykos comes as a ready-made Docker image, `irunmole/epilykos:latest`, built for 64-bit x86 and ARM
+(`amd64` and `arm64`). If a computer runs Docker and stays switched on, it can run Epilykos: Windows
+or macOS with Docker Desktop, a Linux PC or server, a NAS, or a Raspberry Pi with a 64-bit OS.
 
 ## What you need
 
 - Docker with Compose: [Docker Desktop](https://docs.docker.com/desktop/) on Windows and macOS, or
   [Docker Engine](https://docs.docker.com/engine/install/) with the Compose plugin on Linux.
-- For Bluetooth batteries or inverter modules: a Linux host with a Bluetooth adapter and BlueZ running.
-- For RS232 or RS-485 equipment: a USB serial adapter.
+- For Bluetooth batteries or inverter modules, a Linux host with a Bluetooth adapter and BlueZ
+  running.
+- For RS232 or RS-485 equipment, a USB serial adapter.
 
 <Callout title="On Docker Desktop (Windows, macOS), hardware takes extra steps">
-  Docker Desktop runs containers inside a virtual machine. Sources that work over the network
-  (Wi-Fi dongles, Modbus-TCP, Home Assistant, MQTT, REST APIs, and Tuya devices added by hand) work
-  as is. USB serial adapters can be passed in with USB/IP, Bluetooth needs a Linux host, and Tuya
-  discovery may not work. See [Docker Desktop on Windows and macOS](#docker-desktop-on-windows-and-macos).
+  Docker Desktop runs containers inside a virtual machine. Anything Epilykos reaches over the network
+  (Wi-Fi dongles, Modbus-TCP, Home Assistant, MQTT, REST APIs, and Tuya devices you add by hand) works
+  as normal. USB serial adapters can be passed through with USB/IP, Bluetooth needs a Linux host, and
+  Tuya discovery may not work. The details are in
+  [Docker Desktop on Windows and macOS](#docker-desktop-on-windows-and-macos).
 </Callout>
 
 ## Install
@@ -50,30 +52,34 @@ curl.exe -fsSLO https://raw.githubusercontent.com/ashipaek0/Epilykos/main/docker
 </Tab>
 </Tabs>
 
-Epilykos keeps everything it stores in the `data` folder next to this file.
+Everything Epilykos stores ends up in a `data` folder next to this file.
 
 </Step>
 <Step>
 
-### Choose how the admin password is set (optional)
+### Decide how the admin password is set (optional)
 
-By default, the first person to open the setup wizard chooses the admin password. If people you
-don't trust can reach this computer before you've done that, set the password in the compose file
-instead: turn on the `environment:` block and add a line for it.
+Normally, whoever opens the setup wizard first chooses the admin password. That's fine if you're the
+first one there. If other people can reach this computer before you've finished setup, set the
+password in the compose file instead: uncomment the `environment:` line and add your password under
+it.
 
 ```yaml title="docker-compose.yaml"
     environment:
       - SETTINGS_PASSWORD=choose-a-long-password
 ```
 
-<Callout type="warn" title="A .env file is not enough">
-  The compose file doesn't load a `.env` file into the container, so `SETTINGS_PASSWORD` written in
-  `.env` has no effect. Put it under `environment:` as above.
+<Callout type="warn" title="A .env file won't work">
+  This compose file doesn't pass a `.env` file into the container, so a `SETTINGS_PASSWORD` written
+  in `.env` is simply ignored. Put it under `environment:` as shown above.
 </Callout>
 
-Use at least 12 characters (remote access refuses a shorter admin password), and write each `$` in it
-as `$$`, because Compose reads `$` as the start of a variable. A password set this way can't be
-changed from Settings; change it in the compose file and run `docker compose up -d` again.
+Make it at least 12 characters long, because remote access won't accept a shorter admin password. If
+the password contains a `$`, write it as `$$`: Compose treats a single `$` as the start of a
+variable, so `pa$word` would arrive as `pa`, and a password that starts with `$` would arrive empty.
+
+A password set this way can't be changed from Settings. To change it, edit the compose file and run
+`docker compose up -d` again.
 
 </Step>
 <Step>
@@ -90,9 +96,9 @@ docker compose up -d
 ### Run the setup wizard
 
 Open `http://localhost:3000/setup` in a browser on the same computer, or
-`http://<this-computer>:3000/setup` from another device, for example `http://192.168.1.10:3000/setup`.
-The [setup wizard](/getting-started/first-run-setup) walks you through the password, your equipment
-and a first dashboard.
+`http://<this-computer>:3000/setup` from another device on your network, for example
+`http://192.168.1.10:3000/setup`. The [setup wizard](/getting-started/first-run-setup) walks you
+through the password, your equipment and a first dashboard.
 
 </Step>
 </Steps>
@@ -133,17 +139,17 @@ services:
     # network_mode: "host"
 ```
 
-Options that are off start with `# `. To turn one on, remove the `# ` from **every** line of its
-block, the key and its items together, and keep the indentation as it is. A key with nothing under it
-(for example `devices:` on its own) is an error. `docker compose config` prints the file or tells you
-what is wrong. Then run `docker compose up -d`.
+Lines that start with `# ` are options that are switched off. To switch one on, remove the `# ` from
+**every** line of its block (the key and the items under it) and leave the indentation exactly as it
+is. A key with nothing under it, such as `devices:` on its own, is an error. If you're not sure you got
+it right, `docker compose config` either prints the file back or tells you what's wrong. Then run
+`docker compose up -d`.
 
 ### USB serial adapters
 
-On Docker Desktop, first hand the adapter to Docker: see
-[USB adapters on Docker Desktop](#usb-adapters-on-docker-desktop). For an RS232 or RS-485 inverter, or a
-wired BMS, turn on `devices:` with one line per adapter, and `group_add:` with `dialout` for permission to use them. Docker refuses to start the container if a
-listed device doesn't exist, which is why this is off until you need it.
+To connect an RS232 or RS-485 inverter, or a wired BMS, switch on `devices:` with one line per adapter,
+and `group_add:` with `dialout` so Epilykos is allowed to use them. These lines start out switched off
+because Docker refuses to start the container if a listed device doesn't exist.
 
 ```yaml
     devices:
@@ -152,85 +158,94 @@ listed device doesn't exist, which is why this is off until you need it.
       - "dialout"
 ```
 
-Adapters can change names when they're unplugged. `ls /dev/serial/by-id/` lists stable names you can
-use on the left side instead.
+Adapters can change names when you unplug and replug them. `ls /dev/serial/by-id/` shows names that
+stay the same; you can use one of those on the left-hand side instead.
+
+On Docker Desktop, the adapter first has to be handed to Docker; see
+[USB adapters on Docker Desktop](#usb-adapters-on-docker-desktop).
 
 ### Bluetooth
 
-Needs a Linux host (not Docker Desktop). Bluetooth batteries and inverter modules are built in. They use the host's
-Bluetooth adapter through BlueZ over D-Bus, which the `/run/dbus` line (on by default) provides.
+Bluetooth batteries and inverter modules work out of the box on a Linux host (not on Docker Desktop).
+Epilykos uses the computer's own Bluetooth adapter through BlueZ, over the `/run/dbus` line that's
+already switched on.
 
-- The host must run BlueZ with a powered adapter: `systemctl status bluetooth` shows *active*, and
-  `bluetoothctl show` shows `Powered: yes`.
-- If Settings reports *D-Bus denied access to BlueZ*, turn on `group_add:` and add the host's
-  `bluetooth` group ID, from `getent group bluetooth`.
-- `security_opt: apparmor=unconfined`, already in the file, covers Ubuntu hosts.
+- BlueZ has to be running with the adapter powered on: `systemctl status bluetooth` should say
+  *active*, and `bluetoothctl show` should say `Powered: yes`.
+- If Settings reports *D-Bus denied access to BlueZ*, switch on `group_add:` and add the host's
+  `bluetooth` group ID, which `getent group bluetooth` tells you.
+- On Ubuntu, the `security_opt: apparmor=unconfined` line that's already in the file lets the
+  container reach Bluetooth.
 
 ### Time zone
 
-Daily totals roll over at midnight in the container's time zone. By default it follows the host
-(the `/etc/localtime` line). To use another, turn on `environment:` with a `TZ=` line. The startup log
-line shows the active time zone.
+Daily totals roll over at midnight in the container's time zone, which by default follows the
+computer's (that's the `/etc/localtime` line). To use a different one, switch on `environment:` with a
+`TZ=` line. The first lines of the log show which time zone is active.
 
-On Docker Desktop, set `TZ`; see [Time zone on Docker Desktop](#time-zone-on-docker-desktop).
+On Docker Desktop, set `TZ` anyway; see [Time zone on Docker Desktop](#time-zone-on-docker-desktop).
 
 ### One-click updates
 
-The `docker.sock` line lets **Settings → Updates → Update now** download the new image and restart
-Epilykos on it. It also gives Epilykos full control of Docker on this computer, so remove the line if
-you don't want that and update with the commands below.
+The `docker.sock` line lets **Settings → Updates → Update now** download a new image and restart
+Epilykos on it. It also gives Epilykos full control over Docker on this computer. If you'd rather not
+allow that, remove the line and update with the commands under [Updating](#updating).
 
 ### Tuya discovery
 
-Tuya devices announce themselves with LAN broadcasts, which only reach the container with host
-networking on a Linux host (on Docker Desktop, see [Tuya discovery on Docker Desktop](#tuya-discovery-on-docker-desktop)). Turn on `network_mode: "host"` only if you use Tuya discovery; the dashboard is then on
-host port 3000 and `ports:` is ignored.
+Tuya devices announce themselves with broadcasts on your local network. Those only reach the container
+when it uses host networking on a Linux host, so switch on `network_mode: "host"` if you want
+discovery. The dashboard is then on port 3000 of the computer, and the `ports:` lines are ignored. On
+Docker Desktop, see [Tuya discovery on Docker Desktop](#tuya-discovery-on-docker-desktop).
 
 ## Docker Desktop on Windows and macOS
 
-Docker Desktop runs containers inside a virtual machine, so the computer's own hardware doesn't reach
-Epilykos directly. Sources that work over the network (Wi-Fi dongles, Modbus-TCP, Home Assistant,
-MQTT, REST APIs, Tuya devices with known addresses) need nothing extra.
+Docker Desktop runs your containers inside a small virtual machine, so the computer's own hardware
+doesn't reach Epilykos directly. Anything Epilykos talks to over the network (Wi-Fi dongles,
+Modbus-TCP, Home Assistant, MQTT, REST APIs, and Tuya devices with known addresses) works without any
+extra steps. Hardware plugged into the computer needs a little more.
 
 ### USB adapters on Docker Desktop
 
-Possible with USB/IP, which hands the adapter to Docker's virtual machine:
+You can pass a USB serial adapter through with USB/IP, which hands the device over to Docker's virtual
+machine:
 
 - **Windows with the WSL 2 backend** (Docker Desktop's default): install
-  [usbipd-win](https://learn.microsoft.com/windows/wsl/connect-usb) and, in an administrator
-  PowerShell, run `usbipd list`, then `usbipd bind --busid <id>` once and
-  `usbipd attach --wsl --busid <id>`. The adapter then shows up as a Linux device such as
-  `/dev/ttyUSB0`; map it under `devices:` as above.
-- **macOS, and Windows with the Hyper-V backend**: follow
-  [Using USB/IP with Docker Desktop](https://docs.docker.com/desktop/features/usbip/). It runs a USB/IP
-  server on the computer and a privileged helper container that attaches the device. The helper has to
-  keep running.
+  [usbipd-win](https://learn.microsoft.com/windows/wsl/connect-usb). In an administrator PowerShell,
+  run `usbipd list` to find the adapter's bus ID, `usbipd bind --busid <id>` once to share it, and
+  `usbipd attach --wsl --busid <id>` to attach it. It then shows up as a Linux device such as
+  `/dev/ttyUSB0`, which you add under `devices:` just like on Linux.
+- **macOS, and Windows with the Hyper-V backend**: follow Docker's guide,
+  [Using USB/IP with Docker Desktop](https://docs.docker.com/desktop/features/usbip/). You run a USB/IP
+  server on the computer and a privileged helper container that attaches the device, and the helper
+  has to keep running.
 
-The attachment doesn't survive a restart of the computer or of Docker Desktop unless it is redone;
-`usbipd attach --wsl --busid <id> --auto-attach` keeps reattaching on Windows while it runs. Common
-adapter chips (CH340, CP210x, FTDI) usually work, but neither Docker nor Microsoft guarantees every
-device.
+Either way, the attachment doesn't survive a restart of the computer or of Docker Desktop; you'll need
+to attach it again. On Windows, `usbipd attach --wsl --busid <id> --auto-attach` keeps reattaching for
+as long as it runs. The common adapter chips (CH340, CP210x, FTDI) usually work, but neither Docker
+nor Microsoft promises that every device will.
 
-For a Modbus inverter on RS-485, an RS-485 to Ethernet gateway avoids USB altogether and works from
-any Docker host; see [Modbus](/data-sources/modbus#ways-to-connect).
+For a Modbus inverter on RS-485, there's a simpler route: an RS-485 to Ethernet gateway avoids USB
+altogether and works with any Docker host. See [Modbus](/data-sources/modbus#ways-to-connect).
 
 ### Bluetooth on Docker Desktop
 
-Not supported on Docker Desktop. Epilykos talks to the host's Bluetooth service (BlueZ) over D-Bus,
-and Docker Desktop's virtual machine has none. Run Docker on Linux, or use
-[EpilykosOS](/getting-started/install-epilykos-os), for Bluetooth batteries and inverter modules.
+This isn't possible on Docker Desktop. Epilykos talks to the computer's Bluetooth service (BlueZ), and
+Docker Desktop's virtual machine doesn't have one. For Bluetooth batteries and inverter modules, run
+Docker on Linux or use [EpilykosOS](/getting-started/install-epilykos-os).
 
 ### Tuya discovery on Docker Desktop
 
-Docker Desktop 4.34 and later has opt-in host networking (**Settings → Resources → Network → Enable
-host networking**), but it forwards TCP and UDP connections rather than joining your network, so
-Tuya's broadcast announcements may still not arrive. If discovery finds nothing, enter each device's IP
-address by hand; see [Tuya](/data-sources/tuya#add-a-device-by-hand).
+Docker Desktop 4.34 and later can use host networking if you switch it on (**Settings → Resources →
+Network → Enable host networking**). It passes TCP and UDP connections through rather than putting the
+container on your network, though, so Tuya's broadcast announcements may still not arrive. If
+discovery finds nothing, enter each device's IP address yourself; see
+[Tuya](/data-sources/tuya#add-a-device-by-hand).
 
 ### Time zone on Docker Desktop
 
-Set `TZ` under `environment:`: the `/etc/localtime` line may not carry your computer's time zone into
-the container.
+Set `TZ` under `environment:`. The `/etc/localtime` line may not carry your computer's time zone into
+the container on Docker Desktop.
 
 ## Updating
 
@@ -238,52 +253,52 @@ the container.
 docker compose pull && docker compose up -d
 ```
 
-With the Docker socket mounted you can use **Settings → Updates** instead. See
+If you kept the Docker socket line, **Settings → Updates** can do this for you. See
 [Updates and system](/settings/updates-and-system).
 
-The `latest` tag follows releases. `irunmole/epilykos:dev` follows development builds, for testing
-what's coming next.
+The `latest` tag follows releases. If you'd like to try what's coming next, `irunmole/epilykos:dev`
+follows the development builds.
 
 ## Environment variables
 
-Add any of these under `environment:` in the compose file.
+Any of these can go under `environment:` in the compose file.
 
-| Variable | Default | Purpose |
+| Variable | Default | What it does |
 | --- | --- | --- |
-| `SETTINGS_PASSWORD` | not set | Admin password, at least 12 characters (write `$` as `$$`). When set, it can't be changed in Settings. |
-| `TZ` | host time zone | Time zone for daily totals, e.g. `Africa/Lagos`. |
-| `PORT` | `3000` | Port Epilykos listens on inside the container. |
-| `LOG_LEVEL` | `info` | Starting log level: `debug`, `info`, `warn` or `error`. A level chosen in Settings → Logs overrides it. |
-| `LOG_TO_FILE` | `true` | `false` logs to stdout/stderr only, for read-only container roots. |
-| `LOG_DIR` | `logs/` | Where rotating log files go when file logging is on. |
-| `SQLITE_SYNCHRONOUS` | `NORMAL` | Database durability: `NORMAL`, `FULL` or `EXTRA` (`OFF` is refused). |
-| `TMPDIR` | `/tmp` | Temporary folder for uploads (backup restore, layout import). |
-| `BLUETOOTH` | `on` | `off` disables Bluetooth even when `/run/dbus` is mounted. |
-| `BLE_KEEP_ALIVE` | `true` | Keep Bluetooth connections open between reads. `false` reconnects every read: slower, but frees adapter slots. |
-| `BLE_MAX_LINKS` | `1` | Bluetooth devices kept connected at once. Raise it if your adapter handles several connections well. |
-| `BLE_LOG_LEVEL` | `WARNING` | Bluetooth helper log level (`INFO` or `DEBUG` when diagnosing a device). |
-| `UPDATE_CHECK` | `on` | `off` never checks for updates. |
-| `SESSION_SECRET` | generated | Sign-in session secret. If unset, one is generated and kept in `data/session-secret`. |
-| `RESET_TWO_STEP` | not set | `true` turns two-step sign-in off at start. Remove it again afterwards. See [Security](/settings/security). |
+| `SETTINGS_PASSWORD` | not set | The admin password; use at least 12 characters and write `$` as `$$`. While it's set, the password can't be changed in Settings. |
+| `TZ` | the computer's | The time zone for daily totals, for example `Africa/Lagos`. |
+| `PORT` | `3000` | The port Epilykos listens on inside the container. |
+| `LOG_LEVEL` | `info` | How much to log at start: `debug`, `info`, `warn` or `error`. A level chosen in Settings → Logs takes over. |
+| `LOG_TO_FILE` | `true` | Set to `false` to log only to the container's output, for read-only setups. |
+| `LOG_DIR` | `logs/` | Where log files go when file logging is on. |
+| `SQLITE_SYNCHRONOUS` | `NORMAL` | How carefully the database writes: `NORMAL`, `FULL` or `EXTRA` (`OFF` isn't allowed). |
+| `TMPDIR` | `/tmp` | Temporary folder for uploads, such as restoring a backup or importing a layout. |
+| `BLUETOOTH` | `on` | Set to `off` to switch Bluetooth off even when `/run/dbus` is mounted. |
+| `BLE_KEEP_ALIVE` | `true` | Keeps Bluetooth connections open between reads. `false` reconnects every time: slower, but frees up the adapter. |
+| `BLE_MAX_LINKS` | `1` | How many Bluetooth devices stay connected at once. Raise it if your adapter copes well with several. |
+| `BLE_LOG_LEVEL` | `WARNING` | How much the Bluetooth helper logs; use `INFO` or `DEBUG` when chasing a problem with a device. |
+| `UPDATE_CHECK` | `on` | Set to `off` to never check for updates. |
+| `SESSION_SECRET` | generated | The secret for sign-in sessions. If it isn't set, one is generated and kept in `data/session-secret`. |
+| `RESET_TWO_STEP` | not set | `true` switches two-step sign-in off every time Epilykos starts. Remove it and run `docker compose up -d` again once you're back in. See [Security](/settings/security#locked-out-of-two-step-sign-in). |
 
 ## Health check
 
-`GET /healthz` needs no login. It returns `200 {"status":"ok",…}` once Epilykos is serving and its
-database opens with the expected schema, and `503` otherwise. It never depends on the internet, so a
-box without internet stays healthy. The image uses it as its Docker `HEALTHCHECK`.
+`GET /healthz` works without signing in. It answers `200 {"status":"ok",…}` once Epilykos is running
+and its database has opened properly, and `503` if not. It doesn't depend on the internet, so a box
+without a connection still counts as healthy. Docker uses it as the image's `HEALTHCHECK`.
 
 ## What's in the data folder
 
 | Path | What it is |
 | --- | --- |
-| `data/energy.db` | The database: settings, layouts and history. |
-| `data/snapshots/` | The automatic daily snapshots of the database (the last 2 are kept). |
+| `data/energy.db` | The database: your settings, layouts and history. |
+| `data/snapshots/` | The automatic daily snapshots of the database (the two newest are kept). |
 | `data/settings-password` | The admin password, hashed (not used when `SETTINGS_PASSWORD` is set). |
-| `data/encryption-key` | The key that encrypts saved passwords and tokens. |
-| `data/two-step.json` | Two-step sign-in, when it is on. |
-| `data/session-secret` | Sign-in session secret. |
-| `data/tailscale/` | Tailscale state, when remote access is on. |
+| `data/encryption-key` | The key that encrypts your saved passwords and tokens. |
+| `data/two-step.json` | Two-step sign-in, when it's switched on. |
+| `data/session-secret` | The secret for sign-in sessions. |
+| `data/tailscale/` | Tailscale's state, when remote access is on. |
 
-Backups downloaded from Settings contain the database only. Keep a copy of the whole `data` folder if
-you want to move an install with its saved passwords intact; see
+A backup downloaded from Settings contains only the database. To move an installation with its saved
+passwords intact, keep a copy of the whole `data` folder as well; see
 [Backup and restore](/settings/backup-and-restore).

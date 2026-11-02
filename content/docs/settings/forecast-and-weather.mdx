@@ -4,57 +4,59 @@ description: Solar forecasts from Solcast or Open-Meteo, and the weather.
 icon: Sun
 ---
 
-**Settings → Forecast and weather** sets up the solar production forecast and the weather for your
-location. Turn on **Show the solar forecast** to use them.
+**Settings → Forecast and weather** sets up the forecast of how much your panels will produce, along
+with the weather for where you are. Switch on **Show the solar forecast** to start.
 
 ## Location
 
-Enter your **Latitude** and **Longitude**, or press **Use my location** to take them from the browser.
+Enter your **Latitude** and **Longitude**, or press **Use my location** to let your browser fill them
+in.
 
 ## Panels
 
-Add each group of panels that has its own size, tilt or direction, for example an east and a west
-roof. The forecast works each one out and adds them up.
+If you have groups of panels that differ in size, tilt or direction (an east roof and a west roof, for
+example), add each group as its own array. The forecast works each one out and adds them together.
 
 ![Location and panels in Settings → Forecast and weather](/images/settings-forecast.webp)
 
-For each array:
+For each array, enter:
 
 | Field | What to enter |
 | --- | --- |
-| **Array name** | For example "East roof". |
+| **Array name** | Anything that helps you tell them apart, such as "East roof". |
 | **Peak capacity** | The array's size in kWp. |
-| **Tilt** | In degrees: 0 is flat, 90 vertical. |
-| **Facing** | The direction the panels face, in degrees: 180 is south, 90 east. |
+| **Tilt** | The angle in degrees: 0 is flat, 90 is upright. |
+| **Facing** | The direction the panels face, in degrees: 180 is south, 90 is east. |
 | **Solcast resource ID** | Optional: this array's own rooftop site in Solcast. |
 
-**Loss factor** is the share of rated output you actually get, from 0 to 1. 0.9 suits most systems.
-**Installation date** is optional.
+**Loss factor** is the share of their rated output your panels really deliver, from 0 to 1; 0.9
+suits most systems. **Installation date** is optional.
 
 ## Providers
 
-| Provider | Accuracy | Cost |
+| Provider | How accurate | Cost |
 | --- | --- | --- |
-| **Open-Meteo** | Moderate: a general area forecast | Free, no key |
-| **Solcast** | High: rooftop-level modelling | Free hobbyist plan, about 10 calls a day |
+| **Open-Meteo** | Reasonable: a forecast for your general area | Free, no key needed |
+| **Solcast** | Better: modelled for your actual rooftop | Free hobbyist plan with about 10 requests a day |
 
-**Forecast provider** and **Weather provider** can each be **Auto** (Solcast when it's set up, else
-Open-Meteo), **Solcast** or **Open-Meteo**.
+**Forecast provider** and **Weather provider** can each be set to **Auto** (Solcast once it's set up,
+otherwise Open-Meteo), **Solcast** or **Open-Meteo**.
 
-For Solcast, create a rooftop site in the Solcast toolkit and enter your **Solcast API key** and
-**Solcast resource ID**. If one site covers all your arrays, put its ID here; otherwise give each
-array its own above. Epilykos keeps each Solcast forecast for 3 hours, about 8 calls a day, which fits
-the free plan.
+To use Solcast, create a rooftop site in the Solcast toolkit, then enter your **Solcast API key** and
+**Solcast resource ID**. If one site covers all your arrays, put its ID here; otherwise give each array
+its own ID above. Epilykos keeps each Solcast forecast for 3 hours, which works out at about 8
+requests a day and keeps you within the free plan.
 
-Press **Test forecast** to check it.
+Press **Test forecast** to check that it all works.
 
-## When the forecast is unavailable
+## When the forecast isn't available
 
-If Solcast's daily quota runs out or a provider can't be reached, Epilykos sends the **Solar forecast
-unavailable** event. You can be told about it in [Notifications](/settings/notifications).
+If Solcast's daily allowance runs out, or a provider can't be reached, Epilykos raises the **Solar
+forecast unavailable** event. You can choose to be told about it in
+[Notifications](/settings/notifications).
 
 ## Where the forecast shows up
 
-The [forecast and weather cards](/dashboard/cards#forecast-and-weather), **Day totals**, **Energy
-day**, the Telegram `/forecast` command and the scheduled forecast report, such as a "low solar
-tomorrow" warning.
+You'll see it on the [forecast and weather cards](/dashboard/cards#forecast-and-weather), in **Day
+totals** and **Energy day**, in the Telegram `/forecast` command, and in scheduled forecast reports
+such as a "low solar tomorrow" warning.

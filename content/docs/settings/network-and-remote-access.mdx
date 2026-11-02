@@ -4,13 +4,14 @@ description: Home and away addresses, Tailscale, Cloudflare Tunnel and reverse p
 icon: Network
 ---
 
-**Settings → Network** is about how you reach Epilykos, at home and away.
+**Settings → Network** is all about how you reach Epilykos, both at home and when you're out.
 
 ## This box
 
-Shows how the computer running Epilykos is connected. On EpilykosOS it also has **Wi-Fi** (to join a
-different network, see [Wi-Fi setup](/epilykos-os/wifi-setup)) and **Dashboard address**, where you
-change the port (80, or 1024 to 65535; Epilykos restarts on the new port and the page follows it).
+This shows how the computer running Epilykos is connected. On EpilykosOS it also has a **Wi-Fi**
+section, for joining a different network (see [Wi-Fi setup](/epilykos-os/wifi-setup)), and **Dashboard
+address**, where you can change the port to 80 or anything from 1024 to 65535. Epilykos restarts on the
+new port and the page follows it there.
 
 ## App addresses
 
@@ -21,7 +22,8 @@ change the port (80, or 1024 to 65535; Epilykos restarts on the new port and the
 
 ## Remote access with Tailscale
 
-No reverse proxy or port forwarding needed. Under **Remote access**, press **Connect with Tailscale**.
+Tailscale gives you a private, secure address you can use from anywhere, without forwarding ports or
+setting up a reverse proxy. Under **Remote access**, press **Connect with Tailscale**.
 
 ![The Remote access card before connecting](/images/settings-remote-access.webp)
 
@@ -35,34 +37,35 @@ personal use.
 <Step>
 
 Press **Create my address**. You get an HTTPS address such as
-`https://epilykos.your-tailnet.ts.net`. Only devices signed in to your Tailscale account can open it:
-install the Tailscale app on your phone and sign in with the same account. If your Tailscale network
-hasn't turned on HTTPS yet, the card shows a link to do it once.
+`https://epilykos.your-tailnet.ts.net` that only devices signed in to your Tailscale account can open,
+so install the Tailscale app on your phone and sign in with the same account. If HTTPS isn't switched
+on for your Tailscale network yet, the card gives you a link to do it, which you only need once.
 
 </Step>
 <Step>
 
-It fills in **Address away from home** if that is empty, so the installed app switches to it
-automatically.
+If **Address away from home** is empty, Epilykos fills it in with the new address, so the installed
+app switches to it automatically when you're out.
 
 </Step>
 </Steps>
 
-**Open to the internet** (off by default) uses Tailscale Funnel so any browser can open the address.
-Anyone with the address can then reach your sign-in page, so it asks for your admin password, which
-must be at least 12 characters.
+**Open to the internet** (off by default) uses Tailscale Funnel so that any browser can open the
+address, not just your own devices. That means anyone who finds it can reach your sign-in page, so
+Epilykos asks for your admin password first, and the password must be at least 12 characters long.
 
-How it runs: the image includes Tailscale's latest stable release at build time. `tailscaled` runs
-inside Epilykos in userspace networking mode, started only when you turn remote access on, so no
-compose changes or extra permissions are needed. Its state is kept in `data/tailscale/`, not in
+Under the hood, the Epilykos image includes the latest stable Tailscale. It only starts when you
+switch remote access on, and it runs inside Epilykos itself, so you don't need to change the compose
+file or grant any extra permissions. Its state is kept in `data/tailscale/`, which isn't part of the
 database backups.
 
-**Turn off remote access** logs this device out of your Tailscale network. Remote access can only be
-turned on by a signed-in admin.
+**Turn off remote access** signs this device out of your Tailscale network. Only a signed-in admin can
+switch remote access on.
 
 ## Remote access with a Cloudflare Tunnel
 
-For a public address on your own domain (the domain must be on Cloudflare), with no ports to open:
+If your domain is on Cloudflare, a tunnel gives you a public address on your own domain, again
+without opening any ports:
 
 <Steps>
 <Step>
@@ -72,33 +75,34 @@ In Cloudflare Zero Trust, go to **Networks → Tunnels** and create a tunnel of 
 </Step>
 <Step>
 
-Copy the install command it shows and paste it into **Tunnel token or install command** under
-**Cloudflare Tunnel**. Just the token, starting with `eyJ`, works too.
+Copy the install command it shows you and paste it into **Tunnel token or install command** under
+**Cloudflare Tunnel**. Pasting just the token (it starts with `eyJ`) works too.
 
 </Step>
 <Step>
 
-In Cloudflare, under **Public hostname**, add your address (for example `energy.example.com`) with
-service **HTTP** and URL `localhost:3000`. Enter the same address in **Public address** in Epilykos,
-and press **Connect tunnel**.
+Back in Cloudflare, under **Public hostname**, add your address (for example `energy.example.com`)
+with the service set to **HTTP** and the URL `localhost:3000`. Enter the same address under **Public
+address** in Epilykos, and press **Connect tunnel**.
 
 </Step>
 </Steps>
 
-Connecting asks for your admin password, which must be at least 12 characters, because the address is
-reachable from anywhere. Add Cloudflare Access to the hostname if you want an extra sign-in in front.
+Because the address can be reached from anywhere, connecting asks for your admin password, which must
+be at least 12 characters long. For an extra layer of protection, add Cloudflare Access to the
+hostname so visitors have to sign in to Cloudflare first.
 
-`cloudflared` runs inside Epilykos only while the tunnel is on. The token is stored encrypted, passed to
-`cloudflared` through its environment rather than its command line, and hidden in the logs and the
-diagnostics file. **Turn off tunnel** stops it and forgets the token.
+`cloudflared` only runs inside Epilykos while the tunnel is on. The token is stored encrypted, handed
+to `cloudflared` without appearing on its command line, and hidden in the logs and the diagnostics
+file. **Turn off tunnel** stops it and forgets the token.
 
-The released image is rebuilt every Monday, so Tailscale, `cloudflared` and the base system's
-security fixes arrive even without a new Epilykos release.
+The Epilykos image is rebuilt every Monday, so Tailscale, `cloudflared` and the base system's security
+fixes reach you even between Epilykos releases.
 
 ## Reverse proxy
 
-Epilykos pushes live updates over a WebSocket at `/ws`. Behind a reverse proxy (Caddy, Nginx,
-Traefik, Cloudflare), make sure WebSocket upgrade headers are forwarded.
+If you put Epilykos behind your own reverse proxy (Caddy, Nginx, Traefik or Cloudflare), make sure it
+passes WebSocket connections through: that's how live updates reach the dashboard, on `/ws`.
 
 <Tabs items={["Caddy", "Nginx"]}>
 <Tab value="Caddy">
@@ -132,8 +136,8 @@ location /ws {
 </Tab>
 </Tabs>
 
-**Cloudflare proxy (orange cloud):** WebSockets work on all plans. Make sure the record is proxied,
-not DNS-only, and that no firewall rule blocks WebSocket traffic.
+**Behind Cloudflare's proxy (the orange cloud)**, WebSockets work on every plan. Just check that the
+record is proxied rather than DNS-only, and that no firewall rule blocks WebSocket traffic.
 
-The installed app's service worker deliberately doesn't touch `/ws`: WebSocket connections go
-straight to the browser's own WebSocket support.
+The installed app deliberately leaves `/ws` alone, so WebSocket connections always go straight to the
+browser.

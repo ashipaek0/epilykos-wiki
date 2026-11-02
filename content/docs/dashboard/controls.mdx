@@ -4,22 +4,25 @@ description: Change inverter and battery settings safely from the Controls page.
 icon: SlidersHorizontal
 ---
 
-The Controls page, at `/controls`, is where inverter and battery settings are changed, and where the
-switch, selector, slider and knob cards work. It needs sign-in.
+The Controls page, at `/controls`, is where you change inverter and battery settings, and where the
+switch, selector, slider and knob cards live. You need to be signed in to use it.
 
 ![The Controls page, locked, with Device changes and Expert writes off](/images/controls.webp)
 
-## Safety model
+## How it keeps you safe
 
-- **Device changes** is off until you turn it on. While it's off, nothing on the page or the
-  dashboard can change an inverter or battery setting.
-- Changes need your password again: **Unlock** lasts 5 minutes, and ends when you sign out or press
-  **Lock now**.
-- Each setting is read first. A change is refused when the new value is outside the setting's range
-  or step, when the device reports a current value outside that range (the register may mean
-  something else on your model), or when the value changed since the page showed it.
-- After writing, the setting is read back, and a different value is reported.
-- Every attempt, refused ones included, is kept in the **Change log**.
+Changing an inverter's settings can affect your whole power system, so the Controls page is careful:
+
+- **Device changes** starts switched off. While it's off, nothing on this page or on any dashboard can
+  change a setting on your inverter or battery.
+- Even when it's on, you have to enter your password again to **Unlock** the page. The unlock lasts
+  5 minutes, and ends early when you sign out or press **Lock now**.
+- Before changing anything, Epilykos reads the current value. It refuses the change if the new value
+  is outside the setting's allowed range or step, if the device reports a current value that's out of
+  range (a sign that the register might mean something different on your model), or if the value has
+  changed since the page last showed it.
+- After writing, Epilykos reads the setting back and tells you if it doesn't match what you asked for.
+- Every attempt, including the refused ones, is recorded in the **Change log**.
 
 <Callout type="warn">
   A changed setting changes how your inverter or battery behaves. Check each value against your
@@ -28,40 +31,44 @@ switch, selector, slider and knob cards work. It needs sign-in.
 
 ## Device settings
 
-Settings available so far:
+These devices can have settings changed so far:
 
-| Device | What can be changed |
+| Device | What you can change |
 | --- | --- |
-| **LuxPower** (GETA dongle, Wi-Fi or Bluetooth) | Battery charge-level limits; on recognised models, charging and discharging power limits, grid charging power limit, charging-mode flags (grid charging, charge first, forced discharge) and three grid-charging windows |
-| **JBD and JK Bluetooth BMS** | Charging and discharging on/off |
-| **Phocos Any-Grid** (Bluetooth) | An allowlisted set of settings, for the 3, 5, 6.5 and 8 kW models |
+| **LuxPower** (GETA dongle, over Wi-Fi or Bluetooth) | Battery charge limits; on recognised models also the charging and discharging power limits, the grid charging power limit, the charging modes (grid charging, charge first, forced discharge) and three grid-charging windows |
+| **JBD and JK Bluetooth BMS** | Charging and discharging on or off |
+| **Phocos Any-Grid** (over Bluetooth) | A set of settings known to be safe, on the 3, 5, 6.5 and 8 kW models |
 
-Notes:
+A couple of notes:
 
-- **LuxPower:** the power limits, flags and charging windows are only offered when the inverter
-  identifies as a model they apply to. That check follows the LuxCloud app; it isn't certification of
-  every unit, and the firmware can still reject or limit a value. **Download verification** saves a
-  read-only snapshot of the inverter's settings, useful before and after a change.
-- **JBD and JK:** turning discharging off cuts what the pack powers, so the page asks you to confirm
-  that separately. A pack that refuses to turn charging back on is usually protecting itself.
+- **LuxPower:** the power limits, charging modes and charging windows are only offered when the
+  inverter reports a model they apply to. That check follows what the LuxCloud app does; it isn't a
+  guarantee for every unit, and the inverter's firmware may still refuse or limit a value. **Download
+  verification** saves a read-only snapshot of the inverter's settings, which is handy to keep before
+  and after a change.
+- **JBD and JK:** switching discharging off cuts power to whatever the pack supplies, so the page asks
+  you to confirm that separately. If a pack won't switch charging back on, it's usually protecting
+  itself.
 
 ## Expert register writes
 
-**Expert writes** (off by default) allow reading and writing any register number, for registers you
-have checked in your device's manual. Register numbers are decimal or hex (`0x…`); values are whole
-numbers from 0 to 65535 in raw register units, with no scaling. The same unlock and change log apply.
+**Expert writes** (off by default) let you read and write any register number, for registers you've
+checked in your device's manual. Register numbers can be decimal or hex (`0x…`), and values are whole
+numbers from 0 to 65535 in the register's raw units, with no scaling. The same unlock and change log
+apply.
 
 ## Control cards
 
-Add control cards in the [layout editor](/dashboard/editor): open the dashboard menu, pick **Controls
-page**, and add a **Toggle switch**, **Button**, **State select**, **Slider** or **Rotary knob**.
-They appear under **Switches and selectors**.
+To add control cards, open the [layout editor](/dashboard/editor), choose **Controls page** from the
+dashboard menu, and add a **Toggle switch**, **Button**, **State select**, **Slider** or **Rotary
+knob**. They appear on the Controls page under **Switches and selectors**.
 
-The **slider** and the **knob** set a number on a Home Assistant `number` or `input_number`, a Tuya
-value, or an MQTT topic. Pick what to set and give its lowest value, highest value and step (a Home
-Assistant number fills these in itself). Moving the control only shows the value; it's sent when you
-let go of the slider, or stop turning the knob or pressing keys, so one gesture is one change in the
-log. A tap on the knob changes nothing. Arrow keys, Page Up/Down, Home and End work on both.
+The **slider** and the **knob** set a number: a Home Assistant `number` or `input_number`, a Tuya
+value, or an MQTT topic. Pick what you want to control and give it a lowest value, highest value and
+step (a Home Assistant number fills these in for you). Moving the control only previews the value; it's
+sent when you let go of the slider, or stop turning the knob or pressing keys, so each gesture is one
+entry in the change log. Tapping the knob changes nothing, and the arrow keys, Page Up/Down, Home and
+End work on both.
 
-Control cards follow the same rules as everything else here: **Device changes** must be on, and a
-change needs the unlock.
+Control cards follow the same rules as everything else here: **Device changes** has to be on, and
+each change needs the page to be unlocked.

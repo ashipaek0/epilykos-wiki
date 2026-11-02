@@ -4,27 +4,28 @@ description: Every card type, what it needs, and how to try them with made-up re
 icon: LayoutDashboard
 ---
 
-The layout editor's library has every card, grouped as below. Cards that draw energy flows, charts,
-tables, costs and savings use your [metric roles](/getting-started/core-concepts#metric-roles), so set
-those first.
+The layout editor's library has every card, grouped the same way as on this page. Cards that draw
+energy flows, charts, tables, costs or savings work from your
+[metric roles](/getting-started/core-concepts#metric-roles), so it's worth setting those up first.
 
 ## Try them in the showcase
 
-`/showcase` shows every card filled with made-up readings from an imaginary home, updating every few
-seconds. Try each card's options (size, titles, periods, styles) to see what it can do. Nothing on the
-page reads your data or reaches your devices. It needs sign-in.
+The showcase, at `/showcase`, shows every card filled with made-up readings from an imaginary home that
+change every few seconds. It's the easiest way to see what each card can do: play with its options
+(size, titles, time periods, styles) as much as you like. Nothing on that page touches your data or
+your devices. You'll need to be signed in to open it.
 
 ## Energy flow
 
 | Card | What it shows |
 | --- | --- |
-| **System topology** | Animated flow between solar, battery, grid and home |
-| **System overview** | Grid, battery, solar and home tiles with 24-hour sparklines, around the inverter |
-| **Flow card** | Power flow with an optional solar gauge |
-| **Flow square** | Square flow layout with your inverter image |
-| **Flow square, alternate** | Square flow layout without the inverter image |
+| **System topology** | An animated flow between solar, battery, grid and home |
+| **System overview** | Grid, battery, solar and home tiles with 24-hour sparklines, arranged around the inverter |
+| **Flow card** | Power flow, with an optional solar gauge |
+| **Flow square** | A square flow layout with a picture of your inverter |
+| **Flow square, alternate** | The same square layout without the inverter picture |
 
-These need the power roles, or metrics picked on the card.
+These use the power roles, or the metrics you pick on the card.
 
 ![The System topology card with made-up readings](/images/cards-system-topology.webp)
 
@@ -32,30 +33,30 @@ These need the power roles, or metrics picked on the card.
 
 | Card | What it shows |
 | --- | --- |
-| **Metric cards** | A row of large single values |
-| **Metric trend** | A live metric with an optional history or forecast graph |
+| **Metric cards** | A row of big single values |
+| **Metric trend** | A live value, with an optional history or forecast graph |
 | **Dual metric** | Two live values side by side |
-| **Multi-value list** | Label, value and unit rows |
+| **Multi-value list** | Rows of labels, values and units |
 | **Text metric** | One metric's current value as text |
-| **Grid status** | Grid on/off, hours, a 24-hour timeline, and optional costs and hours per day |
-| **Day totals** | Energy to and from the grid, consumption and solar today, against forecast |
-| **Savings** | Savings today, this week, month, year and all time |
+| **Grid status** | Whether the grid is on or off, the hours, a 24-hour timeline, and optionally costs and hours per day |
+| **Day totals** | Today's energy to and from the grid, consumption and solar, compared with the forecast |
+| **Savings** | What you've saved today, this week, month, year and in total |
 
-**Grid status** needs the [grid status metric](/settings/prices-and-savings#grid-status). **Savings**
-needs the daily solar role and your [prices](/settings/prices-and-savings).
+**Grid status** needs a [grid status metric](/settings/prices-and-savings#grid-status), and
+**Savings** needs the daily solar role plus your [prices](/settings/prices-and-savings).
 
 ## Gauges and bars
 
 | Card | What it shows |
 | --- | --- |
 | **Gauge** | One value on a round dial |
-| **Configurable gauge** | A fully configurable dial with bands and history |
+| **Configurable gauge** | A dial you can configure fully, with coloured bands and history |
 | **Half gauge** | One value on a semicircle |
-| **Half gauge, centre zero** | Zero at the top; fills right, or left for negative values |
+| **Half gauge, centre zero** | Zero at the top, filling to the right, or to the left for negative values |
 | **Bar gauge** | Horizontal bars for several metrics |
 | **Bar gauge, segmented** | LED-style segmented bars for several metrics |
 | **History bars** | One metric's history as coloured vertical bars |
-| **Stacked history bars** | Several metrics stacked per time bucket |
+| **Stacked history bars** | Several metrics stacked up in each time slot |
 | **Threshold bar** | One value against coloured bands |
 
 These work with any metric.
@@ -64,15 +65,15 @@ These work with any metric.
 
 | Card | What it shows | Needs |
 | --- | --- | --- |
-| **Power chart** | Solar, load, battery and grid power over time (24 hours or 3 days); a generator series appears when it ran | The power roles |
-| **Energy chart** | Daily solar, grid and load energy as bars (7 days by default) | The daily energy roles |
-| **Energy day** | Hourly consumption, solar and generator with forecast, and battery charge | The power roles |
-| **Energy flows** | Where each hour's energy came from and went | The power roles |
-| **Costs and earnings** | Grid and generator costs, grid earnings and battery wear per hour, with day totals | The power roles and your prices |
+| **Power chart** | Solar, load, battery and grid power over the last 24 hours or 3 days, plus the generator whenever it ran | The power roles |
+| **Energy chart** | Daily solar, grid and load energy as bars (the last 7 days by default) | The daily energy roles |
+| **Energy day** | Hourly consumption, solar and generator with the forecast, and the battery's charge | The power roles |
+| **Energy flows** | Where each hour's energy came from and where it went | The power roles |
+| **Costs and earnings** | Hourly grid and generator costs, grid earnings and battery wear, with totals for the day | The power roles and your prices |
 | **Energy, tabbed** | Energy day, flows, costs and day totals in one card | As above |
 | **Metric chart** | Any metrics over time, with units and scale | Any metric |
-| **Daily table** | Day-by-day energy totals (30 days) | The daily energy roles |
-| **Monthly table** | Month-by-month energy totals (12 months) | The daily energy roles |
+| **Daily table** | Energy totals for each of the last 30 days | The daily energy roles |
+| **Monthly table** | Energy totals for each of the last 12 months | The daily energy roles |
 
 ![The Energy day card: hourly consumption and solar with forecast, and the battery charge below](/images/cards-energy-day.webp)
 
@@ -80,13 +81,13 @@ These work with any metric.
 
 | Card | What it shows |
 | --- | --- |
-| **Solar forecast** | Today's production, the next days, weather and a chart |
-| **Solar forecast summary** | Today and the next days, without the chart |
-| **Solar forecast chart** | Today's actual against forecast solar power |
-| **PV today** | Summary bar, weather timeline and chart |
-| **Weather** | Conditions, forecast and alerts |
+| **Solar forecast** | Today's production, the next few days, the weather and a chart |
+| **Solar forecast summary** | Today and the next few days, without the chart |
+| **Solar forecast chart** | Today's actual solar power against the forecast |
+| **PV today** | A summary bar, a weather timeline and a chart |
+| **Weather** | Current conditions, the forecast and any alerts |
 
-These need [Forecast and weather](/settings/forecast-and-weather) set up.
+These need [Forecast and weather](/settings/forecast-and-weather) to be set up.
 
 ![The Solar forecast card: today's production, the next three days and forecast against actual power](/images/cards-solar-forecast.webp)
 
@@ -94,18 +95,18 @@ These need [Forecast and weather](/settings/forecast-and-weather) set up.
 
 | Card | What it does |
 | --- | --- |
-| **Toggle switch** | Turns an entity on or off |
-| **Button** | Big icon button: tap to toggle, turn on or off, or press |
-| **State select** | Picks one of several states for an entity |
+| **Toggle switch** | Turns something on or off |
+| **Button** | A big icon button: tap to toggle, turn on or off, or press |
+| **State select** | Picks one of several states |
 | **Slider** | Drag to set a number, such as a charge current or a level |
 | **Rotary knob** | Turn a knob to set a number |
 
-Control cards work only on the Controls page; on a dashboard they show a link to it. See
-[Device controls](/dashboard/controls).
+Control cards only work on the Controls page; if you put one on a dashboard, it shows a link to that
+page instead. See [Device controls](/dashboard/controls).
 
 ## Text and embeds
 
 | Card | What it shows |
 | --- | --- |
-| **Text** | A note or heading you write |
-| **Embed** | Another web page in a frame |
+| **Text** | A note or heading you write yourself |
+| **Embed** | Another web page, shown inside the card |

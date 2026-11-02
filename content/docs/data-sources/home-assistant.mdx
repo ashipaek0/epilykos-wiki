@@ -4,15 +4,15 @@ description: Use any Home Assistant entity as a metric.
 icon: House
 ---
 
-The **Home Assistant** source reads entity states from an existing Home Assistant instance over its
-HTTP API. Anything Home Assistant already knows about (a Shelly meter, a smart plug, another
-inverter integration) can feed your dashboard.
+If you already use Home Assistant, the **Home Assistant** source can pull in any of its entities. That
+means anything Home Assistant knows about, such as a Shelly energy meter, a smart plug, or another
+inverter integration, can show up on your Epilykos dashboard.
 
 ## What you need
 
-- Your Home Assistant URL, for example `http://192.168.1.50:8123`.
-- A **long-lived access token**: in Home Assistant, open your profile → **Security** → **Long-lived
-  access tokens** → **Create token**.
+- Your Home Assistant address, for example `http://192.168.1.50:8123`.
+- A **long-lived access token**. In Home Assistant, open your profile, go to **Security**, and under
+  **Long-lived access tokens** press **Create token**.
 
 The token is stored encrypted.
 
@@ -26,33 +26,33 @@ In **Settings → Sources**, press **+ Add Home Assistant server** and give it a
 </Step>
 <Step>
 
-Enter the URL and the access token, then press **Fetch Entities** to load your entity list.
+Enter the address and the access token, then press **Fetch Entities** to load your entity list.
 
 </Step>
 <Step>
 
-Press **+ Add Metric Mapping** for each value you want. Pick a metric name (for example
-`grid_power`) and an entity (for example `sensor.shelly_em_grid_power`).
+Press **+ Add Metric Mapping** for each value you want, and pair a metric name (for example
+`grid_power`) with an entity (for example `sensor.shelly_em_grid_power`).
 
 </Step>
 <Step>
 
-Set the **Poll Interval (s)**; 30 to 60 seconds is a good range. Then **Save changes**.
+Set the **Poll Interval (s)**; somewhere between 30 and 60 seconds works well. Then **Save changes**.
 
 </Step>
 </Steps>
 
-## Which entities
+## Which entities you can use
 
-Entities from these domains are listed: `sensor`, `binary_sensor`, `switch`, `light`, `climate`, `fan`,
-`cover` and `input_boolean`.
+Epilykos lists entities from these domains: `sensor`, `binary_sensor`, `switch`, `light`, `climate`,
+`fan`, `cover` and `input_boolean`.
 
-`on` / `off` states are kept as on / off; the grid status card and the switch cards read them
-directly. So a `binary_sensor` that says whether the grid is up can be your
+States like `on` and `off` are kept as they are, and the grid status card and the switch cards read
+them directly. So a `binary_sensor` that tells you whether the grid is up can be your
 [grid status metric](/settings/prices-and-savings#grid-status).
 
 ## Controlling Home Assistant
 
 Control cards can call Home Assistant services, for example to switch an entity on or off, and the
-slider and knob set `number` / `input_number` values. They live on the
+slider and knob can set `number` and `input_number` values. These cards live on the
 [Controls page](/dashboard/controls).

@@ -4,43 +4,49 @@ description: How Epilykos is built, how to run it locally, and where to add card
 icon: Code
 ---
 
-## Stack
+This page is for anyone who wants to work on Epilykos itself: how it's put together, how to run it on
+your own machine, and where to start when adding a card or a data source.
 
-- **Backend:** Node.js 22 and Express, in `server.js`, `modules/`, `routes/` and `services/`.
-- **Database:** SQLite (better-sqlite3, WAL mode) at `data/energy.db`.
-- **Frontend:** plain JavaScript ES modules, no framework. Charts with Chart.js, the layout editor
-  with GridStack.
+## What it's built with
+
+- **Backend:** Node.js 22 and Express, spread across `server.js`, `modules/`, `routes/` and
+  `services/`.
+- **Database:** SQLite (better-sqlite3, in WAL mode), stored in `data/energy.db`.
+- **Frontend:** plain JavaScript ES modules with no framework, Chart.js for the charts, and GridStack
+  for the layout editor.
 - **Live updates:** a WebSocket at `/ws`.
-- **Python helpers:** Bluetooth (BLE helper, using `aiobmsble`) and Tuya (`tinytuya` bridges).
+- **Python helpers:** one for Bluetooth (built on `aiobmsble`) and the Tuya bridges (built on
+  `tinytuya`).
 
-## Repository layout
+## Where things live
 
-| Path | What's there |
+| Path | What you'll find there |
 | --- | --- |
-| `server.js` | App entry: Express, routes, WebSocket, start-up and shutdown |
-| `modules/` | Data sources, database, metrics, notifications, backups, updates, remote access |
-| `modules/dongle/`, `modules/bms-decoders/`, `modules/rs232-decoders/`, `modules/pvoutput/` | Transport and protocol code per family |
-| `services/PollingManager.js` | The 30-second poll cycle |
-| `routes/` | API routes split out of `server.js` |
-| `public/` | Dashboard, Settings, layout editor and setup wizard |
+| `server.js` | The entry point: Express, routes, the WebSocket, start-up and shutdown |
+| `modules/` | Data sources, the database, metrics, notifications, backups, updates, remote access |
+| `modules/dongle/`, `modules/bms-decoders/`, `modules/rs232-decoders/`, `modules/pvoutput/` | The protocol code for each family of devices |
+| `services/PollingManager.js` | The 30-second polling cycle |
+| `routes/` | API routes that have been split out of `server.js` |
+| `public/` | The dashboard, Settings, the layout editor and the setup wizard |
 | `public/js/components/` | One file per dashboard card |
-| `private/` | Signed-in pages: the card showcase and the Controls page |
-| `profiles/` | Device profiles: Modbus maps, `dongles/`, `rs232/` |
-| `docker/` | Container entrypoint |
-| `test/` | The test suite (no hardware needed) |
+| `private/` | Pages that need sign-in: the card showcase and the Controls page |
+| `profiles/` | Device profiles: the Modbus maps, plus `dongles/` and `rs232/` |
+| `docker/` | The container's entrypoint |
+| `test/` | The test suite, which needs no hardware |
 
 ## Run it locally
 
 ```bash
 npm ci
 npm test                                            # every test/*.test.js, no hardware needed
-python3 modules/ble/ble_helper.py --self-test       # Bluetooth helper's pure functions
-PORT=3002 SETTINGS_PASSWORD=dev node server.js      # local instance, data/ in the working directory
+python3 modules/ble/ble_helper.py --self-test       # the Bluetooth helper's own checks
+PORT=3002 SETTINGS_PASSWORD=dev node server.js      # a local copy, with data/ in the working directory
 ```
 
-Use Node.js 22: the Docker image is built on `node:22`, and native modules (serialport,
-better-sqlite3) are built for the Node version that installed them. Bluetooth outside Docker needs
-Python 3.12 or newer with `pip install -r modules/ble/requirements.txt` and a running BlueZ.
+Use Node.js 22. The Docker image is built on `node:22`, and the native modules (serialport and
+better-sqlite3) are compiled for whichever Node version installed them, so mixing versions causes
+errors. To use Bluetooth outside Docker, you also need Python 3.12 or newer, `pip install -r
+modules/ble/requirements.txt`, and BlueZ running.
 
 ## How data flows
 
@@ -48,66 +54,70 @@ Python 3.12 or newer with `pip install -r modules/ble/requirements.txt` and a ru
 Sources ──► metric queue ──► one SQLite transaction ──► dashboard state ──► WebSocket ──► cards
 ```
 
-- **The poll cycle** (`services/PollingManager.js`) runs every 30 seconds through Home Assistant,
-  Modbus, Tuya, RS232, the battery estimate, combined metrics, history and grid status, in that
-  order. Each runs inside its own circuit breaker (`modules/circuitBreaker.js`): five failures in a
-  row open it, and it tries again after 60 seconds.
-- **Other sources keep their own time:** dongles and Bluetooth devices poll at their own intervals,
-  REST sources on their shared interval, and MQTT pushes messages as they arrive.
-- **Writes are batched.** Sources queue values (`queueMetricWrite` / `queueMetricValue` in
-  `modules/database.js`); `flushMetrics()` writes the batch in one transaction, after each poll
-  cycle and every few seconds. Don't write to SQLite per reading.
-- **Dashboards** get the state over the WebSocket, as a full state plus smaller deltas, and cache it
-  in IndexedDB so a reopened app shows something straight away.
+- **The polling cycle** (`services/PollingManager.js`) runs every 30 seconds and visits Home
+  Assistant, Modbus, Tuya, RS232, the battery estimate, combined metrics, history and grid status, in
+  that order. Each one runs inside its own circuit breaker (`modules/circuitBreaker.js`): after five
+  failures in a row the breaker opens, and it tries again 60 seconds later.
+- **Other sources keep their own time.** Dongles and Bluetooth devices are read at their own
+  intervals, REST sources on their shared interval, and MQTT messages arrive whenever they're
+  published.
+- **Writes are batched.** Sources queue their values (`queueMetricWrite` and `queueMetricValue` in
+  `modules/database.js`), and `flushMetrics()` writes the whole batch in one transaction after each
+  cycle and every few seconds in between. Please don't write to SQLite for every single reading.
+- **Dashboards** receive the state over the WebSocket, first in full and then as smaller updates, and
+  keep a copy in IndexedDB so a reopened app has something to show straight away.
 
 ## Adding a card
 
-1. Write the card in `public/js/components/myCard.js`: a builder that returns its element, and an
+1. Write the card in `public/js/components/myCard.js`: a builder that creates its element, and an
    updater that refreshes it from the dashboard state.
-2. Register the builder in `public/js/components/index.js`, in `componentBuilders` (or
+2. Register the builder in `public/js/components/index.js`, under `componentBuilders` (or
    `controlBuilders` for a control card).
-3. Call its updater from `public/js/cards-update.js`, which the dashboard and the editor's live
-   previews share.
-4. Add it to the block library in `public/js/editor-catalog.js` (`BLOCKS`): its group, name, one-line
-   description, icon and default size in grid columns × rows.
-5. Add its settings to the inspector in `public/js/editor.js` (Data, Style and Layout tabs), and its
-   styles to `public/cards.css`.
-6. Let the card read its config through `components/blockRegistry.js`, so several copies of it can
-   live on one dashboard with different metrics.
+3. Call its updater from `public/js/cards-update.js`, which both the dashboard and the editor's live
+   previews use.
+4. Add it to the block library in `public/js/editor-catalog.js` (`BLOCKS`), with its group, name, a
+   one-line description, an icon and its default size in grid columns × rows.
+5. Add its settings to the editor's inspector in `public/js/editor.js` (the Data, Style and Layout
+   tabs), and its styles to `public/cards.css`.
+6. Have the card read its settings through `components/blockRegistry.js`, so several copies of it can
+   sit on one dashboard with different metrics.
 
-The [card showcase](/dashboard/cards) at `/showcase` (`private/js/showcase.js`) is where every card is
-shown with made-up readings; add yours there too.
+Every card also appears in the [card showcase](/dashboard/cards) at `/showcase`
+(`private/js/showcase.js`) with made-up readings, so add yours there too.
 
 ## Adding a data source
 
-1. Write the module in `modules/`, queueing values instead of writing them.
+1. Write the module in `modules/`, queueing values rather than writing them directly.
 2. If it fits the 30-second cycle, add `{ id, pollFn }` to `defaultRegistry()` in
-   `services/PollingManager.js`. Otherwise start its own timer, and stop it cleanly on shutdown.
-3. Add its API routes (profiles, test connection) and restart it when its settings are saved.
-4. Add its Settings card in `public/settings.html` and `public/settings.js`.
-5. Add its config key to `essentialKeys` in `modules/database.js`, so the setting is created.
+   `services/PollingManager.js`. If not, give it its own timer, and make sure it stops cleanly on
+   shutdown.
+3. Add its API routes (listing profiles, testing the connection), and restart it whenever its settings
+   are saved.
+4. Add its card in Settings, in `public/settings.html` and `public/settings.js`.
+5. Add its config key to `essentialKeys` in `modules/database.js`, so the setting gets created.
 6. Register any password or token field in `SECRET_FIELDS` in `modules/encryption.js`, so it's
-   encrypted at rest.
+   encrypted when stored.
 7. Add tests in `test/`.
 
-Profile-based sources (Modbus, RS232, dongles) read their register maps from `profiles/`. The
-[Supported hardware](/data-sources/supported-hardware) page of this wiki is generated from those files.
+Sources that use profiles (Modbus, RS232 and dongles) read their register maps from `profiles/`. This
+wiki's [Supported hardware](/data-sources/supported-hardware) page is generated from those files.
 
 ## Secrets at rest
 
-Passwords and tokens saved in Settings are stored as `$enc1$` envelopes, AES-256-GCM, with a key kept
-in `data/encryption-key`. `SECRET_FIELDS` lists which config fields are secret. Backups can re-lock
-them with a passphrase; see [Backup and restore](/settings/backup-and-restore).
+Passwords and tokens saved in Settings are stored as `$enc1$` envelopes (AES-256-GCM), with the key kept
+in `data/encryption-key`. `SECRET_FIELDS` lists which settings count as secret. Backups can lock them
+with a passphrase instead; see [Backup and restore](/settings/backup-and-restore).
 
 ## Builds and releases
 
-| Workflow | Runs on | Does |
+| Workflow | When it runs | What it does |
 | --- | --- | --- |
-| `test.yml` | Pushes to `dev`, pull requests to `main` and `dev` | The test suite |
+| `test.yml` | Pushes to `dev`, and pull requests to `main` and `dev` | Runs the test suite |
 | `docker-build-dev.yml` | Pushes to `dev` | Builds `irunmole/epilykos:dev` |
-| `docker-build.yml` | Pushes to `main` (not docs-only changes), and weekly | Builds `irunmole/epilykos:latest` |
+| `docker-build.yml` | Pushes to `main` (except documentation-only changes), and weekly | Builds `irunmole/epilykos:latest` |
 
 The weekly rebuild brings the base image's security fixes and Tailscale's latest stable release to
-users without a new Epilykos release. After each build, the image digest goes to
-[epilykos-os](https://github.com/ashipaek0/epilykos-os), where merging the pull request releases it to
-appliances. Installed copies learn about new builds from the repository's `update-feed` branch.
+everyone, even without a new Epilykos release. After each build, the image's digest is sent to
+[epilykos-os](https://github.com/ashipaek0/epilykos-os), and merging the pull request there releases it
+to Raspberry Pi boxes. Installed copies find out about new builds from the repository's `update-feed`
+branch.

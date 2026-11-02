@@ -1,50 +1,53 @@
 ---
 title: Install as an app
-description: Install Epilykos on a phone or computer and switch between home and away addresses.
+description: Put Epilykos on your phone or computer like an app, and let it switch between home and away addresses.
 icon: Smartphone
 ---
 
-Epilykos is a Progressive Web App: you can install it on a phone, tablet or computer and open it like
-any other app.
+You can install Epilykos on a phone, tablet or computer and open it like any other app, with its own
+icon and window. (Behind the scenes it's a Progressive Web App, so there's nothing to download from an
+app store.)
 
 ## Install it
 
 Open the dashboard in your browser, then:
 
-- **Android (Chrome):** menu → **Install app** or **Add to Home screen**.
-- **iPhone and iPad (Safari):** Share → **Add to Home Screen**.
-- **Desktop (Chrome, Edge):** the install icon in the address bar.
+- **On Android (Chrome)**, open the menu and choose **Install app** or **Add to Home screen**.
+- **On iPhone and iPad (Safari)**, tap Share, then **Add to Home Screen**.
+- **On a computer (Chrome or Edge)**, click the install icon in the address bar.
 
-On iPhone and iPad, [push notifications](/settings/notifications) only work once Epilykos is added
-to the Home Screen.
+On iPhone and iPad, [push notifications](/settings/notifications) only work once Epilykos has been
+added to the Home Screen.
 
 ## What the app does
 
-| Feature | Detail |
+| Feature | What it means for you |
 | --- | --- |
-| Live updates | New readings are pushed to the open dashboard as they arrive. |
-| Offline shell | The app's own files are cached, so it opens without a connection. |
-| Background refresh | Where the browser supports it (Chrome), the installed app asks to refresh readings about every minute even while closed; the browser decides how often it really runs. |
-| Instant start | The last dashboard state is kept on the device, so it shows straight away when reopened. |
-| Home and away addresses | The app tries your home address first and falls back to the away address. |
+| Live updates | New readings appear on the open dashboard as soon as they arrive. |
+| Works offline | The app's own files are kept on the device, so it opens even without a connection. |
+| Background refresh | Where the browser allows it (Chrome does), the installed app asks to refresh readings about once a minute even when it's closed. The browser decides how often that really happens. |
+| Quick start | The last dashboard you saw is kept on the device, so it appears instantly when you reopen the app. |
+| Home and away addresses | The app tries your home address first and switches to your away address when it needs to. |
 
 ## Home and away addresses
 
 Set these in **Settings → Network**:
 
-- **Address at home**, for example `http://192.168.1.10:3000`. Used when your phone or computer is on
-  your home network: fast, and works without internet.
-- **Address away from home**, for example `https://energy.example.com`. Used everywhere else.
+- **Address at home**, for example `http://192.168.1.10:3000`. The app uses this while your phone or
+  computer is on your home network: it's fast, and works even when the internet is down.
+- **Address away from home**, for example `https://energy.example.com`. The app uses this everywhere
+  else.
 
-The app tries the home address first and switches to the away address when it can't reach it. Both
-addresses are handed to the app's service worker when you save them, so open Settings and save them
-once on each device you install the app on.
+The app tries the home address first and switches to the away address if it can't reach it. Both
+addresses are handed to the app when you save them, so open Settings and save them once on each device
+you install the app on.
 
-Don't have an away address? [Tailscale or a Cloudflare Tunnel](/settings/network-and-remote-access)
-gives you one, and Tailscale fills in **Address away from home** for you.
+Don't have an address for when you're away? [Tailscale or a Cloudflare Tunnel](/settings/network-and-remote-access)
+can give you one, and Tailscale even fills in **Address away from home** for you.
 
 ## Troubleshooting
 
-If live updates stop with *closed before connection is established*, an old service worker is in the
-way: unregister it (browser settings → site data for the Epilykos address) and reload. Behind a
-reverse proxy, also check its [WebSocket settings](/settings/network-and-remote-access#reverse-proxy).
+If live updates stop working with the message *closed before connection is established*, an old copy
+of the app's background worker is getting in the way. Clear it (in your browser's settings, under site
+data for the Epilykos address) and reload the page. If you use a reverse proxy, also check its
+[WebSocket settings](/settings/network-and-remote-access#reverse-proxy).

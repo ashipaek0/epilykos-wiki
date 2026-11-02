@@ -4,39 +4,41 @@ description: How sources, metrics and dashboard cards fit together.
 icon: BookOpen
 ---
 
-Everything in Epilykos follows one path: **sources** read your equipment, each reading is stored as a
-named **metric**, and **cards** on your dashboards show metrics.
+Everything in Epilykos follows one simple path. **Sources** read your equipment, each reading is saved
+under a name as a **metric**, and the **cards** on your dashboards show those metrics.
 
 ## Sources
 
-A source is one connection to a device or system: an inverter's Wi-Fi dongle, a Modbus link, a
-Bluetooth battery, Home Assistant, an MQTT broker and so on. You add them in **Settings → Sources**.
-Several source types hold more than one device, for example one card per dongle or battery pack.
+A source is one connection to a device or system: an inverter's Wi-Fi dongle, a Modbus cable, a
+Bluetooth battery, Home Assistant, an MQTT broker and so on. You add them in **Settings → Sources**,
+and most types can hold several devices, for example one card per dongle or per battery pack.
 
-For each source you choose which of its values to keep and what to call them. Sources with a device
-profile (Modbus, RS232, WiFi dongle) fill in suggested names for you.
+For each source, you choose which of its values to keep and what to call them. Sources that use a
+device profile (Modbus, RS232 and WiFi dongle) suggest names for you.
 
-See [Data sources](/data-sources) for each type.
+[Data sources](/data-sources) explains each type.
 
 ## Metrics
 
-A metric is a named reading, such as `battery_soc` or `pv1_power`. The name is what connects your
-hardware to the dashboard: a card shows whatever metric you pick on it.
+A metric is a reading with a name, such as `battery_soc` or `pv1_power`. That name is what ties your
+hardware to the dashboard: a card simply shows whichever metric you pick for it.
 
 ### Naming conventions
 
 - Use **lowercase** with **underscores**: `battery_voltage`, not `BatteryVoltage`.
-- Be **descriptive**: `pv1_power` is better than `solar`.
-- Use **consistent suffixes**: `_power`, `_voltage`, `_current`, `_energy`, `_soc`, `_temp`.
-- Number multiple PV strings: `pv1_power`, `pv2_power`.
+- Be **specific**: `pv1_power` tells you more than `solar`.
+- Stick to the **usual endings**: `_power`, `_voltage`, `_current`, `_energy`, `_soc`, `_temp`.
+- Number multiple solar strings: `pv1_power`, `pv2_power`.
 
-Bluetooth BMS readings are named for you as `bms_<name>_<key>`, for example `bms_pack1_voltage`.
+Bluetooth batteries name their readings for you, as `bms_<name>_<key>`, for example
+`bms_pack1_voltage`.
 
 ### Metric roles
 
-Roles tell Epilykos which of your metrics is which. The setup wizard fills them in; change them in
-**Settings → Metrics → Metric roles**. They feed the history behind the power and energy charts, the
-daily and monthly tables, the energy day, flows and costs cards, and savings.
+Roles tell Epilykos which of your metrics is which: this one is the solar power, that one is the
+battery level, and so on. The setup wizard fills them in, and you can change them any time in
+**Settings → Metrics → Metric roles**. The power and energy charts, the daily and monthly tables, the
+energy, flow and cost cards, and your savings all rely on them.
 
 | Role | Unit | Typical metric names |
 | --- | --- | --- |
@@ -47,29 +49,29 @@ daily and monthly tables, the energy day, flows and costs cards, and savings.
 | Battery SOC | % | `battery_soc` |
 | Solar voltage | V | `pv_voltage`, `pv1_voltage` |
 | Daily solar, consumption, battery charge and discharge, grid import and export | kWh today | `daily_solar`, `pv_energy_today` (reset at midnight by the inverter) |
-| Generator power and daily generator energy | W, kWh today | `generator_power`, `generator_energy_today` (inverters with a generator input) |
+| Generator power and daily generator energy | W, kWh today | `generator_power`, `generator_energy_today` (for inverters with a generator input) |
 
-No daily energy reading for a role? A [combined metric](/settings/metrics) can work it out from
-power, or add several inverters' readings together.
+Missing a daily energy reading for one of the roles? A [combined metric](/settings/metrics) can work it
+out from power, or add up the readings of several inverters.
 
 ## Cards and dashboards
 
-A dashboard is a grid of cards. Each card shows one or more metrics as a flow diagram, gauge, chart,
-table, forecast and so on. You can have several dashboards, for example "Overview", "Battery" and "TV
-display", and choose which one opens on computers and which on phones. See
+A dashboard is a grid of cards, and each card shows one or more metrics as a flow diagram, a gauge, a
+chart, a table, a forecast and so on. You can have as many dashboards as you like (say "Overview",
+"Battery" and "TV display") and choose which one opens on computers and which on phones. See
 [Layout editor](/dashboard/editor).
 
 ## How often readings update
 
-The main cycle runs every 30 seconds, and each source has its own read interval. Open dashboards get
-new readings pushed to them as they arrive, without reloading. Charts and tables fill in as history
-builds up.
+Epilykos runs its main cycle every 30 seconds, and each source also has its own read interval. New
+readings are pushed to every open dashboard as they arrive, so there's no need to reload. Charts and
+tables fill in as history builds up.
 
-Readings are kept in full for 30 days. After that they are kept as 5-minute averages. Text readings,
-such as an inverter's mode, are not kept beyond 30 days.
+Readings are kept in full for 30 days, and after that as 5-minute averages. Text readings, such as an
+inverter's mode, aren't kept beyond 30 days.
 
 ## Who can see what
 
-The dashboard is open to anyone who can reach it: no login. Settings, the layout editor, the card
-showcase and the Controls page need the admin password. Changing a device setting needs the password
-again. See [Security](/settings/security).
+The dashboard is open to anyone who can reach it, without signing in. Settings, the layout editor, the
+card showcase and the Controls page need the admin password, and changing a device setting asks for it
+once more. See [Security](/settings/security).
