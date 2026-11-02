@@ -4,4 +4,51 @@ description: Arrange cards, build several dashboards and switch between desktop 
 icon: LayoutGrid
 ---
 
-This page is being written.
+Open the layout editor at `/editor`; it needs sign-in. Changes save as you go.
+
+## Add and arrange cards
+
+- **Add block** opens the library. Search it, then drag a block onto the layout, or select a block
+  in the layout and press Enter on a library entry to add it below.
+- **Move** a card by dragging it. The layout is a 12-column grid.
+- **Resize** by dragging any edge or corner, or select a card and press Shift + arrow keys.
+- **Duplicate** a card with the copy icon in its toolbar.
+- **Undo** with Ctrl + Z and **redo** with Ctrl + Shift + Z.
+
+## Card settings
+
+Select a card to open its settings, in three tabs:
+
+| Tab | What it sets |
+| --- | --- |
+| **Data** | Which metrics the card shows. |
+| **Style** | Colours, transparency, font size and the card's own display options. |
+| **Layout** | Its size on the grid. |
+
+Any card type can appear several times, each with its own metrics. Most energy cards use your
+[metric roles](/getting-started/core-concepts#metric-roles) when you don't pick metrics on the card.
+
+The block library and what each card needs are in [Cards and the showcase](/dashboard/cards).
+
+## Several dashboards
+
+The dashboard menu at the top left lists your dashboards. From it you can make a **New dashboard**,
+**Rename…**, **Duplicate** or **Delete dashboard…**, for example to have "Overview", "Battery" and "TV
+display".
+
+Which dashboard opens on computers and which on phones is set in
+[Settings → Appearance](/settings/appearance).
+
+The **Controls page** is also in this menu. It holds the switch, button, selector, slider and knob
+cards; see [Device controls](/dashboard/controls).
+
+## Import and export
+
+**Import / export** in the toolbar:
+
+- **Export all dashboards** downloads every dashboard's layout as one JSON file.
+- **Import from file…** reads such a file. Choose **Append** to add its dashboards to yours, or
+  **Replace** to swap yours for them. The import can be undone.
+
+A layout file only holds the layouts. Metric names in it have to exist on the Epilykos you import it
+into.
