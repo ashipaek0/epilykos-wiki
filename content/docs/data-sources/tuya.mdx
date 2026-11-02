@@ -4,4 +4,53 @@ description: Poll Tuya and Smart Life devices on your local network.
 icon: Lightbulb
 ---
 
-This page is being written.
+The **Tuya** source reads Tuya and Smart Life plugs, meters and switches directly on your network,
+over encrypted TCP on port 6668. The Tuya cloud is used once, to fetch each device's local key; after
+that everything runs locally.
+
+## Set it up with your Smart Life account
+
+<Steps>
+<Step>
+
+Find your **Smart Life UID**: in the Smart Life app, **Me → ⚙ → Account → User ID**.
+
+</Step>
+<Step>
+
+In **Settings → Sources → Tuya**, enter the UID under **Smart Life login** and press **Generate QR
+code**. Scan it with the Smart Life app (**Me → + → Scan QR Code**).
+
+</Step>
+<Step>
+
+Your devices are filled in automatically: local keys, data point (DP) labels and LAN IP addresses.
+
+</Step>
+<Step>
+
+Map the DP rows you want to metric names using the dropdowns.
+
+</Step>
+<Step>
+
+Press **Verify all devices** to test them all at once, then **Save changes**.
+
+</Step>
+</Steps>
+
+## Add a device by hand
+
+For a device the cloud login didn't find, press **+ Add device manually** and enter its **Device ID**,
+**Local Key** and **IP Address**, then add DP mappings with **+ Add DP Mapping**.
+
+## Discovery on Docker
+
+Tuya devices announce themselves with LAN broadcasts, which only reach a Docker container with host
+networking. Turn on `network_mode: "host"` in the compose file if you rely on discovery; see
+[Install with Docker](/getting-started/install-docker#tuya-discovery). EpilykosOS needs nothing extra.
+
+## Controlling Tuya devices
+
+Switch and selector cards, and the slider and knob, can change Tuya values from the
+[Controls page](/dashboard/controls).

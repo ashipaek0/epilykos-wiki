@@ -4,4 +4,79 @@ description: Read inverters that speak their own serial protocol.
 icon: Cable
 ---
 
-This page is being written.
+The **RS232 serial** source reads inverters over a USB-to-serial adapter, using ASCII query and
+response or binary protocols.
+
+## What you need
+
+- A USB-to-serial adapter with a working driver (CH340, FTDI, CP2102), or the cable supplied with the
+  inverter.
+- Permission to use the port. On Docker, pass the adapter in and add `dialout`; see
+  [Install with Docker](/getting-started/install-docker#usb-serial-adapters). Without Docker:
+  `sudo usermod -a -G dialout $USER`, then log out and back in.
+
+## Protocols
+
+| Protocol | Inverters | Profile | Serial settings |
+| --- | --- | --- | --- |
+| Voltronic QPIGS | Voltronic, Axpert, Infinisolar, MUST, Sako | `Voltronic / Axpert (QPIGS ASCII)`, `Infinisolar (Voltronic QPIGS)` | 2400 8N1 |
+| Phocos | Phocos Any-Grid PSW-H, firmware 06.11 or later | `Phocos Any-Grid PSW-H (RS-232 / RS-485)` | 2400 8N1 |
+| Victron VE.Direct | SmartSolar, BMV, MultiPlus, with a VE.Direct cable | `Victron VE.Direct` | 19200 8N1, streaming |
+| SolaX AA55 (binary) | SolaX X1 / X3 series, with a USB-to-TTL adapter | `SolaX Pocket USB (AA55 Binary)` | 9600 8N1 |
+| Modbus-RTU | For example the Anern EVO4200L over RS-485 | `Anern EVO4200L (24V Hybrid, Modbus RTU)` | 2400 8N1 |
+
+## Set up an RS232 device
+
+<Steps>
+<Step>
+
+In **Settings → Sources**, add an **RS232 device** and give it a name.
+
+</Step>
+<Step>
+
+Pick the serial port. Ports are detected automatically. Set the baud rate and the other serial
+settings to the profile's (table above).
+
+</Step>
+<Step>
+
+Pick the profile, then press **📥 Load Profile Fields** and give each field a metric name.
+**📋 Fetch Profile Entities** lists every field; **+ Add Mapping** adds one row.
+
+</Step>
+<Step>
+
+Press **Test RS232**, then **Save changes**.
+
+</Step>
+</Steps>
+
+**Read all RS232 devices every … seconds** (30 by default) sets how often they are read.
+
+## Phocos Any-Grid
+
+Phocos's own protocol, read-only. Every read gets the live readings, PV power, operating mode, the
+fault code with its name, status flags (MPPT, charging, battery state, AC input and output), totals and
+set charging currents. Now and then it also reads the ratings and settings (charger priority as
+CSO / SNU / OSO, battery type and so on), the unit's defaults, available charging currents, date and
+time, serial number and firmware (main, display and Bluetooth).
+
+Up to nine paralleled units are read as `unit1_…` to `unit9_…`. Map a unit's fields to have it
+asked; a unit that is not there is left alone for a while. The inverters number themselves and the
+numbering can change when they restart, so follow each unit by its serial number.
+
+<Callout type="warn">
+  Use the cable supplied with the inverter. Other cables can damage it.
+</Callout>
+
+For the same inverter over Bluetooth, see
+[Inverter dongles](/data-sources/inverter-dongles#phocos-any-grid-over-bluetooth).
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Permission denied | No permission for the serial port | Add `dialout` (see above). |
+| No ports found | Adapter unplugged or not passed into the container | Check `ls /dev/ttyUSB*` and reseat the cable; on Docker, check `devices:`. |
+| Read timeout | Wrong baud rate | Match the profile: 2400 (Voltronic), 9600 (SolaX), 19200 (VE.Direct). |

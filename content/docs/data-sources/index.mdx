@@ -4,4 +4,74 @@ description: Pick the right source for your inverter, battery and other devices.
 icon: Plug
 ---
 
-This page is being written.
+A source is one connection Epilykos reads from. Add them in **Settings → Sources → Add source**, or
+let the [setup wizard](/getting-started/first-run-setup) do it the first time.
+
+## Which source do I need?
+
+| Your equipment | Source | Guide |
+| --- | --- | --- |
+| Inverter with a Wi-Fi logger stick: Solarman V5, LuxPower, Growatt, Felicity | **WiFi dongle** | [Inverter dongles](/data-sources/inverter-dongles) |
+| Inverter with a Bluetooth module: LuxPower, Phocos Any-Grid, SRNE and Renogy-style modules | **WiFi dongle**, connection Bluetooth | [Inverter dongles](/data-sources/inverter-dongles) |
+| Inverter or charge controller with an RS-485 (Modbus) port | **Modbus (RS485 or TCP)** | [Modbus](/data-sources/modbus) |
+| Victron GX device (Cerbo, CCGX, Venus OS) | **Modbus (RS485 or TCP)**, TCP | [Modbus](/data-sources/modbus) |
+| Voltronic, Axpert, Infinisolar, MUST, Sako; Phocos Any-Grid; Victron VE.Direct; SolaX | **RS232 serial** | [RS232 serial](/data-sources/rs232) |
+| Battery with a Bluetooth BMS | **Battery management (BMS)** | [Battery BMS](/data-sources/bms) |
+| Battery with a wired RS485 / UART BMS port | **Wired BMS** | [Battery BMS](/data-sources/bms) |
+| Anything already in Home Assistant | **Home Assistant** | [Home Assistant](/data-sources/home-assistant) |
+| Devices that publish to an MQTT broker | **MQTT** | [MQTT](/data-sources/mqtt) |
+| Tuya / Smart Life plugs, meters and switches | **Tuya** | [Tuya](/data-sources/tuya) |
+| Anything with an HTTP API that returns JSON | **REST API** | [REST API](/data-sources/rest-api) |
+
+[Supported hardware](/data-sources/supported-hardware) lists every device profile that ships with
+Epilykos.
+
+## Adding a source
+
+<Steps>
+<Step>
+
+Go to **Settings → Sources** and press **Add source**. Pick the type.
+
+</Step>
+<Step>
+
+Fill in the connection. For Modbus, RS232 and WiFi dongle sources, pick the **profile** that matches
+your model.
+
+</Step>
+<Step>
+
+Choose the readings to keep. Each mapping row is one reading: a metric name on one side, the
+register, entity, topic or field it comes from on the other. Profile-based sources fill these in with
+**Load Profile Registers** or **Load Profile Fields**; keep the suggested names or type your own (see
+[naming conventions](/getting-started/core-concepts#naming-conventions)).
+
+</Step>
+<Step>
+
+Press the source's test button (**Test Connection**, **Test Modbus**, **Test Broker**…) to check it
+reads, then **Save changes** in the bar at the bottom.
+
+</Step>
+</Steps>
+
+Most source types hold more than one device: add one card per inverter, dongle or battery pack.
+
+## Several inverters or batteries
+
+Add each one as its own source, with its own metric names (dongle sources have a **Metric Prefix**
+field for this). Then, in **Settings → Metrics → Combined metrics**, add their readings together or
+work out energy from power. Battery packs can also be combined into a
+[battery bank](/data-sources/bms#battery-banks).
+
+## Bluetooth devices
+
+Bluetooth BMS packs and inverter Bluetooth modules share the host's Bluetooth adapter:
+
+- Devices on one adapter are read one at a time. With several, allow about 10 seconds per device in
+  their read intervals, for example 60 seconds for six.
+- Most devices accept only one Bluetooth connection at a time. Close the vendor's phone app while
+  Epilykos is connected.
+- On Docker, the container needs the host's D-Bus socket. See
+  [Install with Docker](/getting-started/install-docker#bluetooth).

@@ -4,4 +4,55 @@ description: Use any Home Assistant entity as a metric.
 icon: House
 ---
 
-This page is being written.
+The **Home Assistant** source reads entity states from an existing Home Assistant instance over its
+HTTP API. Anything Home Assistant already knows about (a Shelly meter, a smart plug, another
+inverter integration) can feed your dashboard.
+
+## What you need
+
+- Your Home Assistant URL, for example `http://192.168.1.50:8123`.
+- A **long-lived access token**: in Home Assistant, open your profile → **Security** → **Long-lived
+  access tokens** → **Create token**.
+
+The token is stored encrypted.
+
+## Set it up
+
+<Steps>
+<Step>
+
+In **Settings → Sources**, press **+ Add Home Assistant server** and give it a name.
+
+</Step>
+<Step>
+
+Enter the URL and the access token, then press **Fetch Entities** to load your entity list.
+
+</Step>
+<Step>
+
+Press **+ Add Metric Mapping** for each value you want. Pick a metric name (for example
+`grid_power`) and an entity (for example `sensor.shelly_em_grid_power`).
+
+</Step>
+<Step>
+
+Set the **Poll Interval (s)**; 30 to 60 seconds is a good range. Then **Save changes**.
+
+</Step>
+</Steps>
+
+## Which entities
+
+Entities from these domains are listed: `sensor`, `binary_sensor`, `switch`, `light`, `climate`, `fan`,
+`cover` and `input_boolean`.
+
+`on` / `off` states are kept as on / off; the grid status card and the switch cards read them
+directly. So a `binary_sensor` that says whether the grid is up can be your
+[grid status metric](/settings/prices-and-savings#grid-status).
+
+## Controlling Home Assistant
+
+Control cards can call Home Assistant services, for example to switch an entity on or off, and the
+slider and knob set `number` / `input_number` values. They live on the
+[Controls page](/dashboard/controls).

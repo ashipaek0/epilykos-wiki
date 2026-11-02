@@ -1,7 +1,113 @@
 ---
 title: Battery BMS
-description: Read battery packs over Bluetooth or a wired RS485/UART link.
+description: Read battery packs over Bluetooth or a wired RS485/UART link, and combine them into banks.
 icon: BatteryCharging
 ---
 
-This page is being written.
+The **Battery management (BMS)** source reads the battery's own management system: state of charge,
+cell voltages, temperatures and current. Packs can be read over Bluetooth or a wire, and several packs
+can be combined into one battery bank.
+
+## Bluetooth BMS
+
+Bluetooth support is built in and uses the host's Bluetooth adapter. On Docker, see
+[Install with Docker](/getting-started/install-docker#bluetooth) for what the host needs.
+
+Decoding uses the [aiobmsble](https://pypi.org/project/aiobmsble/) library, which covers JK, JBD,
+Daly, Seplos, ANT, Renogy, EG4, PACE and many more.
+
+<Steps>
+<Step>
+
+In **Settings → Sources**, press **+ Add Bluetooth BMS** and give it a name.
+
+</Step>
+<Step>
+
+Close the vendor's phone app, then press **🔍 Scan** and pick the pack. Recognised packs are labelled
+with their type.
+
+</Step>
+<Step>
+
+Press **Test Connection**, then **📥 Load BMS Metrics** and choose the readings to keep. Then
+**Save changes**.
+
+</Step>
+</Steps>
+
+Readings are stored as `bms_<name>_<key>`, for example `bms_pack1_voltage`, `bms_pack1_current`,
+`bms_pack1_battery_level`, `bms_pack1_cell_voltage_1` and `bms_pack1_temp_1`.
+
+If a rebranded pack is found by the scan but not recognised, set its **type** (JBD, JK, Daly, Seplos,
+ANT, PACE / PACEEX) next to the MAC address. Leave it on auto-detect otherwise.
+
+Things to know:
+
+- Most packs accept **one Bluetooth connection at a time**. Close the vendor app while Epilykos is
+  connected.
+- All Bluetooth devices share one adapter and are read one after another: allow about 10 seconds per
+  device in their read intervals.
+- Bluetooth LE reaches about 10 m. On a Raspberry Pi 3, a USB Bluetooth adapter is more reliable than
+  the onboard radio.
+- JBD and JK packs can also have charging and discharging switched on and off from the
+  [Controls page](/dashboard/controls).
+
+## Wired BMS
+
+**Wired BMS** connects over RS-485 or RS-232 through a USB adapter. Press **+ Add wired BMS**, pick the
+serial port and a profile; the serial settings follow the profile.
+
+| Profile | Packs | Wiring | Serial |
+| --- | --- | --- | --- |
+| JBD / Jiabaida Smart BMS | JBD, Jiabaida, Xiaoxiang, Overkill Solar and rebrands | UART port (TX, RX, GND) through a USB-TTL adapter, or the RS485 port (A, B) on boards that have one | 9600 8N1, no unit ID |
+| JK-BMS | JK-B / JK-BD boards | JK RS485 adapter in the GPS port, A/B to a USB-RS485 adapter; or GPS-port TX/RX/GND to a USB-TTL adapter | 115200 8N1, no unit ID |
+| PACE BMS (protocol 25) | Jakiper, Easun, Tewaycell, Greenrich, FSP, Eenovance and many rebrands | The pack's RS232 port (usually RJ11 / RJ12) or its RS485 port | 9600 8N1 (a few packs use 19200); set the pack address to its DIP-switch address, usually 1 |
+| Cworth CE-H6K / CE-LBW-48100C | Cworth PACE packs | COMM port pin 7 = RS485-A, pin 8 = RS485-B, nothing else | Modbus-RTU, 9600 8N1 |
+
+<Callout type="error" title="Never connect the BMS's power pin">
+  - **JBD:** don't connect the UART port's power pin (often +12 V / VBAT) to the adapter.
+  - **JK:** don't connect the GPS port's VBAT pin to the adapter.
+  - **Cworth:** pin 3 carries +5 V. Connect only pins 7 and 8, and don't use a straight-through
+    8-pin cable.
+</Callout>
+
+More notes:
+
+- **JBD:** the Bluetooth module and the wired port usually share one UART. Unplug the Bluetooth module
+  to use the wire, or use Bluetooth instead.
+- **PACE:** if the pack doesn't answer, try its other port. On many packs the RS485 / CAN port is set
+  to an inverter protocol. Older protocol 20 packs (for example EG4 LifePower4) are not covered.
+- **JK:** the newer JK-PB inverter BMS speaks a different protocol and is not covered.
+- **Cworth:** only one pack can be read per RS485 adapter: the packs default to address 0 and there's
+  no documented way to change it over the wire. Its current is negative while charging, the opposite
+  of the other profiles (positive = charging).
+
+Wired JBD and JK packs report the same metric names as over Bluetooth (`voltage`, `current`,
+`battery_level`, `cell_voltage_N`, `temp_N`), so dashboards and banks work with either connection.
+
+## Battery banks
+
+A battery bank combines several packs into one battery with computed readings. Press **+ Add battery
+bank**, name it, and tick the packs in it. **Capacity (Ah)** is optional: leave it blank to use the
+capacity each BMS reports.
+
+**Add the usual battery metrics** adds these in one go:
+
+| Reading | Calculation |
+| --- | --- |
+| `soc` | Charge, weighted by capacity |
+| `voltage` | Average |
+| `current` | Add up |
+| `power` | Add up |
+| `temperature` | Highest |
+| `cell_voltage_min` | Lowest |
+| `cell_voltage_max` | Highest |
+
+You can add your own with **+ Add metric**. The calculations are **Add up**, **Average**, **Lowest**,
+**Highest**, **Charge, weighted by capacity**, **Add up, weighted by capacity** and **Newest
+reading**. Weighted calculations use each pack's capacity: its Ah override, or what it reports. Each
+bank reading is saved with `bank_` in front of its name. A bank with one pack passes its readings
+through unchanged.
+
+Press **Test bank** to check the result before saving.

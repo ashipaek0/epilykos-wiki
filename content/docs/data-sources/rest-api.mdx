@@ -4,4 +4,51 @@ description: Read values from any HTTP API that returns JSON.
 icon: Globe
 ---
 
-This page is being written.
+The **REST API** source reads any HTTP(S) address that returns JSON, on your LAN (for example
+`http://192.168.1.50/status`) or on the internet, and turns fields of the response into metrics.
+
+## Set it up
+
+<Steps>
+<Step>
+
+In **Settings → Sources**, press **+ Add REST source** and give it a name.
+
+</Step>
+<Step>
+
+Enter the URL. If the API needs a key, it has to be part of the URL, for example
+`https://api.example.com/v1/data?key=…`.
+
+</Step>
+<Step>
+
+Press **📋 Fetch Fields** to list the fields in the response, or **+ Add Mapping** to add one by hand:
+a JSON path and a metric name. **Test Path** shows the value a path reads.
+
+</Step>
+<Step>
+
+**Save changes**.
+
+</Step>
+</Steps>
+
+**Read all REST sources every … seconds** (60 by default, 5 at least) sets how often they're read.
+
+## JSON paths
+
+Paths use dots, and list items by number:
+
+| Response | Path |
+| --- | --- |
+| `{"data": {"power": 1234}}` | `data.power` |
+| `{"results": [{"temperature": 21.5}]}` | `results.0.temperature` (not `results[0]`) |
+| `{"current": {"temp_c": 30}}` | `current.temp_c` |
+
+## Limits
+
+- Requests are plain `GET`s with a 10-second timeout; custom headers aren't supported.
+- Addresses on your LAN are allowed. Loopback (`localhost`, `127.0.0.1`), link-local and cloud
+  metadata addresses are blocked, so an API on the same computer as Epilykos has to be reached by its
+  LAN address.

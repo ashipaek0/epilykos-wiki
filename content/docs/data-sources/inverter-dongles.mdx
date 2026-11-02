@@ -4,4 +4,152 @@ description: Read an inverter through its Wi-Fi/LAN dongle or Bluetooth module.
 icon: Wifi
 ---
 
-This page is being written.
+The **WiFi dongle** source talks to an inverter's Wi-Fi logger stick over your network, or to its
+Bluetooth module through the host's Bluetooth adapter. No cable to the inverter is needed.
+
+## Supported dongles
+
+| Profile | Connection | What it needs |
+| --- | --- | --- |
+| Deye / SunSynk Hybrid (Solarman V5), SRNE Hybrid Inverter (Solarman V5) | Solarman stick, port 8899 | The stick's IP and its serial number (on the sticker) |
+| LuxPowerTek Generic Hybrid | Wi-Fi dongle on port 8000, or Bluetooth | The dongle's IP, the dongle serial and the inverter serial (10 characters each, on their labels); or the Bluetooth address |
+| LuxPowerTek GETA 3.6kW 24V | Same as above | Use it instead of the generic profile for that model: only the registers the 24 V single-MPPT unit has |
+| Felicity Inverter (TCP/JSON) | Wi-Fi, port 53970 | The inverter's IP |
+| Growatt SPF Series (TCP Server) | The stick connects to Epilykos on port 5279 | Point the stick's server address at the Epilykos computer |
+| Phocos Any-Grid PSW-H (Bluetooth) | Bluetooth only | The Bluetooth address (use Scan) |
+
+## Set up a dongle
+
+<Steps>
+<Step>
+
+In **Settings → Sources**, add a **WiFi dongle** and give it a name.
+
+</Step>
+<Step>
+
+Choose the **Connection**: **TCP/IP (Wi-Fi / LAN)** or **Bluetooth**. Then pick the **Profile**. The
+list only offers profiles that work over the chosen connection; Bluetooth-only profiles appear in
+their own group.
+
+</Step>
+<Step>
+
+Fill in what the profile needs (table above):
+
+- **TCP/IP:** the dongle's **Host / IP Address** and **Port**. Give the dongle a fixed address in your
+  router so it doesn't move.
+- **Bluetooth:** press **🔍 Scan** and pick the device, or type its MAC address.
+- **Serials:** Solarman sticks need the **Logger Serial Number**. LuxPower needs the **Dongle Serial**
+  and **Inverter Serial**. Serials are case-sensitive and must match the labels exactly.
+
+</Step>
+<Step>
+
+Press **📥 Load Profile Registers** to fill in the readings, and keep or change the metric names.
+**📋 Fetch Profile Entities** lists every register in the profile; **+ Add Mapping** adds one row.
+
+</Step>
+<Step>
+
+Press **Test Connection**, then **Save changes**.
+
+</Step>
+</Steps>
+
+**Poll (s)** sets how often the dongle is read. The defaults are 5 seconds for LuxPower over Wi-Fi,
+15 seconds for LuxPower over Bluetooth and 30 seconds for the rest. A reading that is still running
+when the next is due is skipped and logged.
+
+**Metric Prefix (optional)** is added to every metric name from this dongle. Use it when you have
+several inverters of the same kind.
+
+## Bluetooth modules
+
+Some inverters ship a Bluetooth module that carries plain Modbus-RTU over Bluetooth LE, for example
+SRNE and Renogy-style BT modules. Set **Connection** to **Bluetooth**, pick a register-map profile for
+your inverter, use **🔍 Scan** to pick the module, and test.
+
+The module's GATT characteristics default to `ffd1` (write) and `fff1` (notify). If yours uses
+different ones, read them with a Bluetooth LE explorer app such as nRF Connect and enter them in
+**Write characteristic** and **Notify characteristic**.
+
+Things to know:
+
+- Many Wi-Fi + Bluetooth dongles use Bluetooth only for Wi-Fi setup and don't serve live data over
+  it.
+- Dongles usually accept one Bluetooth connection at a time. Close the vendor's app first.
+- All Bluetooth devices share the host's adapter and are read one after another, so allow about 10
+  seconds per device in their poll intervals.
+
+## LuxPower
+
+LuxPower dongles connect over Wi-Fi (port 8000) or Bluetooth. Close the LuxCloud app before
+Epilykos connects: the dongle may allow only one client.
+
+The card has three LuxPower options. Leave them on their defaults first:
+
+| Option | Default | Other choices |
+| --- | --- | --- |
+| **Local Wi-Fi security** | Plain TCP (existing dongles) | Require TLS-PSK; Try TLS, allow plain fallback |
+| **Bluetooth write strategy** | Long write with response | Chunked without response (as the LuxCloud app does) |
+| **Local protocol** | 5 | 2 |
+
+Choose **LuxPowerTek GETA 3.6kW 24V** for that model: it reads only what the 24 V single-MPPT unit
+has. **LuxPowerTek Generic Hybrid** is for the other LuxPowerTek models.
+
+Battery charge limits, charging and discharging power limits, charging-mode flags and grid-charging
+windows can be changed from the [Controls page](/dashboard/controls).
+
+## Growatt
+
+The Growatt profile works the other way round: the stick pushes its data to Epilykos about every 5
+minutes. In the stick's web page, change its server address from `server.growatt.com` to the address of
+the computer running Epilykos. Epilykos listens on port 5279 (the card's **Port** field).
+
+<Callout type="warn" title="Docker: publish the port">
+  On Docker, the stick can only reach Epilykos if port 5279 is published. Add it under `ports:` in the
+  compose file and run `docker compose up -d`:
+
+  ```yaml
+      ports:
+        - "3000:3000"
+        - "5279:5279"
+  ```
+
+  EpilykosOS uses host networking and needs nothing extra.
+</Callout>
+
+## Phocos Any-Grid over Bluetooth
+
+Phocos Any-Grid PSW-H inverters report over Bluetooth LE without pairing. Epilykos reads their live
+values, ratings, identity and settings, and can change an allowlisted set of settings from the
+[Controls page](/dashboard/controls) (each change is read, compared, written and read back).
+
+The profile comes from analysis of the PhocosLink 2.1.4 app and has not been checked against a unit.
+Each field in the list says how far it is trusted:
+
+| Confidence | Meaning |
+| --- | --- |
+| `app_confirmed` | The app shows it the same way: grid and output voltage, load, battery voltage, SOC, charge and discharge current, PV voltage and power, mode, identity, ratings, settings. |
+| `corroborated` | Also matches Phocos's RS-232 command document: output apparent power, DC bus voltage and heatsink temperature. |
+| `inferred` | PV1 and PV2 current. PV voltage times PV current need not equal PV power. |
+| `derived` / `estimated` | Calculated by Epilykos: PV power, battery net power, estimated grid power. |
+| `unverified` | The fault bytes. |
+
+Settings with a fixed list of values show the names the unit's display and app use (for example
+charger priority **CSO / SNU / OSO** and output priority **USB / SUB / SBU**); the number is what is
+sent to the inverter.
+
+For a wired connection to the same inverter, see [RS232 serial](/data-sources/rs232#phocos-any-grid).
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Timeout | Dongle not reachable | Check its Wi-Fi signal and ping its IP from the Epilykos computer. |
+| Checksum mismatch | Wrong serial number | Serials are case-sensitive and must match the sticker exactly. |
+| No data | Wrong profile | Match the profile to your inverter: Solarman is not Felicity TCP. |
+| Bluetooth device not found | Out of range, or the vendor app is connected | Move the adapter closer, close the vendor app, scan again. |
+
+More in [Troubleshooting](/troubleshooting).

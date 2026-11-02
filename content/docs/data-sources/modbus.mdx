@@ -4,4 +4,89 @@ description: Read an inverter or charge controller over RS-485 or Modbus-TCP.
 icon: Cable
 ---
 
-This page is being written.
+The **Modbus (RS485 or TCP)** source reads most hybrid inverters and charge controllers through their
+Modbus registers. Pick the profile that matches your model and Epilykos knows which registers to read.
+
+## Ways to connect
+
+| Connection | When to use it | What you need |
+| --- | --- | --- |
+| **Serial (RS485 / Modbus-RTU)** | The inverter is near the Epilykos computer | A USB to RS-485 adapter, wired to the inverter's RS-485 port |
+| **TCP (Modbus-TCP)** | The device speaks Modbus-TCP itself (Victron GX), or through a gateway | The IP address and port (usually 502) |
+
+An RS-485 inverter can also be reached over the network through an RS-485 to Ethernet or Wi-Fi
+gateway (for example an Elfin EW11 or USR-TCP232). Choose **TCP**, enter the gateway's address, and
+set the gateway framing:
+
+- **Gateway converts to Modbus-TCP** (most gateways)
+- **Transparent gateway (RTU over TCP)**
+
+On Docker, a USB adapter has to be passed into the container. See
+[Install with Docker](/getting-started/install-docker#usb-serial-adapters).
+
+## Profiles
+
+| Inverter | Profile |
+| --- | --- |
+| SRNE / PowMr / EASun | `SRNE Inverter (V1.96 / Latest Protocol)` or `SRNE All-in-One Inverter (Modbus RTU)` |
+| Growatt SPF 3500–6000 ES | `Growatt SPF Series (Modbus RTU)` |
+| Voltronic / Axpert / MPP Solar | `Voltronic Axpert / MPP Solar (P00-P09 Modbus)` |
+| Felicity IVEM6048 | `Felicity IVEM6048 Series (Modbus RTU)` |
+| Felicity T-REX 5K | `Felicity T-REX 5K (Modbus RTU) - P1G01` |
+| Felicity T-REX 10K | `Felicity T-REX 10K (Modbus RTU) - P3G01` |
+| Felicity T-REX 25K/50K | `Felicity T-REX 25K/50K (Modbus RTU) - HP3G01` |
+| Felicity IVPS10048 | `Felicity IVPS10048 (Modbus RTU) - 10kVA` |
+| Deye Hybrid | `Deye Hybrid Inverter` |
+| Luxpower | `Luxpower (Modbus RTU RS-485)` |
+| Solis Hybrid | `Solis Hybrid Inverter (Ver3.2 / RHI Series)` |
+| Solis String | `Solis String Inverter (Ver19 / 3-Phase)` |
+| Victron GX device | `Victron CCGX / Venus OS (Modbus TCP)` |
+| Generic MPPT (EPever, Tracer, Renogy) | `Generic MPPT Charge Controller (EPever/Tracer/Renogy)` |
+
+Only the Victron profile is native Modbus-TCP; the others are RS-485 register maps.
+
+## Set up a Modbus device
+
+<Steps>
+<Step>
+
+In **Settings → Sources**, add a **Modbus device** and give it a name.
+
+</Step>
+<Step>
+
+Choose the transport and fill in the connection:
+
+- **TCP:** host or IP, and port (usually 502).
+- **Serial:** the serial path (for example `/dev/ttyUSB0`), baud rate, data bits, parity and stop bits
+  from your inverter's manual.
+
+Set the **Unit ID**. Most inverters use 1; the Victron profile defaults to 100.
+
+</Step>
+<Step>
+
+Pick the **profile** for your hardware, then press **📥 Load Profile Registers** and give each
+register a metric name. **📋 Fetch Profile Entities** lists every register in the profile; **+ Add
+Mapping** adds one row.
+
+</Step>
+<Step>
+
+Press **Test Modbus** to check it reads, then **Save changes**.
+
+</Step>
+</Steps>
+
+**Poll (s)** sets how often the device is read.
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Connection refused | Wrong IP or port | Check the address answers (`ping <ip>`) and that port 502 is open. |
+| Timeout | Wrong unit ID | Most inverters use unit ID 1. Check your inverter's manual. |
+| No data on the dashboard | Unmapped registers | Press **Load Profile Registers** and make sure each register has a metric name. |
+| CRC / checksum errors | Baud rate mismatch | Match the baud rate to the inverter: 9600 for most, 2400 for Voltronic. |
+| Port not found | USB adapter unplugged or driver missing | Check `ls /dev/ttyUSB*`. Install the CH340 or FTDI driver if needed. |
+| Permission denied | No permission for the serial port | Docker: add `dialout` under `group_add:`. Without Docker: `sudo usermod -a -G dialout $USER`, then log out and back in. |
