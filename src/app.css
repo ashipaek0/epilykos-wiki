@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+@import "fumapress/css/preset.css";
+
+/* Accent from the Watch-Grid E mark. Its orange (#d65a00) is only 3.9:1 on white, so light mode uses a
+   darker shade; dark mode uses the orange of the dark logo variant. */
+:root {
+  --color-fd-primary: #b34a00;
+  --color-fd-primary-foreground: #ffffff;
+}
+
+.dark {
+  --color-fd-primary: #ff8a40;
+  --color-fd-primary-foreground: #1a1a18;
+}

@@ -1,0 +1,35 @@
+{
+  "name": "epilykos-wiki",
+  "scripts": {
+    "dev": "fumapress dev --port 1337",
+    "build": "fumapress build",
+    "start": "fumapress start",
+    "types:check": "tsc --noEmit",
+    "lint": "oxlint",
+    "gen:hardware": "node scripts/gen-hardware.mjs",
+    "check:site": "node scripts/check-site.mjs"
+  },
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@base-ui/react": "1.9.0",
+    "fumadocs-core": "16.17.9",
+    "fumadocs-mdx": "15.4.10",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@16.17.9",
+    "fumapress": "1.6.2",
+    "lucide-react": "1.66.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@types/mdx": "2.0.14",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "oxlint": "1.90.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  }
+}
