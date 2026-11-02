@@ -46,9 +46,11 @@ For a device the cloud login didn't find, press **+ Add device manually** and en
 
 ## Discovery on Docker
 
-Tuya devices announce themselves with LAN broadcasts, which only reach a Docker container with host
-networking. Turn on `network_mode: "host"` in the compose file if you rely on discovery; see
-[Install with Docker](/getting-started/install-docker#tuya-discovery). EpilykosOS needs nothing extra.
+The cloud login fills in keys and data points, but devices' LAN IP addresses come from discovery:
+Tuya devices announce themselves with LAN broadcasts. Those only reach a Docker container with host
+networking on a Linux host; turn on `network_mode: "host"` in the compose file if you rely on them, see
+[Install with Docker](/getting-started/install-docker#tuya-discovery). Otherwise, including on Docker
+Desktop for Windows and macOS, enter each device's IP address yourself. EpilykosOS needs nothing extra.
 
 ## Controlling Tuya devices
 

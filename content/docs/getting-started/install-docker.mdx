@@ -1,17 +1,27 @@
 ---
 title: Install with Docker
-description: Run Epilykos with Docker Compose on any Linux computer.
+description: Run Epilykos with Docker Compose on any system that runs Docker.
 icon: Container
 ---
 
-Epilykos is published as a Docker image, `irunmole/epilykos:latest`. Any Linux computer that stays on
-works: a mini PC, a NAS, a Raspberry Pi with a regular OS, or a server.
+Epilykos is published as a Docker image, `irunmole/epilykos:latest`, for 64-bit x86 and ARM (`amd64`
+and `arm64`). It runs wherever Docker does, on a computer that stays on: Windows or macOS with Docker
+Desktop, a Linux PC or server, a NAS, or a Raspberry Pi with a 64-bit OS.
 
 ## What you need
 
-- Docker Engine with the Compose plugin. See [Install Docker Engine](https://docs.docker.com/engine/install/).
+- Docker with Compose: [Docker Desktop](https://docs.docker.com/desktop/) on Windows and macOS, or
+  [Docker Engine](https://docs.docker.com/engine/install/) with the Compose plugin on Linux.
 - For Bluetooth batteries or inverter modules: a Bluetooth adapter on the host, with BlueZ running.
 - For RS232 or RS-485 equipment: a USB serial adapter.
+
+<Callout title="Bluetooth, USB adapters and Tuya discovery need a Linux host">
+  Docker Desktop on Windows and macOS runs containers inside a virtual machine, so the host's
+  Bluetooth, USB serial adapters and LAN broadcasts don't reach Epilykos there out of the box. Sources
+  that work over the network (Wi-Fi dongles, Modbus-TCP, Home Assistant, MQTT, REST APIs, and Tuya
+  devices added by hand) work on any system. For Bluetooth or wired equipment, run Docker on Linux, or
+  use [EpilykosOS](/getting-started/install-epilykos-os).
+</Callout>
 
 ## Install
 
@@ -22,10 +32,24 @@ works: a mini PC, a NAS, a Raspberry Pi with a regular OS, or a server.
 
 Make a folder for Epilykos and download the compose file into it:
 
+<Tabs items={["Linux and macOS", "Windows (PowerShell)"]}>
+<Tab value="Linux and macOS">
+
 ```bash
 mkdir epilykos && cd epilykos
 curl -fsSLO https://raw.githubusercontent.com/ashipaek0/Epilykos/main/docker-compose.yaml
 ```
+
+</Tab>
+<Tab value="Windows (PowerShell)">
+
+```powershell
+mkdir epilykos; cd epilykos
+curl.exe -fsSLO https://raw.githubusercontent.com/ashipaek0/Epilykos/main/docker-compose.yaml
+```
+
+</Tab>
+</Tabs>
 
 Epilykos keeps everything it stores in the `data` folder next to this file.
 
@@ -65,7 +89,8 @@ docker compose up -d
 
 ### Run the setup wizard
 
-Open `http://<this-computer>:3000/setup` in a browser, for example `http://192.168.1.10:3000/setup`.
+Open `http://localhost:3000/setup` in a browser on the same computer, or
+`http://<this-computer>:3000/setup` from another device, for example `http://192.168.1.10:3000/setup`.
 The [setup wizard](/getting-started/first-run-setup) walks you through the password, your equipment
 and a first dashboard.
 
@@ -115,8 +140,8 @@ what is wrong. Then run `docker compose up -d`.
 
 ### USB serial adapters
 
-For an RS232 or RS-485 inverter, or a wired BMS, turn on `devices:` with one line per adapter, and
-`group_add:` with `dialout` for permission to use them. Docker refuses to start the container if a
+Needs a Linux host. For an RS232 or RS-485 inverter, or a wired BMS, turn on `devices:` with one line
+per adapter, and `group_add:` with `dialout` for permission to use them. Docker refuses to start the container if a
 listed device doesn't exist, which is why this is off until you need it.
 
 ```yaml
@@ -131,8 +156,8 @@ use on the left side instead.
 
 ### Bluetooth
 
-Bluetooth batteries and inverter modules are built in. They use the host's Bluetooth adapter through
-BlueZ over D-Bus, which the `/run/dbus` line (on by default) provides.
+Needs a Linux host. Bluetooth batteries and inverter modules are built in. They use the host's
+Bluetooth adapter through BlueZ over D-Bus, which the `/run/dbus` line (on by default) provides.
 
 - The host must run BlueZ with a powered adapter: `systemctl status bluetooth` shows *active*, and
   `bluetoothctl show` shows `Powered: yes`.
@@ -146,6 +171,9 @@ Daily totals roll over at midnight in the container's time zone. By default it f
 (the `/etc/localtime` line). To use another, turn on `environment:` with a `TZ=` line. The startup log
 line shows the active time zone.
 
+On Docker Desktop (Windows and macOS), the `/etc/localtime` line may not carry your computer's time
+zone into the container, so set `TZ` there to be sure.
+
 ### One-click updates
 
 The `docker.sock` line lets **Settings → Updates → Update now** download the new image and restart
@@ -155,7 +183,7 @@ you don't want that and update with the commands below.
 ### Tuya discovery
 
 Tuya devices announce themselves with LAN broadcasts, which only reach the container with host
-networking. Turn on `network_mode: "host"` only if you use Tuya discovery; the dashboard is then on
+networking on a Linux host. Turn on `network_mode: "host"` only if you use Tuya discovery; the dashboard is then on
 host port 3000 and `ports:` is ignored.
 
 ## Updating
