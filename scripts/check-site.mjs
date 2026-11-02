@@ -51,6 +51,8 @@ const referrer = new Map([[base, "(start)"]]);
 const queue = [base];
 const seen = new Set();
 const failures = [];
+const anchors = []; // [page path, fragment, linked from]
+const ids = new Map(); // page path -> Set of element ids
 let pages = 0;
 while (queue.length) {
   const path = queue.shift();
@@ -64,15 +66,24 @@ while (queue.length) {
   if (!(res.headers.get("content-type") ?? "").startsWith("text/html")) continue;
   pages++;
   const html = await res.text();
+  ids.set(path, new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1])));
   for (const [, raw] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
-    const url = raw.replaceAll("&amp;", "&").split("#")[0].split("?")[0];
+    const [beforeHash, fragment] = raw.replaceAll("&amp;", "&").split("#");
+    const url = beforeHash.split("?")[0] || path;
     if (!url.startsWith("/") || url.startsWith("//")) continue;
+    if (fragment) anchors.push([url, decodeURIComponent(fragment), path]);
     if (!referrer.has(url)) referrer.set(url, path);
     queue.push(url);
   }
 }
 server.close();
-console.log(`Checked ${seen.size} URLs (${pages} pages).`);
+
+// Links to a section of a page need an element with that id on the page.
+for (const [url, fragment, from] of anchors) {
+  const pageIds = ids.get(url) ?? ids.get(url.replace(/\/$/, "")) ?? ids.get(`${url}/`);
+  if (pageIds && !pageIds.has(fragment)) failures.push(`missing #${fragment} on ${url}  (linked from ${from})`);
+}
+console.log(`Checked ${seen.size} URLs (${pages} pages) and ${anchors.length} section links.`);
 if (failures.length) {
   console.error(`${failures.length} broken:\n${failures.join("\n")}`);
   process.exit(1);
