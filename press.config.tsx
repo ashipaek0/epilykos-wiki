@@ -27,14 +27,15 @@ const docs = defineDocs({
   meta: { schema: metaSchema },
 });
 
-// Previous/next links above the page as well as below it.
+// Previous/next links above the page as well as below it (below only on phones, to keep the
+// content near the top).
 const DocsLayout = createDocsLayoutPage<typeof config.$context>({
   renderBody: ({ props, next }) =>
     next({
       ...props,
       children: (
         <>
-          <PageFooter className="not-prose mb-8" />
+          <PageFooter className="not-prose mb-8 max-md:hidden" />
           {props.children}
         </>
       ),
