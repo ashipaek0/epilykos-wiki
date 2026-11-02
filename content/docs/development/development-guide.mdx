@@ -1,7 +1,120 @@
 ---
 title: Development guide
-description: How Epilykos is built and how to add cards and data sources.
+description: How Epilykos is built, how to run it locally, and where to add cards and data sources.
 icon: Code
 ---
 
-This page is being written.
+<Callout title="Replaces the GitHub wiki guide">
+  This page describes the `main` branch as of November 2026. The older Development Guide on the
+  GitHub wiki was last updated in September 2026, before Bluetooth moved into the main container, the
+  editor's block library and the card update pipeline changed, and before notifications, remote
+  access, device controls and the battery estimate were added.
+</Callout>
+
+## Stack
+
+- **Backend:** Node.js 22 and Express, in `server.js`, `modules/`, `routes/` and `services/`.
+- **Database:** SQLite (better-sqlite3, WAL mode) at `data/energy.db`.
+- **Frontend:** plain JavaScript ES modules, no framework. Charts with Chart.js, the layout editor
+  with GridStack.
+- **Live updates:** a WebSocket at `/ws`.
+- **Python helpers:** Bluetooth (BLE helper, using `aiobmsble`) and Tuya (`tinytuya` bridges).
+
+## Repository layout
+
+| Path | What's there |
+| --- | --- |
+| `server.js` | App entry: Express, routes, WebSocket, start-up and shutdown |
+| `modules/` | Data sources, database, metrics, notifications, backups, updates, remote access |
+| `modules/dongle/`, `modules/bms-decoders/`, `modules/rs232-decoders/`, `modules/pvoutput/` | Transport and protocol code per family |
+| `services/PollingManager.js` | The 30-second poll cycle |
+| `routes/` | API routes split out of `server.js` |
+| `public/` | Dashboard, Settings, layout editor and setup wizard |
+| `public/js/components/` | One file per dashboard card |
+| `private/` | Signed-in pages: the card showcase and the Controls page |
+| `profiles/` | Device profiles: Modbus maps, `dongles/`, `rs232/` |
+| `docker/` | Container entrypoint |
+| `test/` | The test suite (no hardware needed) |
+
+## Run it locally
+
+```bash
+npm ci
+npm test                                            # every test/*.test.js, no hardware needed
+python3 modules/ble/ble_helper.py --self-test       # Bluetooth helper's pure functions
+PORT=3002 SETTINGS_PASSWORD=dev node server.js      # local instance, data/ in the working directory
+```
+
+Use Node.js 22: the Docker image is built on `node:22`, and native modules (serialport,
+better-sqlite3) are built for the Node version that installed them. Bluetooth outside Docker needs
+Python 3.12 or newer with `pip install -r modules/ble/requirements.txt` and a running BlueZ.
+
+## How data flows
+
+```text
+Sources ──► metric queue ──► one SQLite transaction ──► dashboard state ──► WebSocket ──► cards
+```
+
+- **The poll cycle** (`services/PollingManager.js`) runs every 30 seconds through Home Assistant,
+  Modbus, Tuya, RS232, the battery estimate, combined metrics, history and grid status, in that
+  order. Each runs inside its own circuit breaker (`modules/circuitBreaker.js`): five failures in a
+  row open it, and it tries again after 60 seconds.
+- **Other sources keep their own time:** dongles and Bluetooth devices poll at their own intervals,
+  REST sources on their shared interval, and MQTT pushes messages as they arrive.
+- **Writes are batched.** Sources queue values (`queueMetricWrite` / `queueMetricValue` in
+  `modules/database.js`); `flushMetrics()` writes the batch in one transaction, after each poll
+  cycle and every few seconds. Don't write to SQLite per reading.
+- **Dashboards** get the state over the WebSocket, as a full state plus smaller deltas, and cache it
+  in IndexedDB so a reopened app shows something straight away.
+
+## Adding a card
+
+1. Write the card in `public/js/components/myCard.js`: a builder that returns its element, and an
+   updater that refreshes it from the dashboard state.
+2. Register the builder in `public/js/components/index.js`, in `componentBuilders` (or
+   `controlBuilders` for a control card).
+3. Call its updater from `public/js/cards-update.js`, which the dashboard and the editor's live
+   previews share.
+4. Add it to the block library in `public/js/editor-catalog.js` (`BLOCKS`): its group, name, one-line
+   description, icon and default size in grid columns × rows.
+5. Add its settings to the inspector in `public/js/editor.js` (Data, Style and Layout tabs), and its
+   styles to `public/cards.css`.
+6. Let the card read its config through `components/blockRegistry.js`, so several copies of it can
+   live on one dashboard with different metrics.
+
+The [card showcase](/dashboard/cards) at `/showcase` (`private/js/showcase.js`) is where every card is
+shown with made-up readings; add yours there too.
+
+## Adding a data source
+
+1. Write the module in `modules/`, queueing values instead of writing them.
+2. If it fits the 30-second cycle, add `{ id, pollFn }` to `defaultRegistry()` in
+   `services/PollingManager.js`. Otherwise start its own timer, and stop it cleanly on shutdown.
+3. Add its API routes (profiles, test connection) and restart it when its settings are saved.
+4. Add its Settings card in `public/settings.html` and `public/settings.js`.
+5. Add its config key to `essentialKeys` in `modules/database.js`, so the setting is created.
+6. Register any password or token field in `SECRET_FIELDS` in `modules/encryption.js`, so it's
+   encrypted at rest.
+7. Add tests in `test/`.
+
+Profile-based sources (Modbus, RS232, dongles) read their register maps from `profiles/`. The
+[Supported hardware](/data-sources/supported-hardware) page of this wiki is generated from those files.
+
+## Secrets at rest
+
+Passwords and tokens saved in Settings are stored as `$enc1$` envelopes, AES-256-GCM, with a key kept
+in `data/encryption-key`. `SECRET_FIELDS` lists which config fields are secret. Backups can re-lock
+them with a passphrase; see [Backup and restore](/settings/backup-and-restore).
+
+## Builds and releases
+
+| Workflow | Runs on | Does |
+| --- | --- | --- |
+| `test.yml` | Pushes to `dev`, pull requests to `main` and `dev` | The test suite |
+| `docker-build-dev.yml` | Pushes to `dev` | Builds `irunmole/epilykos:dev` |
+| `docker-build.yml` | Pushes to `main` (not docs-only changes), and weekly | Builds `irunmole/epilykos:latest` |
+
+The weekly rebuild brings the base image's security fixes and Tailscale's latest stable release to
+users without a new Epilykos release. After each build, the image digest goes to
+[epilykos-os](https://github.com/ashipaek0/epilykos-os), where merging the pull request releases it to
+appliances. Installed copies learn about new builds from the repository's `update-feed` branch.

@@ -1,7 +1,38 @@
 ---
 title: Contributing
-description: How to contribute to Epilykos and to this wiki.
+description: Report problems, propose changes to Epilykos, and improve this wiki.
 icon: GitPullRequest
 ---
 
-This page is being written.
+## Report a problem
+
+Open an issue on [GitHub](https://github.com/ashipaek0/Epilykos/issues). Attach the **Diagnostics
+file** from **Settings → Logs**: it has recent log lines and your settings with secrets hidden. See
+[Logs](/settings/logs).
+
+## Pull requests to Epilykos
+
+- Branch names describe the change: `fix/…`, `feat/…`, `chore/…`.
+- Keep pull requests short: what changed in a line or two, the bug if it fixes one, the files edited
+  or added, and the reason if it isn't obvious.
+- No tool or assistant attribution: no co-author or session trailers in commit messages, and no
+  "generated with" footers or links in pull request titles, bodies or comments.
+- Run `npm test` before opening the pull request. See the [Development guide](/development/development-guide).
+
+## Improve this wiki
+
+The wiki lives in [ashipaek0/epilykos-wiki](https://github.com/ashipaek0/epilykos-wiki), built with
+[Fumapress](https://press.fumadocs.dev). Each page is an MDX file under `content/docs/`; the sidebar
+order comes from the `meta.json` files next to them. Images go in `public/images/`.
+
+```bash
+npm install
+npm run dev        # http://localhost:1337
+npm run build      # fails on broken internal links
+```
+
+The [Supported hardware](/data-sources/supported-hardware) page is generated from an Epilykos checkout:
+
+```bash
+npm run gen:hardware -- ../Epilykos
+```

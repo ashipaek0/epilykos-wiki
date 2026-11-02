@@ -4,4 +4,55 @@ description: The operating system that runs Epilykos on a Raspberry Pi like an a
 icon: Cpu
 ---
 
-This page is being written.
+EpilykosOS is a dedicated operating system for running Epilykos on a Raspberry Pi. You flash it,
+power it on and finish setup from a browser. From then on it runs, updates and recovers by itself,
+like an appliance.
+
+To install it, see [Install on a Raspberry Pi](/getting-started/install-epilykos-os).
+
+## Hardware
+
+- A Raspberry Pi 3B. The Pi 4 and Pi 5 are planned, best effort.
+- A microSD card of 32 GB or larger; 64 GB is recommended.
+- Ethernet or 2.4 GHz Wi-Fi.
+
+## What's different from Docker
+
+| | EpilykosOS | Docker |
+| --- | --- | --- |
+| Setup | Flash, power on, open `http://epilykos.local:3000` | Install Docker, write the compose file |
+| Wi-Fi, port, time zone | From Settings | From the host and the compose file |
+| App updates | Signed releases, installed by the box, rolled back if unhealthy; optionally automatic | `docker compose pull`, or **Update now** with the Docker socket |
+| Forgotten password | A file on the SD card | `SETTINGS_PASSWORD` in the compose file |
+| Restart, shut down, factory reset | **Settings → System** | Restart only |
+| Bluetooth pairing with a PIN | **Settings → System → Bluetooth devices** | On the host |
+| SSH | **Settings → System**, off by default | The host's own |
+
+## Safe updates
+
+- Application updates are separate from OS updates and can be rolled back on their own.
+- Every application image is pinned by its digest, so the box runs exactly the release that was
+  checked.
+
+More in [Updates and recovery](/epilykos-os/updates-and-recovery).
+
+## Release channels
+
+| Channel | Contents |
+| --- | --- |
+| **Stable** | Reviewed releases for devices in the field |
+| **Dev** | Integration builds for testing |
+
+## Guides
+
+<Cards>
+  <Card title="Wi-Fi setup" href="/epilykos-os/wifi-setup">
+    Connect the box with Raspberry Pi Imager, a wifi.txt file or your phone.
+  </Card>
+  <Card title="Password and factory reset" href="/epilykos-os/password-and-reset">
+    Reset a forgotten password or start over.
+  </Card>
+  <Card title="Updates and recovery" href="/epilykos-os/updates-and-recovery">
+    How the box updates itself and rolls back.
+  </Card>
+</Cards>

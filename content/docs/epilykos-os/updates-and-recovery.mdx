@@ -1,7 +1,43 @@
 ---
 title: Updates and recovery
-description: How the box updates itself and rolls back.
+description: How the box updates Epilykos and itself, and rolls back when something goes wrong.
 icon: RotateCcw
 ---
 
-This page is being written.
+## Epilykos updates
+
+The box checks for signed Epilykos releases and installs them itself:
+
+- Each release is verified before it's installed, and every application image is pinned by its
+  digest.
+- After an update, the box checks that the new version is healthy. If it isn't, it goes back to the
+  previous version.
+- Application updates are separate from system updates and can be rolled back on their own.
+
+You install them from **Settings → Updates**. **Install updates automatically** is off by default;
+see [Updates and system](/settings/updates-and-system#automatic-installation-epilykosos).
+
+## System updates
+
+When an EpilykosOS system update is offered in **Settings → Updates**, the box downloads and
+installs it into its spare system slot while monitoring keeps running. Nothing changes until you
+restart. The new system is kept once it has run properly; otherwise the box goes back to the previous
+version by itself.
+
+## Clock and time zone
+
+**Settings → System → Time and storage** shows the site time zone and the network clock state. A box
+without internet can drift; the clock can be corrected from the browser. Daily totals and forecasts
+follow the time zone, and changing it restarts Epilykos.
+
+## Database checks
+
+After an unclean stop (for example a power cut) Epilykos checks its database one minute after
+starting, and again weekly. It runs in the background without blocking the dashboard, and reports
+problems; it doesn't repair them.
+
+## Backups
+
+Daily snapshots live on the same SD card as everything else, so a failed card takes them with it. A
+monthly reminder asks you to download a backup and keep it somewhere else; see
+[Backup and restore](/settings/backup-and-restore).

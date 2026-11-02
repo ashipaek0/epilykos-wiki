@@ -1,7 +1,87 @@
 ---
 title: Wi-Fi setup
-description: Connect the box to your network.
+description: Connect the box to your network with Ethernet, Raspberry Pi Imager, a wifi.txt file or your phone.
 icon: Wifi
 ---
 
-This page is being written.
+The box needs a network before you can open its dashboard. Ethernet needs nothing: plug in a cable.
+For Wi-Fi, use one of the three ways below.
+
+<Callout title="2.4 GHz only">
+  A Raspberry Pi 3B only sees 2.4 GHz networks. It only sees a router on channel 12 or 13 once it
+  knows its country: set the country in Raspberry Pi Imager or in `wifi.txt`, otherwise the box
+  takes it from the time zone chosen in setup, which comes after Wi-Fi.
+</Callout>
+
+## With Raspberry Pi Imager
+
+Add EpilykosOS to Raspberry Pi Imager's list with this repository URL:
+
+```text
+https://github.com/ashipaek0/epilykos-os/releases/latest/download/epilykos-os-imager.json
+```
+
+Then choose EpilykosOS, and enter your Wi-Fi network and Wi-Fi country in Imager's settings before
+writing the card.
+
+## With a wifi.txt file
+
+<Steps>
+<Step>
+
+After flashing, open the card's boot drive on your computer. It has a file called
+`wifi-example.txt`.
+
+</Step>
+<Step>
+
+Make a copy of it in the same folder named `wifi.txt`, and fill it in:
+
+```text title="wifi.txt"
+ssid=Home Net
+password=your-wifi-password
+country=NG
+hidden=no
+```
+
+| Key | Value |
+| --- | --- |
+| `ssid` | The network name, exactly as your phone shows it. |
+| `password` | Its password, 8 to 63 characters. Leave it empty for an open network. |
+| `country` | Two-letter code of the country the box is in, for example GB, US, NG or DE. |
+| `hidden` | `yes` if the network doesn't broadcast its name. |
+
+</Step>
+<Step>
+
+Put the card back in the Pi and power it on.
+
+</Step>
+</Steps>
+
+The box reads `wifi.txt` once, saves the network, and deletes the file so your password doesn't stay
+on the card.
+
+## From your phone over Bluetooth
+
+EpilykosOS supports [Improv Wi-Fi](https://www.improv-wifi.com) over Bluetooth:
+
+1. On a phone or computer with Chrome, go to [improv-wifi.com](https://www.improv-wifi.com).
+2. Choose **Connect device to Wi-Fi** and pick **Epilykos**.
+3. Choose your network and enter its password.
+
+Bluetooth setup opens by itself when the box has had no network for 2 minutes. Don't pair the Pi in
+your computer's Bluetooth menu: setup doesn't need it.
+
+## Change Wi-Fi later
+
+In **Settings → Network → Wi-Fi**, press **Change Wi-Fi** to open Bluetooth setup, then connect from
+improv-wifi.com as above. While it's open, **Keep setup open 15 more minutes** gives you more time.
+
+## Can't find the box?
+
+- Open `http://epilykos.local:3000`. If your device doesn't resolve `.local` names, use the IP
+  address your router gave the Pi.
+- If no device on the network can reach another, the router is keeping them apart: turn off its
+  "AP isolation" or "client isolation" setting and restart it. Plugging the Pi into Ethernet also
+  works.
