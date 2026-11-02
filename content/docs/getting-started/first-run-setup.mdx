@@ -21,8 +21,11 @@ The admin password protects Settings and the layout editor. The dashboard itself
 
 ![The setup wizard's password step](/images/setup-password.webp)
 
-- **No password set yet:** the first person to open the wizard chooses it (at least 4 characters). Open
-  the wizard yourself right after the first start.
+- **No password set yet:** the first person to open the wizard chooses it. Open the wizard yourself
+  right after the first start.
+- **Use at least 12 characters.** The wizard accepts 4, but opening Epilykos to the internet
+  (Tailscale's **Open to the internet**, or a Cloudflare Tunnel) refuses an admin password shorter
+  than 12. **Generate a strong password** makes a long one for you.
 - **Docker with `SETTINGS_PASSWORD` set:** the wizard asks for that password instead. See
   [Install with Docker](/getting-started/install-docker).
 

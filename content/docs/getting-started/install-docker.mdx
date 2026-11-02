@@ -12,15 +12,14 @@ Desktop, a Linux PC or server, a NAS, or a Raspberry Pi with a 64-bit OS.
 
 - Docker with Compose: [Docker Desktop](https://docs.docker.com/desktop/) on Windows and macOS, or
   [Docker Engine](https://docs.docker.com/engine/install/) with the Compose plugin on Linux.
-- For Bluetooth batteries or inverter modules: a Bluetooth adapter on the host, with BlueZ running.
+- For Bluetooth batteries or inverter modules: a Linux host with a Bluetooth adapter and BlueZ running.
 - For RS232 or RS-485 equipment: a USB serial adapter.
 
-<Callout title="Bluetooth, USB adapters and Tuya discovery need a Linux host">
-  Docker Desktop on Windows and macOS runs containers inside a virtual machine, so the host's
-  Bluetooth, USB serial adapters and LAN broadcasts don't reach Epilykos there out of the box. Sources
-  that work over the network (Wi-Fi dongles, Modbus-TCP, Home Assistant, MQTT, REST APIs, and Tuya
-  devices added by hand) work on any system. For Bluetooth or wired equipment, run Docker on Linux, or
-  use [EpilykosOS](/getting-started/install-epilykos-os).
+<Callout title="On Docker Desktop (Windows, macOS), hardware takes extra steps">
+  Docker Desktop runs containers inside a virtual machine. Sources that work over the network
+  (Wi-Fi dongles, Modbus-TCP, Home Assistant, MQTT, REST APIs, and Tuya devices added by hand) work
+  as is. USB serial adapters can be passed in with USB/IP, Bluetooth needs a Linux host, and Tuya
+  discovery may not work. See [Docker Desktop on Windows and macOS](#docker-desktop-on-windows-and-macos).
 </Callout>
 
 ## Install
@@ -72,8 +71,9 @@ instead: turn on the `environment:` block and add a line for it.
   `.env` has no effect. Put it under `environment:` as above.
 </Callout>
 
-A password set this way can't be changed from Settings; change it in the compose file and run
-`docker compose up -d` again.
+Use at least 12 characters (remote access refuses a shorter admin password), and write each `$` in it
+as `$$`, because Compose reads `$` as the start of a variable. A password set this way can't be
+changed from Settings; change it in the compose file and run `docker compose up -d` again.
 
 </Step>
 <Step>
@@ -140,8 +140,9 @@ what is wrong. Then run `docker compose up -d`.
 
 ### USB serial adapters
 
-Needs a Linux host. For an RS232 or RS-485 inverter, or a wired BMS, turn on `devices:` with one line
-per adapter, and `group_add:` with `dialout` for permission to use them. Docker refuses to start the container if a
+On Docker Desktop, first hand the adapter to Docker: see
+[USB adapters on Docker Desktop](#usb-adapters-on-docker-desktop). For an RS232 or RS-485 inverter, or a
+wired BMS, turn on `devices:` with one line per adapter, and `group_add:` with `dialout` for permission to use them. Docker refuses to start the container if a
 listed device doesn't exist, which is why this is off until you need it.
 
 ```yaml
@@ -156,7 +157,7 @@ use on the left side instead.
 
 ### Bluetooth
 
-Needs a Linux host. Bluetooth batteries and inverter modules are built in. They use the host's
+Needs a Linux host (not Docker Desktop). Bluetooth batteries and inverter modules are built in. They use the host's
 Bluetooth adapter through BlueZ over D-Bus, which the `/run/dbus` line (on by default) provides.
 
 - The host must run BlueZ with a powered adapter: `systemctl status bluetooth` shows *active*, and
@@ -171,8 +172,7 @@ Daily totals roll over at midnight in the container's time zone. By default it f
 (the `/etc/localtime` line). To use another, turn on `environment:` with a `TZ=` line. The startup log
 line shows the active time zone.
 
-On Docker Desktop (Windows and macOS), the `/etc/localtime` line may not carry your computer's time
-zone into the container, so set `TZ` there to be sure.
+On Docker Desktop, set `TZ`; see [Time zone on Docker Desktop](#time-zone-on-docker-desktop).
 
 ### One-click updates
 
@@ -183,8 +183,54 @@ you don't want that and update with the commands below.
 ### Tuya discovery
 
 Tuya devices announce themselves with LAN broadcasts, which only reach the container with host
-networking on a Linux host. Turn on `network_mode: "host"` only if you use Tuya discovery; the dashboard is then on
+networking on a Linux host (on Docker Desktop, see [Tuya discovery on Docker Desktop](#tuya-discovery-on-docker-desktop)). Turn on `network_mode: "host"` only if you use Tuya discovery; the dashboard is then on
 host port 3000 and `ports:` is ignored.
+
+## Docker Desktop on Windows and macOS
+
+Docker Desktop runs containers inside a virtual machine, so the computer's own hardware doesn't reach
+Epilykos directly. Sources that work over the network (Wi-Fi dongles, Modbus-TCP, Home Assistant,
+MQTT, REST APIs, Tuya devices with known addresses) need nothing extra.
+
+### USB adapters on Docker Desktop
+
+Possible with USB/IP, which hands the adapter to Docker's virtual machine:
+
+- **Windows with the WSL 2 backend** (Docker Desktop's default): install
+  [usbipd-win](https://learn.microsoft.com/windows/wsl/connect-usb) and, in an administrator
+  PowerShell, run `usbipd list`, then `usbipd bind --busid <id>` once and
+  `usbipd attach --wsl --busid <id>`. The adapter then shows up as a Linux device such as
+  `/dev/ttyUSB0`; map it under `devices:` as above.
+- **macOS, and Windows with the Hyper-V backend**: follow
+  [Using USB/IP with Docker Desktop](https://docs.docker.com/desktop/features/usbip/). It runs a USB/IP
+  server on the computer and a privileged helper container that attaches the device. The helper has to
+  keep running.
+
+The attachment doesn't survive a restart of the computer or of Docker Desktop unless it is redone;
+`usbipd attach --wsl --busid <id> --auto-attach` keeps reattaching on Windows while it runs. Common
+adapter chips (CH340, CP210x, FTDI) usually work, but neither Docker nor Microsoft guarantees every
+device.
+
+For a Modbus inverter on RS-485, an RS-485 to Ethernet gateway avoids USB altogether and works from
+any Docker host; see [Modbus](/data-sources/modbus#ways-to-connect).
+
+### Bluetooth on Docker Desktop
+
+Not supported on Docker Desktop. Epilykos talks to the host's Bluetooth service (BlueZ) over D-Bus,
+and Docker Desktop's virtual machine has none. Run Docker on Linux, or use
+[EpilykosOS](/getting-started/install-epilykos-os), for Bluetooth batteries and inverter modules.
+
+### Tuya discovery on Docker Desktop
+
+Docker Desktop 4.34 and later has opt-in host networking (**Settings → Resources → Network → Enable
+host networking**), but it forwards TCP and UDP connections rather than joining your network, so
+Tuya's broadcast announcements may still not arrive. If discovery finds nothing, enter each device's IP
+address by hand; see [Tuya](/data-sources/tuya#add-a-device-by-hand).
+
+### Time zone on Docker Desktop
+
+Set `TZ` under `environment:`: the `/etc/localtime` line may not carry your computer's time zone into
+the container.
 
 ## Updating
 
@@ -204,7 +250,7 @@ Add any of these under `environment:` in the compose file.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `SETTINGS_PASSWORD` | not set | Admin password. When set, it can't be changed in Settings. |
+| `SETTINGS_PASSWORD` | not set | Admin password, at least 12 characters (write `$` as `$$`). When set, it can't be changed in Settings. |
 | `TZ` | host time zone | Time zone for daily totals, e.g. `Africa/Lagos`. |
 | `PORT` | `3000` | Port Epilykos listens on inside the container. |
 | `LOG_LEVEL` | `info` | Starting log level: `debug`, `info`, `warn` or `error`. A level chosen in Settings → Logs overrides it. |

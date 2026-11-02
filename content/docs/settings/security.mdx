@@ -19,8 +19,15 @@ It is set in the first step of the [setup wizard](/getting-started/first-run-set
 - **Forgotten:** on EpilykosOS, see [Password and factory reset](/epilykos-os/password-and-reset). On
   Docker, set `SETTINGS_PASSWORD` under `environment:` in the compose file.
 
-The wizard accepts passwords of 4 characters or more. Choose a long one: opening Epilykos to the
-internet with Tailscale Funnel or a Cloudflare Tunnel requires at least 12 characters.
+**Use at least 12 characters.** The wizard and the reset file accept 4 or more, but opening Epilykos
+to the internet (Tailscale's **Open to the internet**, or a Cloudflare Tunnel) refuses an admin
+password shorter than 12, and a short one would have to be changed first.
+
+| Password | Where it's used | Length |
+| --- | --- | --- |
+| Admin password | Signing in, Settings, the layout editor, the REST API, and unlocking the Controls page | 4 or more accepted; 12 or more needed to open Epilykos to the internet |
+| SSH maintenance login (EpilykosOS) | Logging in to the box as `epilykos` over SSH | 8 to 128 |
+| Backup passphrase | Protecting saved passwords in a downloaded backup | 8 to 256 |
 
 ## Two-step sign-in
 
