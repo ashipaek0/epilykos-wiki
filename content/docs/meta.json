@@ -1,3 +1,15 @@
 {
-  "pages": ["index"]
+  "pages": [
+    "index",
+    "---Getting started---",
+    "...getting-started",
+    "---Guides---",
+    "data-sources",
+    "dashboard",
+    "settings",
+    "epilykos-os",
+    "troubleshooting",
+    "---Contributing---",
+    "...development"
+  ]
 }

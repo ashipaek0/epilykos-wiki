@@ -1,0 +1,10 @@
+{
+  "title": "EpilykosOS",
+  "icon": "Cpu",
+  "pages": [
+    "index",
+    "wifi-setup",
+    "password-and-reset",
+    "updates-and-recovery"
+  ]
+}

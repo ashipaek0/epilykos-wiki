@@ -1,0 +1,9 @@
+{
+  "title": "Getting started",
+  "pages": [
+    "install-epilykos-os",
+    "install-docker",
+    "first-run-setup",
+    "core-concepts"
+  ]
+}

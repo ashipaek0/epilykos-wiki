@@ -1,0 +1,16 @@
+{
+  "title": "Data sources",
+  "icon": "Plug",
+  "pages": [
+    "index",
+    "inverter-dongles",
+    "modbus",
+    "rs232",
+    "bms",
+    "home-assistant",
+    "mqtt",
+    "tuya",
+    "rest-api",
+    "supported-hardware"
+  ]
+}

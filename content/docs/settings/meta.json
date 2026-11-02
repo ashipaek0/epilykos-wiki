@@ -1,0 +1,17 @@
+{
+  "title": "Settings",
+  "icon": "Settings",
+  "pages": [
+    "metrics",
+    "forecast-and-weather",
+    "prices-and-savings",
+    "appearance",
+    "uploads",
+    "notifications",
+    "network-and-remote-access",
+    "security",
+    "logs",
+    "backup-and-restore",
+    "updates-and-system"
+  ]
+}

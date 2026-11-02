@@ -1,0 +1,10 @@
+{
+  "title": "Dashboard",
+  "icon": "LayoutDashboard",
+  "pages": [
+    "editor",
+    "cards",
+    "controls",
+    "app-and-network"
+  ]
+}
