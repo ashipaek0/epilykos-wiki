@@ -4,4 +4,112 @@ description: The setup wizard, the admin password and the pages you will use.
 icon: WandSparkles
 ---
 
-This page is being written.
+The first time you open Epilykos, go to `/setup`, for example `http://epilykos.local:3000/setup` on
+EpilykosOS or `http://192.168.1.10:3000/setup` on Docker. The wizard sets the admin password,
+connects your equipment and builds a first dashboard. Everything it sets can be changed later in
+Settings.
+
+## The wizard
+
+<Steps>
+<Step>
+
+### Password
+
+The admin password protects Settings and the layout editor. The dashboard itself stays open to view.
+
+- **No password set yet:** the first person to open the wizard chooses it (at least 4 characters). Open
+  the wizard yourself right after the first start.
+- **Docker with `SETTINGS_PASSWORD` set:** the wizard asks for that password instead. See
+  [Install with Docker](/getting-started/install-docker).
+
+</Step>
+<Step>
+
+### Sources
+
+Pick what Epilykos should read from, then fill in each connection:
+
+| Group | Choices |
+| --- | --- |
+| Inverter | WiFi or Bluetooth dongle, Modbus-TCP, RS485 (Modbus-RTU), RS232 serial |
+| Battery | BMS over Bluetooth (scans for nearby batteries), BMS over RS485 / RS232 |
+| Home automation and other | Home Assistant, MQTT, REST API |
+
+Testing a connection is optional; a failed test won't stop you continuing. Tuya devices are added
+later in Settings. Each source type is explained under [Data sources](/data-sources).
+
+</Step>
+<Step>
+
+### Metrics
+
+Tell Epilykos which reading is your solar power, battery level, home use and so on. These
+[metric roles](/getting-started/core-concepts#metric-roles) drive the flow card, savings and daily
+totals. Leave any you don't have empty.
+
+</Step>
+<Step>
+
+### Dashboard
+
+Choose a starting layout:
+
+- **Everything**: system overview, today's totals, energy charts, forecast, grid, savings and
+  history. Remove what you don't need later.
+- **Simple**: just the system overview, today's totals and your savings.
+
+</Step>
+<Step>
+
+### Basics
+
+- **Site time zone** (EpilykosOS only): daily totals follow it. It's detected from your browser.
+- **Dashboard title**, shown at the top of the dashboard.
+- **Currency symbol** for savings, for example €, $, £ or ₦.
+- **Solar array size (kWp)**: total panel capacity, for the solar forecast.
+- **Grid buy price per kWh**, and the **generator buy price** if you mapped a generator.
+- **Theme** for this browser. Each device remembers its own.
+
+</Step>
+<Step>
+
+### Extras
+
+All optional, and all in Settings later: uploads to [PVOutput](/settings/uploads), the
+[solar forecast](/settings/forecast-and-weather), and the
+[addresses the app uses at home and away](/dashboard/app-and-network).
+
+</Step>
+<Step>
+
+### Finish
+
+Review what's set up, finish, and open your dashboard.
+
+</Step>
+</Steps>
+
+Once setup is finished, opening `/setup` again says *Epilykos is already set up*. Sign in to run it
+again.
+
+## The pages you will use
+
+| Address | What it is | Sign-in |
+| --- | --- | --- |
+| `/` | The live dashboard | No |
+| `/settings` | Settings | Yes |
+| `/editor` | The [layout editor](/dashboard/editor) | Yes |
+| `/showcase` | Every card with made-up readings, see [Cards and the showcase](/dashboard/cards) | Yes |
+| `/controls` | [Device controls](/dashboard/controls) | Yes |
+| `/setup` | The setup wizard | Yes, once setup is finished |
+
+## If someone else set the password first
+
+If the wizard says Epilykos is already set up and you never chose a password, someone else opened it
+first.
+
+- **Docker:** set `SETTINGS_PASSWORD` under `environment:` in the compose file and run
+  `docker compose up -d`. That password then unlocks setup and Settings.
+- **EpilykosOS:** reset the password with a file on the SD card, see
+  [Password and factory reset](/epilykos-os/password-and-reset).

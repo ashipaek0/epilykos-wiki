@@ -4,4 +4,90 @@ description: Flash EpilykosOS to a microSD card and finish setup from a browser.
 icon: Microchip
 ---
 
-This page is being written.
+EpilykosOS is a dedicated operating system for running Epilykos on a Raspberry Pi. You flash it, power
+it on and finish setup in a browser. From then on it runs, updates and recovers by itself. More about
+what it does in [EpilykosOS](/epilykos-os).
+
+## What you need
+
+- A **Raspberry Pi 3B**. The Pi 4 and Pi 5 are planned, best effort.
+- A **microSD card of 32 GB or larger**. Settings → System warns about smaller cards; 64 GB is
+  recommended.
+- **Ethernet**, or a **2.4 GHz Wi-Fi** network (the Pi 3B can't see 5 GHz networks).
+- A computer to flash the card, with [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or
+  [balenaEtcher](https://etcher.balena.io/).
+
+## Install
+
+<Steps>
+<Step>
+
+### Download the image
+
+Get the latest image from the
+[EpilykosOS releases page](https://github.com/ashipaek0/epilykos-os/releases).
+
+</Step>
+<Step>
+
+### Flash the card
+
+Write the image to the microSD card with Raspberry Pi Imager or balenaEtcher.
+
+To let Raspberry Pi Imager fill in your Wi-Fi for you, add EpilykosOS to its list of operating
+systems with this repository URL (in Imager's app options):
+
+```text
+https://github.com/ashipaek0/epilykos-os/releases/latest/download/epilykos-os-imager.json
+```
+
+Then choose EpilykosOS from the list and enter your Wi-Fi network and Wi-Fi country in Imager's
+settings.
+
+</Step>
+<Step>
+
+### Connect it to your network
+
+Use one of these:
+
+- **Ethernet**: plug in a cable. Nothing else to do.
+- **Raspberry Pi Imager**: the Wi-Fi settings from the previous step.
+- **A `wifi.txt` file** on the card's boot drive. See [Wi-Fi setup](/epilykos-os/wifi-setup).
+- **Your phone over Bluetooth**, after the box has started. See [Wi-Fi setup](/epilykos-os/wifi-setup).
+
+</Step>
+<Step>
+
+### Power it on and open the dashboard
+
+Put the card in the Pi and power it on. After it has started, open this address in a browser on the
+same network:
+
+```text
+http://epilykos.local:3000
+```
+
+The [setup wizard](/getting-started/first-run-setup) opens. On EpilykosOS it also asks for the site
+time zone, which daily totals and forecasts follow.
+
+</Step>
+</Steps>
+
+<Callout title="Can't open the dashboard?">
+  From another computer, try to ping a third device on the same network. If that fails too, the
+  router is keeping devices apart: turn off its "AP isolation" or "client isolation" setting and
+  restart it. Plugging the Pi into Ethernet also works.
+</Callout>
+
+## Change the address
+
+The dashboard's port can be changed in **Settings → Network → Dashboard address**: port 80, or any
+port from 1024 to 65535. Port 80 makes the address just `http://epilykos.local`. Epilykos restarts on
+the new port and the page follows it.
+
+## Next steps
+
+- [Connect your equipment](/data-sources)
+- [Build your dashboard](/dashboard/editor)
+- [Reach the dashboard away from home](/settings/network-and-remote-access)

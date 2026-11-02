@@ -4,4 +4,209 @@ description: Run Epilykos with Docker Compose on any Linux computer.
 icon: Container
 ---
 
-This page is being written.
+Epilykos is published as a Docker image, `irunmole/epilykos:latest`. Any Linux computer that stays on
+works: a mini PC, a NAS, a Raspberry Pi with a regular OS, or a server.
+
+## What you need
+
+- Docker Engine with the Compose plugin. See [Install Docker Engine](https://docs.docker.com/engine/install/).
+- For Bluetooth batteries or inverter modules: a Bluetooth adapter on the host, with BlueZ running.
+- For RS232 or RS-485 equipment: a USB serial adapter.
+
+## Install
+
+<Steps>
+<Step>
+
+### Get the compose file
+
+Make a folder for Epilykos and download the compose file into it:
+
+```bash
+mkdir epilykos && cd epilykos
+curl -fsSLO https://raw.githubusercontent.com/ashipaek0/Epilykos/main/docker-compose.yaml
+```
+
+Epilykos keeps everything it stores in the `data` folder next to this file.
+
+</Step>
+<Step>
+
+### Choose how the admin password is set (optional)
+
+By default, the first person to open the setup wizard chooses the admin password. If people you
+don't trust can reach this computer before you've done that, set the password in the compose file
+instead: turn on the `environment:` block and add a line for it.
+
+```yaml title="docker-compose.yaml"
+    environment:
+      - SETTINGS_PASSWORD=choose-a-long-password
+```
+
+<Callout type="warn" title="A .env file is not enough">
+  The compose file doesn't load a `.env` file into the container, so `SETTINGS_PASSWORD` written in
+  `.env` has no effect. Put it under `environment:` as above.
+</Callout>
+
+A password set this way can't be changed from Settings; change it in the compose file and run
+`docker compose up -d` again.
+
+</Step>
+<Step>
+
+### Start Epilykos
+
+```bash
+docker compose up -d
+```
+
+</Step>
+<Step>
+
+### Run the setup wizard
+
+Open `http://<this-computer>:3000/setup` in a browser, for example `http://192.168.1.10:3000/setup`.
+The [setup wizard](/getting-started/first-run-setup) walks you through the password, your equipment
+and a first dashboard.
+
+</Step>
+</Steps>
+
+## The compose file
+
+```yaml title="docker-compose.yaml"
+services:
+  epilykos:
+    image: irunmole/epilykos:latest
+    container_name: epilykos
+    restart: unless-stopped
+    ports:
+      - "3000:3000"                  # Ignored with network_mode: host (the app then listens on host port 3000)
+    volumes:
+      - ./data:/app/data
+      - /etc/localtime:/etc/localtime:ro   # The container follows this computer's time zone.
+      - /run/dbus:/run/dbus:ro       # Bluetooth BMS / inverter Bluetooth modules: talk to the host's BlueZ over D-Bus.
+      # "Update now" in Settings → Updates. This gives Epilykos full control of Docker on
+      # this computer (it could start any container), so only keep it if you want one-click
+      # updates. Without it, update with: docker compose pull && docker compose up -d
+      - /var/run/docker.sock:/var/run/docker.sock
+    security_opt:
+      - "apparmor=unconfined"        # Lets the container reach the host's Bluetooth service on Ubuntu; harmless elsewhere.
+
+    # ── Option: USB serial adapter (RS232 / RS485 inverter or wired BMS) and/or the Bluetooth group.
+    # devices:
+    #   - "/dev/ttyUSB0:/dev/ttyUSB0"
+    # group_add:
+    #   - "dialout"                  # Serial port permission.
+    #   - "108"                      # The host's bluetooth group ID, from `getent group bluetooth`.
+
+    # ── Option: a time zone other than this computer's (uncomment both lines).
+    # environment:
+    #   - TZ=Europe/London
+
+    # ── Option: host networking, only for Tuya LAN broadcast discovery (then `ports` above is ignored).
+    # network_mode: "host"
+```
+
+Options that are off start with `# `. To turn one on, remove the `# ` from **every** line of its
+block, the key and its items together, and keep the indentation as it is. A key with nothing under it
+(for example `devices:` on its own) is an error. `docker compose config` prints the file or tells you
+what is wrong. Then run `docker compose up -d`.
+
+### USB serial adapters
+
+For an RS232 or RS-485 inverter, or a wired BMS, turn on `devices:` with one line per adapter, and
+`group_add:` with `dialout` for permission to use them. Docker refuses to start the container if a
+listed device doesn't exist, which is why this is off until you need it.
+
+```yaml
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    group_add:
+      - "dialout"
+```
+
+Adapters can change names when they're unplugged. `ls /dev/serial/by-id/` lists stable names you can
+use on the left side instead.
+
+### Bluetooth
+
+Bluetooth batteries and inverter modules are built in. They use the host's Bluetooth adapter through
+BlueZ over D-Bus, which the `/run/dbus` line (on by default) provides.
+
+- The host must run BlueZ with a powered adapter: `systemctl status bluetooth` shows *active*, and
+  `bluetoothctl show` shows `Powered: yes`.
+- If Settings reports *D-Bus denied access to BlueZ*, turn on `group_add:` and add the host's
+  `bluetooth` group ID, from `getent group bluetooth`.
+- `security_opt: apparmor=unconfined`, already in the file, covers Ubuntu hosts.
+
+### Time zone
+
+Daily totals roll over at midnight in the container's time zone. By default it follows the host
+(the `/etc/localtime` line). To use another, turn on `environment:` with a `TZ=` line. The startup log
+line shows the active time zone.
+
+### One-click updates
+
+The `docker.sock` line lets **Settings → Updates → Update now** download the new image and restart
+Epilykos on it. It also gives Epilykos full control of Docker on this computer, so remove the line if
+you don't want that and update with the commands below.
+
+### Tuya discovery
+
+Tuya devices announce themselves with LAN broadcasts, which only reach the container with host
+networking. Turn on `network_mode: "host"` only if you use Tuya discovery; the dashboard is then on
+host port 3000 and `ports:` is ignored.
+
+## Updating
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+With the Docker socket mounted you can use **Settings → Updates** instead. See
+[Updates and system](/settings/updates-and-system).
+
+## Environment variables
+
+Add any of these under `environment:` in the compose file.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `SETTINGS_PASSWORD` | not set | Admin password. When set, it can't be changed in Settings. |
+| `TZ` | host time zone | Time zone for daily totals, e.g. `Africa/Lagos`. |
+| `PORT` | `3000` | Port Epilykos listens on inside the container. |
+| `LOG_LEVEL` | `info` | Starting log level: `debug`, `info`, `warn` or `error`. A level chosen in Settings → Logs overrides it. |
+| `LOG_TO_FILE` | `true` | `false` logs to stdout/stderr only, for read-only container roots. |
+| `LOG_DIR` | `logs/` | Where rotating log files go when file logging is on. |
+| `SQLITE_SYNCHRONOUS` | `NORMAL` | Database durability: `NORMAL`, `FULL` or `EXTRA` (`OFF` is refused). |
+| `TMPDIR` | `/tmp` | Temporary folder for uploads (backup restore, layout import). |
+| `BLUETOOTH` | `on` | `off` disables Bluetooth even when `/run/dbus` is mounted. |
+| `BLE_KEEP_ALIVE` | `true` | Keep Bluetooth connections open between reads. `false` reconnects every read: slower, but frees adapter slots. |
+| `BLE_MAX_LINKS` | `1` | Bluetooth devices kept connected at once. Raise it if your adapter handles several connections well. |
+| `BLE_LOG_LEVEL` | `WARNING` | Bluetooth helper log level (`INFO` or `DEBUG` when diagnosing a device). |
+| `UPDATE_CHECK` | `on` | `off` never checks for updates. |
+| `SESSION_SECRET` | generated | Sign-in session secret. If unset, one is generated and kept in `data/session-secret`. |
+| `RESET_TWO_STEP` | not set | `true` turns two-step sign-in off at start. Remove it again afterwards. See [Security](/settings/security). |
+
+## Health check
+
+`GET /healthz` needs no login. It returns `200 {"status":"ok",…}` once Epilykos is serving and its
+database opens with the expected schema, and `503` otherwise. It never depends on the internet, so a
+box without internet stays healthy. The image uses it as its Docker `HEALTHCHECK`.
+
+## What's in the data folder
+
+| Path | What it is |
+| --- | --- |
+| `data/energy.db` | The database: settings, layouts and history. |
+| `data/snapshots/` | The automatic daily snapshots of the database (the last 2 are kept). |
+| `data/settings-password` | The admin password, hashed (not used when `SETTINGS_PASSWORD` is set). |
+| `data/encryption-key` | The key that encrypts saved passwords and tokens. |
+| `data/two-step.json` | Two-step sign-in, when it is on. |
+| `data/session-secret` | Sign-in session secret. |
+| `data/tailscale/` | Tailscale state, when remote access is on. |
+
+Backups downloaded from Settings contain the database only. Keep a copy of the whole `data` folder if
+you want to move an install with its saved passwords intact; see
+[Backup and restore](/settings/backup-and-restore).

@@ -1,6 +1,77 @@
 ---
 title: Epilykos Wiki
-description: Guides for installing, connecting and running Epilykos.
+description: Guides for installing, connecting and running Epilykos, the self-hosted energy dashboard.
 ---
 
-Welcome.
+Epilykos is a self-hosted, real-time dashboard for solar systems, inverters, batteries and home
+automation. It reads your equipment directly (Wi-Fi dongles, Modbus, RS232, Bluetooth, Home
+Assistant, MQTT, Tuya and REST APIs), keeps the history in a database on your own machine, and shows
+it on a dashboard anyone on your network can open. Settings stay behind an admin password.
+
+Run it on a Raspberry Pi with **EpilykosOS**, or with **Docker** on any Linux computer.
+
+<Cards>
+  <Card title="Install on a Raspberry Pi" href="/getting-started/install-epilykos-os">
+    Flash EpilykosOS to a microSD card and finish setup from a browser.
+  </Card>
+  <Card title="Install with Docker" href="/getting-started/install-docker">
+    Run Epilykos with Docker Compose on any Linux computer.
+  </Card>
+  <Card title="Connect your equipment" href="/data-sources">
+    Pick the right source for your inverter, battery and other devices.
+  </Card>
+  <Card title="Build your dashboard" href="/dashboard/editor">
+    Arrange cards and build dashboards for desktop, phone and wall display.
+  </Card>
+  <Card title="Settings" href="/settings/metrics">
+    Every settings page explained, from metrics to backups and updates.
+  </Card>
+  <Card title="Troubleshooting" href="/troubleshooting">
+    Fixes for the problems people run into most.
+  </Card>
+</Cards>
+
+## Features
+
+### Reads your equipment directly
+
+Inverter Wi-Fi dongles (Solarman V5, LuxPower, Growatt, Felicity), Modbus over RS-485 or TCP, RS232
+inverters (Voltronic, Victron VE.Direct, SolaX, Phocos), battery BMS over Bluetooth or a wired link,
+Home Assistant, MQTT, Tuya devices on your LAN, and any JSON API. See
+[Supported hardware](/data-sources/supported-hardware).
+
+### A live dashboard anyone can open
+
+More than 20 card types, from energy-flow diagrams to charts, tables, gauges and forecasts, updated
+every 30 seconds. Build several dashboards, with separate layouts for computers and phones. Viewing
+needs no login.
+
+### Device controls with safety checks
+
+Change supported inverter and battery settings from the Controls page. Every change is checked
+against the setting's range, read back from the device and kept in a change log.
+
+### Forecasts, prices and savings
+
+Solar forecasts from Open-Meteo (free) or Solcast, weather, grid and generator prices, battery wear
+cost, and what your solar has saved you. Uploads to PVOutput.org.
+
+### Alerts where you'll see them
+
+Push notifications, Telegram (with `/status` and `/today` commands), Discord, ntfy or a webhook. Alert
+on any reading, on events such as a grid outage, or send a daily summary.
+
+### Reach it from anywhere
+
+Tailscale or a Cloudflare Tunnel from Settings, with no port forwarding. Install it on your phone as
+an app that switches between your home and away addresses by itself.
+
+### Safe to leave running
+
+Admin password with optional two-step sign-in, saved passwords encrypted at rest, daily snapshots,
+downloadable backups, and one-click updates that roll back if the new version doesn't start.
+
+### EpilykosOS
+
+An operating system for the Raspberry Pi that runs Epilykos like an appliance: flash it, power it on,
+finish setup from a browser. It updates and recovers by itself.
