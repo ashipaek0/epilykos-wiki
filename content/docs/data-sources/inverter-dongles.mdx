@@ -102,8 +102,14 @@ The card has three LuxPower options. Start with the defaults and only change the
 If you have the **LuxPowerTek GETA 3.6kW 24V**, choose its own profile, which reads only what that
 24 V single-MPPT model has. **LuxPowerTek Generic Hybrid** covers the other LuxPowerTek models.
 
-You can change the battery charge limits, charging and discharging power limits, charging modes and
-grid-charging windows from the [Controls page](/dashboard/controls).
+The generic profile reads what the Home Assistant LuxPower integration reads: power, energy, battery and
+BMS values, the arc-fault (AFCI) readings, and the inverter's settings, from its grid connection and
+protection limits to its charging, discharging and export settings and battery alarms. Fetch the
+profile's entities on the dongle card and map the ones you want.
+
+You can change the battery charge limits, the charging and discharging currents and power limits,
+export to the grid, the grid charging, charge-first and forced-discharge settings and their time
+windows, and the output priority from the [Controls page](/dashboard/controls).
 
 ## Growatt
 

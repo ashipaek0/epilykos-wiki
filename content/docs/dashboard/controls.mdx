@@ -35,17 +35,19 @@ These devices can have settings changed so far:
 
 | Device | What you can change |
 | --- | --- |
-| **LuxPower** (GETA dongle, over Wi-Fi or Bluetooth) | Battery charge limits; on recognised models also the charging and discharging power limits, the grid charging power limit, the charging modes (grid charging, charge first, forced discharge) and three grid-charging windows |
+| **LuxPower** (dongle, over Wi-Fi or Bluetooth) | Battery charge limits; charging, discharging and grid charging current and power limits; export to the grid and its limit; the grid charging rule and windows; charge first and forced discharge with their limits and windows; output priority, AC input mode, eco and green mode, charge last, fast zero export and the buzzer |
 | **JBD and JK Bluetooth BMS** | Charging and discharging on or off |
 | **Phocos Any-Grid** (over Bluetooth) | A set of settings known to be safe, on the 3, 5, 6.5 and 8 kW models |
 
 A couple of notes:
 
-- **LuxPower:** the power limits, charging modes and charging windows are only offered when the
-  inverter reports a model they apply to. That check follows what the LuxCloud app does; it isn't a
-  guarantee for every unit, and the inverter's firmware may still refuse or limit a value. **Download
-  verification** saves a read-only snapshot of the inverter's settings, which is handy to keep before
-  and after a change.
+- **LuxPower:** the charging and discharging power limits, the grid charging power limit, the grid
+  charging, charge-first and forced-discharge switches and the grid-charging windows come from the
+  LuxCloud app and only work when the inverter reports a GETA model. The other settings follow the
+  LuxPower protocol, so the **LuxPowerTek Generic Hybrid** profile offers them on any LuxPower
+  inverter; the **LuxPowerTek GETA 3.6kW 24V** profile offers the ones that model has. The inverter's
+  firmware may still refuse or limit a value. **Download verification** saves a read-only snapshot of
+  the inverter's settings, which is handy to keep before and after a change.
 - **JBD and JK:** switching discharging off cuts power to whatever the pack supplies, so the page asks
   you to confirm that separately. If a pack won't switch charging back on, it's usually protecting
   itself.
