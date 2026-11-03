@@ -21,16 +21,15 @@ You choose the admin password in the first step of the
 - **If you've forgotten it**, see [Password and factory reset](/epilykos-os/password-and-reset) on
   EpilykosOS. On Docker, set `SETTINGS_PASSWORD` under `environment:` in the compose file.
 
-**Use at least 12 characters.** The wizard and the reset file will accept a password as short as 4
-characters, but you won't be able to open Epilykos to the internet (with Tailscale's **Open to the
-internet** or a Cloudflare Tunnel) until it's at least 12. Starting with a long one saves you changing
-it later.
+**Use at least 12 characters.** Epilykos won't open to the internet (with Tailscale's **Open to the
+internet** or a Cloudflare Tunnel) with a shorter password. A shorter password you set earlier still
+signs you in, but change it before you switch on remote access.
 
 Epilykos uses a few different passwords, each with its own rules:
 
 | Password | What it's for | Length |
 | --- | --- | --- |
-| Admin password | Signing in, Settings, the layout editor, the REST API, and unlocking the Controls page | 4 or more accepted; 12 or more to open Epilykos to the internet |
+| Admin password | Signing in, Settings, the layout editor, the REST API, and unlocking the Controls page | 12 or more |
 | SSH maintenance login (EpilykosOS) | Logging in to the box as `epilykos` over SSH | 8 to 128 |
 | Backup passphrase | Protecting the saved passwords inside a downloaded backup | 8 to 256 |
 
