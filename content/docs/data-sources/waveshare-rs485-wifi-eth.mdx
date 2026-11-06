@@ -1,0 +1,126 @@
+---
+title: Waveshare RS232/485 to WiFi/ETH
+description: Connect an RS-485 inverter or battery to Epilykos with a Waveshare serial server.
+icon: Router
+---
+
+The Waveshare **RS232/485 TO WIFI ETH (B)** is a small serial server. It connects the RS-485 (or
+RS232) port on an inverter or battery to your network over Wi-Fi or Ethernet. Epilykos then reads it
+as a [Modbus](/data-sources/modbus) source over TCP. The PoE version of the same module works the same
+way.
+
+## What you need
+
+- The module, powered with 6–36 V DC (DC jack or screw terminals).
+- Two wires from the module's RS-485 A and B terminals to the inverter or BMS. Connect A to A and B
+  to B.
+- A device that speaks **Modbus RTU** on its RS-485 port, and a matching profile from
+  [Supported hardware](/data-sources/supported-hardware).
+- A computer or phone, to set up the module once.
+
+## Set up the module
+
+<Steps>
+<Step>
+
+**Connect to it.** Power the module and join its Wi-Fi network, called `Waveshare_xxxx` (the last four
+digits of its MAC address). It's open by default. Then open `http://10.10.100.254` in a browser and
+log in with `admin` / `admin`. If that address doesn't load, try `10.10.100.222`.
+
+If the module doesn't answer, hold the **RELOAD** button for more than 5 seconds after power-up to
+restore the factory settings.
+
+</Step>
+<Step>
+
+**Put it on your network.** Choose one:
+
+- **Ethernet:** the port is off by default. Enable it on the Ethernet setting page as a LAN port.
+- **Wi-Fi:** on the wireless terminal (STA) page, enter your router's name and password.
+
+The module can't use STA and Ethernet at the same time. Give it a **fixed IP or a DHCP reservation**
+on your router so Epilykos can always find it.
+
+</Step>
+<Step>
+
+**Match the serial settings.** On the serial port and network settings page, set the baud rate, data
+bits, parity and stop bits to what your inverter or BMS expects; check its manual. The module's
+default of 57600, 8, 1, none is rarely right. 9600 and 115200 are common.
+
+</Step>
+<Step>
+
+**Choose the TCP settings.** Set the network protocol to **TCP**, mode **Server**, port **8899** (the
+default). Leave **TCP connection password verification** off. When it's on, a client has to send the
+web password first, and Epilykos doesn't.
+
+Leave **Modbus polling** off. It's a separate feature of the module, and Epilykos does its own
+polling.
+
+</Step>
+<Step>
+
+**Choose a work mode.** Both of these work, and each needs a different **Gateway type** in Epilykos:
+
+| Work mode on the module | Gateway type in Epilykos |
+| --- | --- |
+| **Transparent transmission** (the default) | **Transparent gateway (RTU over TCP)** |
+| `ModbusTCP<=>ModbusRTU` (`AT+TMODE=modbus`) | **Gateway converts to Modbus-TCP** |
+
+Start with transparent mode. The module passes the Modbus RTU frames through unchanged, so there is
+less to go wrong. Waveshare's manual doesn't say how the conversion mode handles unit IDs or
+timeouts.
+
+Save the settings and let the module restart.
+
+</Step>
+</Steps>
+
+## Add it in Epilykos
+
+<Steps>
+<Step>
+
+In **Settings → Sources**, add a **Modbus device** and give it a name.
+
+</Step>
+<Step>
+
+Choose **TCP**. Enter the module's IP address as the host, `8899` as the port, and set the **Gateway
+type** from the table above. Set the **Unit ID** to your inverter's Modbus address, often 1.
+
+</Step>
+<Step>
+
+Pick the **profile** for your inverter or BMS, press **📥 Load Profile Registers**, and keep or
+rename the suggested metrics.
+
+</Step>
+<Step>
+
+Press **Test Modbus** to check that it reads, then **Save changes**. A poll of 30 seconds is a
+sensible start.
+
+</Step>
+</Steps>
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Timeouts, no readings | Wrong baud rate or parity, or A and B swapped | Check the inverter's manual, and swap the two wires. |
+| Connects, but every read fails | Wrong gateway type for the module's work mode, or wrong unit ID | Match the table above, and check the unit ID. |
+| Works at first, then stops | The module's Wi-Fi dropped, or its address changed | Use a DHCP reservation or a fixed IP, and prefer Ethernet if you can. |
+| Odd failures while another tool is open | Two programs are using the module at once | Close the vendor tool. Two clients on one RS-485 bus can collide, and Waveshare doesn't document the module's connection limits. |
+| Garbage values | The serial settings don't match the device, or it's the wrong profile | Recheck the baud rate, parity and profile. |
+| Can't reach the module's web page | Your computer isn't on its subnet | Join the module's own Wi-Fi, or give your computer an address like `10.10.100.253`. |
+
+## Good to know
+
+- The module can also act as a Wi-Fi access point, an MQTT gateway or an HTTP client. Epilykos
+  doesn't use these.
+- Modbus ASCII isn't supported by the module's conversion mode.
+- For the module's own settings in detail, see Waveshare's
+  [wiki page](https://www.waveshare.com/wiki/RS232/485_TO_WIFI_ETH_(B)) and
+  [user manual](https://files.waveshare.com/upload/9/9a/RS232-485-TO-WIFI-ETH-User-Manual-EN.pdf).

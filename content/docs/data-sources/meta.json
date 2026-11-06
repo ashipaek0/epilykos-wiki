@@ -5,6 +5,7 @@
     "index",
     "inverter-dongles",
     "modbus",
+    "waveshare-rs485-wifi-eth",
     "rs232",
     "bms",
     "home-assistant",
