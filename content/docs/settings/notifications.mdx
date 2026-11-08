@@ -9,8 +9,8 @@ regular reports. Messages can go to your phones and computers, Telegram, Discord
 Only the admin can see this section, and bot tokens, webhook addresses, authorisation headers and push
 keys are all stored encrypted.
 
-It works in two parts: first set up at least one **channel** (where messages go), then add **rules**
-(what to send, and when).
+It works in two parts: first set up where messages go (a **channel**, or a browser **device**), then add
+**rules** (what to send, and when).
 
 ![The General and Push devices cards in Settings → Notifications](/images/settings-notifications.webp)
 
@@ -25,13 +25,41 @@ It works in two parts: first set up at least one **channel** (where messages go)
 
 | Channel | How to set it up |
 | --- | --- |
-| **Push to devices** | Notifications on the phones, tablets and computers where you switch push on. One channel can reach all of them or just the ones you pick. |
+| **Push to devices** | Notifications on the phones, tablets and computers that have accepted the notifications prompt (see [Push devices](#push-devices)). One channel can reach all of them or just the ones you pick. |
 | **Telegram** | Message [@BotFather](https://t.me/BotFather), send `/newbot` and paste the token it gives you. Then send your bot a message (or add it as an admin of your channel or group and post something there) and press **Find chat**. |
 | **Discord** | Paste a channel's webhook address. You can have it **Mention @here on critical alerts**. |
 | **ntfy** | Use [ntfy.sh](https://ntfy.sh) or your own ntfy server, with the ntfy phone app. Switch on **Server is on my local network** if your server is at home. |
 | **Webhook** | Each alert is sent as JSON to Home Assistant, n8n, Node-RED or a script of your own, optionally with an authorisation header. |
 
 Every channel has a test button, so you can check it before relying on it.
+
+## Push devices
+
+Any browser that opens your dashboard, signed in or not, is offered a small prompt: **Get notifications
+on this device?** with **Enable** and **Not now**. Accepting asks the browser for permission and adds the
+browser to **Push devices** in Settings → Notifications. It is named after the browser and system, for
+example `Linux · Firefox`, and you can rename it.
+
+**A device only gets what you choose.** Being on the list sends it nothing. You pick it in one of two ways:
+
+- in a rule's **Send push to these devices** list, so a device can get some alerts and not others;
+- in a **Push to devices** channel, either one by one, or with **All devices, including ones added later**.
+  With that switch on, every browser that accepts the prompt starts receiving what the channel sends, so
+  leave it off if your dashboard is open to people you don't know.
+
+Each device in the list shows where it is chosen, or "not chosen for any notification yet". **Test**
+sends it a test message and **Remove** takes it off the list.
+
+- **Not now** hides the prompt on that browser for a week. A browser you have removed is offered the
+  prompt again.
+- If notifications are blocked for the site in the browser, the prompt doesn't appear. Allow them in the
+  browser's site settings first.
+- The prompt only appears on an `https://` address (see below), and not on a browser that doesn't support
+  push.
+- To keep the list tidy, Epilykos accepts at most 10 sign-ups an hour from one address and 50 devices in
+  total, and only the push services browsers use (Google, Mozilla, Apple and Windows).
+- The **Turn on push for this device** button in Settings does the same thing for the browser you are
+  using, without asking for a name.
 
 ### Push needs HTTPS
 
@@ -65,8 +93,8 @@ You can start from a ready-made rule or build your own:
 | **Evening summary** | Sends today's solar, usage, grid and savings at 21:00. |
 | **Low solar tomorrow** | Warns you in the evening when tomorrow looks poor. |
 
-For each rule you choose which channels it uses and how serious it is: **Critical**, **Warning** or
-**Info**.
+For each rule you choose which channels and push devices it uses, and how serious it is: **Critical**,
+**Warning** or **Info**.
 
 ### Metric rules
 
