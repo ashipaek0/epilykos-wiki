@@ -42,6 +42,8 @@ On Docker, `docker compose logs -f` shows the same log from the computer itself.
 | A card shows zeros or nothing | The metric picked on the card has to match exactly what the source writes. |
 | The charts are empty | History builds up from the first readings, so give it two or three cycles (60 to 90 seconds). The energy charts and tables also need your [metric roles](/getting-started/core-concepts#metric-roles). |
 | The grid status card shows nothing | Set the [grid status metric](/settings/prices-and-savings#grid-status) to the metric that reads 1 or `on` while the grid is up. |
+| The generator status card says "Not set up" | Map **Generator power** in [Metric roles](/settings/metrics#metric-roles), or set a [generator status metric](/settings/prices-and-savings#generator-status). |
+| The generator card shows no cost | It needs the **Daily generator energy** role and a generator price in [Prices and savings](/settings/prices-and-savings). |
 | Savings look too low after choosing a generator option | The generator price is still 0; set it in [Prices and savings](/settings/prices-and-savings). |
 | The generator is missing from charts and costs | Map **Generator power** and **Daily generator energy** in [Metric roles](/settings/metrics#metric-roles). |
 | Daily totals roll over at the wrong time | The time zone is wrong. On Docker, set `TZ` or mount `/etc/localtime` (the first log lines show the active time zone). On EpilykosOS, use **Settings → System → Time and storage**. |

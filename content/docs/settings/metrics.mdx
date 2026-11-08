@@ -67,9 +67,67 @@ energy from power. Each result becomes a new metric that you can use in roles an
 | **Energy today from power** | The kWh so far today, worked out from a power reading. Starts again at midnight. |
 | **Lifetime energy from power** | A kWh total that only ever goes up. You can give it a starting value to match a meter. |
 | **Today's increase of a counter** | How much a lifetime counter (such as total kWh) has gone up since midnight. |
+| **On/Off from a limit** | Turns one input into **On** or **Off**, depending on whether it is past a limit you choose. See [On/Off metrics](#onoff-metrics). |
 
 Sums and averages can be shown split into their parts on cards. Switch a combined metric off if you
 want it to stop being calculated.
+
+### On/Off metrics
+
+**On/Off from a limit** makes a status out of any reading. The result is a normal metric that reads 1
+when it is On and 0 when it is Off, shown as On or Off in this list. For example, a grid status from the
+inverter's grid voltage:
+
+<Steps>
+<Step>
+
+Press **Add combined metric**, name it (for example `grid_status`) and choose **On/Off from a limit**.
+
+</Step>
+<Step>
+
+Add the input, for example `grid_voltage`. This calculation takes one input.
+
+</Step>
+<Step>
+
+Choose **at or above** (or **at or below**) and enter the value it turns **On** at, for example 180.
+
+</Step>
+<Step>
+
+Optionally enter a different value for **Turns Off when it is below**, for example 160. Press
+**Preview** to see what it reads now, then **Save**.
+
+</Step>
+</Steps>
+
+With only the On value, it is a plain comparison: On at 180 V and above, Off below. A different Off
+value leaves a gap between the two. While the reading is inside the gap, the metric keeps its last
+state, so a voltage that hovers around 170 V doesn't flip On and Off and count as a string of outages.
+If the very first reading is inside the gap, it starts Off.
+
+Some more uses:
+
+| Status | Input | Turns On |
+| --- | --- | --- |
+| Generator running | Generator voltage or power | at or above a small value |
+| Battery full | Battery charge (%) | at or above 100 |
+| Battery low | Battery charge (%) | at or below 20, Off above 25 |
+| Charging | Battery power | at or above 50 |
+
+If the input stops updating, the metric waits and keeps its last state instead of switching, so an
+inverter that goes offline doesn't look like an outage. Under **When readings are late** you can choose
+**Count it as 0** instead, which makes it Off.
+
+When you have a grid voltage metric, Epilykos suggests this calculation as **Grid status (On/Off)**
+above the list. Use the metric as your [grid status metric](/settings/prices-and-savings#grid-status),
+and as the [generator status metric](/settings/prices-and-savings#generator-status) for a generator.
+
+<Callout type="warn">
+  Some inverters keep showing a grid voltage when the grid is lost. A limit can't tell the difference,
+  so check what yours reads during a real outage before you rely on it.
+</Callout>
 
 If several BMS packs make up one battery, a [battery bank](/data-sources/bms#battery-banks) is the
 better fit; its `bank_` metrics can be used here too.

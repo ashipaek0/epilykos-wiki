@@ -57,6 +57,30 @@ Epilykos finds it for you.
 `on` while it is. It drives the **Grid status** card, the grid outage and grid restored alerts, and
 savings worked out by grid availability.
 
+If your inverter reports the grid voltage but not an on/off status, make one with an
+[On/Off metric](/settings/metrics#onoff-metrics): for example On at 180 V and above, Off below 160 V.
+
+## Generator status
+
+The **Generator status** card shows whether the generator is running. Epilykos works that out in one of
+two ways:
+
+- **Generator status metric:** a metric that is on while the generator runs, such as a switch, a binary
+  sensor or an [On/Off metric](/settings/metrics#onoff-metrics) made from the generator's voltage. It
+  should read 1 or `on` while the generator runs.
+- **Generator power:** if you leave the field empty, the generator counts as running while the
+  **Generator power** [role](/settings/metrics#metric-roles) is above 20 W. Inverters that report the power taken
+  from their generator input need nothing else.
+
+Epilykos keeps the start and stop times, so the card can show how long the generator has run today,
+this week, this month, this year and in total. The cost under each period is the day's **Daily generator
+energy** role times your generator price above. Without that role, or without a price, the cost shows a
+dash.
+
+A change is recorded once the previous one is at least a minute old, so a generator that stutters while
+starting doesn't count as several runs. Each start and stop also raises a `generator.on` or
+`generator.off` [event](/settings/notifications#event-rules).
+
 ## Battery
 
 | Field | What it's for |
