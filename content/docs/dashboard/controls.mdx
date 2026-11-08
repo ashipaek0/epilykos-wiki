@@ -65,9 +65,41 @@ To add control cards, open the [layout editor](/dashboard/editor), choose **Cont
 dashboard menu, and add a **Toggle switch**, **Button**, **State select**, **Slider** or **Rotary
 knob**. They appear on the Controls page under **Switches and selectors**.
 
+### What a card can control
+
+A card can control a Tuya value, a Home Assistant entity, an MQTT topic, or an **inverter or battery
+setting** from the list under [Device settings](#device-settings). Device settings appear in the card's
+picker under **Inverter and battery**, followed by the device's name, and each card offers only the
+settings that suit it:
+
+| Card | Inverter and battery settings it offers |
+| --- | --- |
+| **Toggle switch** | Settings that are on or off, such as grid charging, charge first and forced discharge on a LuxPower, or charging and discharging on a JBD or JK battery |
+| **State select** | Settings with a list of choices, such as output priority. The choices are filled in for you |
+| **Slider** and **Rotary knob** | Settings that are a number, such as a charging power limit. The lowest value, highest value, step and unit are filled in for you |
+
+Times of day (such as the grid charging windows) have no card, and the **Button** card doesn't offer
+device settings. Like every control card, these only work on the Controls page; on a dashboard they
+show a link to it.
+
+A card for a device setting reads the setting from the device when the page opens, once a minute while
+the page stays open, and after each change. It isn't shown from the dashboard's regular readings, so
+what it shows is what the device reports. Changing it follows the same checks as the list on this page:
+
+- the current value is read first, and the change is refused if it no longer matches what the card
+  showed (the card then shows what it is now);
+- the value is read back afterwards, and every attempt goes in the **Change log**;
+- if the device can't change that setting (for example, a setting for a model yours isn't), the card
+  is locked and says why. If the device doesn't answer, the card shows as unavailable.
+
+A card sends one request to the device each time it reads, so a page with many device cards makes the
+dongle busy; a few cards that you really use work better than a card for every setting.
+
+### Sliders and knobs
+
 The **slider** and the **knob** set a number: a Home Assistant `number` or `input_number`, a Tuya
-value, or an MQTT topic. Pick what you want to control and give it a lowest value, highest value and
-step (a Home Assistant number fills these in for you). Moving the control only previews the value; it's
+value, an MQTT topic, or a device setting. Pick what you want to control and give it a lowest value,
+highest value and step (a Home Assistant number or a device setting fills these in for you). Moving the control only previews the value; it's
 sent when you let go of the slider, or stop turning the knob or pressing keys, so each gesture is one
 entry in the change log. Tapping the knob changes nothing, and the arrow keys, Page Up/Down, Home and
 End work on both.
