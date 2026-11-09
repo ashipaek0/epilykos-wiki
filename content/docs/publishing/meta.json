@@ -1,0 +1,8 @@
+{
+  "title": "Publishing data",
+  "icon": "Send",
+  "pages": [
+    "index",
+    "home-assistant"
+  ]
+}
