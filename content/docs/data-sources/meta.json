@@ -9,6 +9,7 @@
     "rs232",
     "bms",
     "home-assistant",
+    "home-assistant-sensors",
     "mqtt",
     "tuya",
     "rest-api",

@@ -1,0 +1,148 @@
+---
+title: Epilykos in Home Assistant
+description: Show your Epilykos metrics as sensors in Home Assistant.
+icon: House
+---
+
+This guide does the opposite of the [Home Assistant source](/data-sources/home-assistant): it puts your
+Epilykos metrics **into** Home Assistant as sensors. Every sensor is named **Epilykos …**, so they sort
+together and are easy to find.
+
+Home Assistant reads Epilykos over your network every 30 seconds. Nothing is installed on Epilykos.
+
+<Callout type="warn" title="Only on your own network">
+Epilykos shares its metrics without a password, so anyone on your network can read them. That is fine
+at home. Don't open Epilykos to the internet to do this.
+</Callout>
+
+## What you need
+
+- Epilykos running, with its address and port, for example `http://192.168.0.101:3000`.
+- Home Assistant on the same network, and a way to edit its files (the **File editor** or **Studio Code
+  Server** add-on, or Samba).
+- Python 3 on any computer on your network, to make the sensor list. Most computers already have it.
+
+## Set it up
+
+<Steps>
+<Step>
+
+**Check that Home Assistant can see Epilykos.** On a computer on your network, open this address in a
+browser, using your own address:
+
+```text
+http://192.168.0.101:3000/api/metrics/current
+```
+
+You should see a long list of metric names with values. If the page doesn't load, check the address
+and port.
+
+</Step>
+<Step>
+
+**Make the sensor list.** Save the script below as `epilykos_to_ha.py`, change the address on the
+`URL =` line to yours, and run it:
+
+```bash
+python3 epilykos_to_ha.py
+```
+
+It prints `Wrote epilykos_rest.yaml with … sensors`. The file is next to the script.
+
+**The script:**
+
+```python
+#!/usr/bin/env python3
+"""Read every metric from Epilykos and write epilykos_rest.yaml for Home Assistant."""
+import json, re, sys, urllib.request
+
+URL = sys.argv[1] if len(sys.argv) > 1 else "http://192.168.0.101:3000"   # your Epilykos address
+data = json.load(urllib.request.urlopen(URL.rstrip("/") + "/api/metrics/current", timeout=15))
+
+CLASS = {"W": "power", "V": "voltage", "A": "current", "°C": "temperature", "Hz": "frequency",
+         "Wh": "energy_storage", "s": "duration"}
+ACRONYMS = {"pv": "PV", "bms": "BMS", "soc": "SOC", "mppt": "MPPT", "mosfet": "MOSFET"}
+
+def nice(name):
+    words = []
+    for w in name.split("_"):
+        words.append(ACRONYMS.get(w.lower()) or (w if (w[:1].isupper() or re.search(r"\d", w)) else w.capitalize()))
+    return " ".join(words)
+
+out = ["# Made by epilykos_to_ha.py - run it again after you add metrics.",
+       f"- resource: {URL.rstrip('/')}/api/metrics/current",
+       "  scan_interval: 30", "  timeout: 15", "  sensor:"]
+for name in sorted(data):
+    unit = (data[name] or {}).get("unit")
+    get = f"value_json.get('{name}', {{}}).get('value')"
+    out += [f'    - name: "Epilykos {nice(name)}"', f"      unique_id: epilykos_{name.lower()}"]
+    if not unit:
+        out.append(f'      value_template: "{{{{ {get} }}}}"')
+        continue
+    out += [f'      value_template: "{{{{ {get} | float(none) }}}}"', f'      unit_of_measurement: "{unit}"']
+    total = unit == "kWh" and re.search(r"today|alltime", name)     # a daily or all-time energy total
+    cls = "energy" if total else "energy_storage" if unit == "kWh" and "batt" in name else CLASS.get(unit)
+    if cls: out.append(f"      device_class: {cls}")
+    out.append("      state_class: " + ("total_increasing" if total else "measurement"))
+
+open("epilykos_rest.yaml", "w").write("\n".join(out) + "\n")
+print(f"Wrote epilykos_rest.yaml with {len(data)} sensors")
+```
+
+</Step>
+<Step>
+
+**Copy the file to Home Assistant.** Put `epilykos_rest.yaml` in your Home Assistant configuration
+folder, the one that holds `configuration.yaml`.
+
+</Step>
+<Step>
+
+**Point Home Assistant at it.** Open `configuration.yaml` and add this line:
+
+```yaml
+rest: !include epilykos_rest.yaml
+```
+
+If you already have a `rest:` line in there, don't add a second one. Add the contents of
+`epilykos_rest.yaml` to your existing `rest:` list instead.
+
+</Step>
+<Step>
+
+**Check and restart.** In Home Assistant, go to **Developer tools → YAML**, press **Check
+configuration**, then press **Restart**.
+
+</Step>
+<Step>
+
+**Find your sensors.** Go to **Settings → Devices & services → Entities** and search for `Epilykos`.
+Add any of them to a dashboard, or use them in automations and the Energy dashboard.
+
+</Step>
+</Steps>
+
+## Adding more metrics later
+
+When you add a new metric in Epilykos, run `python3 epilykos_to_ha.py` again, copy the new
+`epilykos_rest.yaml` over the old one, and restart Home Assistant. Your existing sensors keep their
+history.
+
+## Good to know
+
+- **Units come from Epilykos.** A metric that has no unit in Epilykos has none in Home Assistant. To
+  give one a unit, add a `unit_of_measurement:` line to its block in `epilykos_rest.yaml`. Running the
+  script again replaces the file, so keep your edits somewhere safe.
+- **Battery bank energy** (`bank_…_energy`) is in kWh. A single battery's own capacity is in Wh.
+- **Daily and all-time kWh totals** are set up as energy totals, so the Energy dashboard accepts them.
+- **How often:** change `scan_interval: 30` in the file to read more or less often.
+- **Many sensors:** all of them come from one request, so a long list doesn't slow Epilykos down.
+
+## If it doesn't work
+
+| What you see | What to do |
+| --- | --- |
+| **Check configuration** reports an error | Make sure the `rest:` line is in `configuration.yaml` exactly as shown, and the file is in the same folder. |
+| Sensors say **Unavailable** | Home Assistant can't reach Epilykos. Open the address from step 1 on the Home Assistant machine, or check the port. |
+| A sensor shows **Unknown** | That metric has no value yet in Epilykos, or it was deleted. Remove it from the file. |
+| No sensors named Epilykos | Home Assistant wasn't restarted after the change. |
