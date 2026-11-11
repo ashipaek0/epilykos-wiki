@@ -85,14 +85,47 @@ picture; this turns on free placement too. Where cards overlap, the one lower do
 on top.
 
 </Step>
+<Step>
+
+Turn on **Scale to screen width** if the cards sit over a background picture and have to stay on
+the same part of it on every screen. See [Scale to screen width](#scale-to-screen-width) below.
+
+</Step>
 </Steps>
 
 Changing the precision keeps every card where it is on the page. Going finer is exact. Going coarser
 moves a card to the nearest cell if it was not on one, and tells you how many moved; **Undo** puts them
 back. New cards, and cards you copy and paste from another dashboard, are sized to fit the grid.
 
+Without free placement, the layout editor shows each card where it is saved, as the dashboard does.
+Cards that have empty space above them move up to fill it as soon as you move a card, so the editor
+tells you when that applies. Turn on **Free placement** to keep them where they are.
+
 On a phone the cards stack in one column, whatever the grid. The grid is saved with the dashboard, so
 **Export** and **Duplicate** carry it along. The Controls page always uses the standard grid.
+
+### Scale to screen width
+
+Normally a card's width follows the screen, but its height is a fixed number of pixels, and a
+background picture fills the browser window. On a screen of a different size the cards then sit on a
+different part of the picture. That is a problem when you place cards over something in the picture,
+such as the panels on a photo of your house.
+
+With **Scale to screen width** on:
+
+- The height of every row, and the space between cards, shrink and grow with the width of the
+  dashboard, so the whole layout keeps its proportions. At 1400 px wide (the widest the dashboard gets)
+  it is exactly the size you set; on a narrower screen it is smaller in the same proportion.
+- The background picture sits behind the cards, as wide as they are, starting where they start. It
+  is no longer stretched over the whole window, so a card stays on the same part of the picture.
+  The layout editor draws it the same way, so what you place there is where it appears.
+- On a phone the cards stack as they always do, and the picture fills the page background as before.
+
+The picture is as wide as the cards, so on a very wide screen there is plain background on either
+side of it. Pick a background colour that matches the edge of your picture to make that unnoticeable.
+
+The setting is off by default, so existing dashboards do not change. It is saved with the dashboard,
+and **Export** and **Duplicate** carry it along.
 
 ## Dashboard style
 
