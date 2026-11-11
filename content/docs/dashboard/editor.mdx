@@ -14,8 +14,8 @@ dashboard.
 
 - The **block library** is on the left. Search it, then drag a block onto the layout. Or select a
   card on the layout and press Enter on a library entry to drop the new one just below it.
-- **Move** a card by dragging it, or select it and use the arrow keys. The layout is a grid 12
-  columns wide.
+- **Move** a card by dragging it, or select it and use the arrow keys. The layout is a grid, 12
+  columns wide unless you choose a [finer one](#layout-grid).
 - **Resize** a card by dragging any edge or corner, or select it and press Shift + an arrow key.
 - **Duplicate** a card with the copy icon in its toolbar, and press **Delete** to remove the selected
   card.
@@ -49,6 +49,51 @@ You choose which dashboard opens on computers and which on phones in
 The same menu also has the **Controls page**, which is where the switch, button, selector, slider and
 knob cards go; see [Device controls](/dashboard/controls).
 
+## Layout grid
+
+By default a dashboard's layout is 12 columns wide, and cards snap to whole cells. For more exact
+placement, each dashboard can have its own grid.
+
+<Steps>
+<Step>
+
+Open the dashboard you want to change. With no card selected, **Layout grid** is at the top of the panel
+on the right. You can also choose **Layout grid…** from the dashboard menu.
+
+</Step>
+<Step>
+
+Pick a **Precision**:
+
+| Precision | Columns | Row height |
+| --- | --- | --- |
+| Standard | 12 | 50 px |
+| Fine | 24 | 25 px |
+| Finer | 60 | 10 px |
+
+</Step>
+<Step>
+
+Set the **Space between cards**, from 0 to 24 px (2 px by default).
+
+</Step>
+<Step>
+
+Turn on **Free placement** to keep cards exactly where you drop them. Without it, cards move up to
+fill empty space. Turn on **Allow overlap** to let cards sit on top of each other, for example over a
+picture; this turns on free placement too. Where cards overlap, the one lower down the dashboard is
+on top.
+
+</Step>
+</Steps>
+
+Changing the precision keeps every card where it is on the page. Going finer is exact. Going coarser
+moves a card to the nearest cell if it was not on one, and tells you how many moved; **Undo** puts them
+back. New cards, and cards you copy and paste from another dashboard, are sized to fit the grid.
+
+On a phone the cards stack in one column, whatever the grid. The grid is saved with the dashboard, so
+**Export** and **Duplicate** carry it along. The Controls page always uses the standard grid.
+
 ## Dashboard style
 
 Each dashboard can have its own look, so one can be a plain overview and another a glass-effect display
@@ -78,7 +123,7 @@ rest of your changes.
 
 Anything you leave on **Default** follows [Settings → Appearance](/settings/appearance), so changing
 those settings changes every dashboard that has not set its own. **Use default** puts one setting back,
-and **Reset this dashboard to the defaults** puts them all back. The title, logo and favicon are the
+and **Reset the style to the defaults** puts them all back. The title, logo and favicon are the
 same on every dashboard.
 
 A dashboard's style is saved with it, so **Export** and **Duplicate** carry it along. The Controls page
