@@ -5,8 +5,13 @@ icon: Wifi
 ---
 
 Many inverters come with a small Wi-Fi logger stick, or a Bluetooth module, that normally sends data to
-the manufacturer's app. The **WiFi dongle** source lets Epilykos read from it directly, over your
-network or through the computer's Bluetooth adapter, so there's no cable to run to the inverter.
+the manufacturer's app. Two sources let Epilykos read from it directly, so there's no cable to run to
+the inverter:
+
+- **WiFi dongle** reads it over your network.
+- **Bluetooth dongle** reads it through the computer's Bluetooth adapter.
+
+They are set up the same way, and each lists only the profiles that work over its connection.
 
 ## Supported dongles
 
@@ -24,23 +29,24 @@ network or through the computer's Bluetooth adapter, so there's no cable to run 
 <Steps>
 <Step>
 
-In **Settings → Sources**, add a **WiFi dongle** and give it a name.
+In **Settings → Sources**, choose **Add source**, then **WiFi dongle** or **Bluetooth dongle** (both
+are under **Inverter**), and give it a name.
 
 </Step>
 <Step>
 
-Choose the **Connection**, either **TCP/IP (Wi-Fi / LAN)** or **Bluetooth**, and then the
-**Profile**. The list only shows profiles that work over the connection you chose; profiles that work
-only over Bluetooth are grouped separately.
+Choose the **Profile**. The list only shows profiles that work over the connection of the source type you
+chose: a Bluetooth dongle lists the Bluetooth ones (including those that work only over Bluetooth), and a
+WiFi dongle lists the rest.
 
 </Step>
 <Step>
 
 Fill in what the profile needs (see the table above):
 
-- **For TCP/IP**, enter the dongle's **Host / IP Address** and **Port**. It's worth giving the dongle a
+- **For a WiFi dongle**, enter the dongle's **Host / IP Address** and **Port**. It's worth giving the dongle a
   fixed address in your router so it doesn't change.
-- **For Bluetooth**, press **🔍 Scan** and pick the device, or type in its MAC address.
+- **For a Bluetooth dongle**, press **🔍 Scan** and pick the device, or type in its MAC address.
 - **Serial numbers:** Solarman sticks need the **Logger Serial Number**, and LuxPower needs both the
   **Dongle Serial** and the **Inverter Serial**. Type them exactly as they appear on the labels; upper
   and lower case matter.
@@ -70,7 +76,7 @@ things tidy when you have several inverters of the same kind.
 ## Bluetooth modules
 
 Some inverters come with a Bluetooth module that simply carries Modbus over Bluetooth, such as SRNE and
-Renogy-style BT modules. Set **Connection** to **Bluetooth**, pick the profile for your inverter, use
+Renogy-style BT modules. Add a **Bluetooth dongle**, pick the profile for your inverter, use
 **🔍 Scan** to find the module, and test.
 
 By default, Epilykos sends commands to the module on characteristic `ffd1` and listens for answers on
@@ -88,7 +94,7 @@ A few things to keep in mind:
 
 ## LuxPower
 
-LuxPower dongles connect over Wi-Fi (port 8000) or Bluetooth. Close the LuxCloud app before Epilykos
+LuxPower dongles connect over Wi-Fi (port 8000, a WiFi dongle) or Bluetooth (a Bluetooth dongle). Close the LuxCloud app before Epilykos
 connects, because the dongle may only let one client in at a time.
 
 The card has three LuxPower options. Start with the defaults and only change them if you need to:
