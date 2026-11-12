@@ -24,8 +24,19 @@ your devices. You'll need to be signed in to open it.
 | **Flow card** | Power flow, with an optional solar gauge |
 | **Flow square** | A square flow layout with a picture of your inverter |
 | **Flow square, alternate** | The same square layout without the inverter picture |
+| **Power flow** | Where the power comes from on the left (solar, and battery, grid or generator when they are active) and where it goes on the right (home, battery, grid export) |
 
 These use the power roles, or the metrics you pick on the card.
+
+### Power flow
+
+Solar and Home are always shown. **Battery**, **Grid** and **Generator** appear only while they are doing
+something: the battery on the left while it discharges and on the right while it charges, the grid on the
+left while you import and on the right while you export, and the generator on the left while it runs.
+A battery or generator you haven't set up never shows. In the card's settings you can turn the Grid,
+Generator, Battery-as-a-source and Grid-export entries off, rename the title (empty hides it) and pick the
+metric behind each value. The card fills whatever size you give it: rows, text and icons follow its height,
+and on very small cards the labels and title drop away instead of overlapping.
 
 ![The System topology card with made-up readings](/images/cards-system-topology.webp)
 
@@ -46,6 +57,13 @@ These use the power roles, or the metrics you pick on the card.
 **Grid status** needs a [grid status metric](/settings/prices-and-savings#grid-status),
 **Generator status** needs a [generator status metric or generator power](/settings/prices-and-savings#generator-status),
 and **Savings** needs the daily solar role plus your [prices](/settings/prices-and-savings).
+
+### Icons on value cards
+
+**Metric cards**, **Multi-value list** and **Text metric** can show an icon beside each value. Type an
+icon name (the field suggests names as you type, for example `solar-power` or `battery`), an emoji, or the
+address of an image (`https://…` or a path starting with `/`). Leave it empty and the tile looks as it
+always has. An image that fails to load is dropped, so a broken link never leaves an empty frame.
 
 ## Gauges and bars
 
