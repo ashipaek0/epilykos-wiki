@@ -67,11 +67,38 @@ energy from power. Each result becomes a new metric that you can use in roles an
 | **Energy today from power** | The kWh so far today, worked out from a power reading. Starts again at midnight. |
 | **Lifetime energy from power** | A kWh total that only ever goes up. You can give it a starting value to match a meter. |
 | **Today's increase of a counter** | How much a lifetime counter (such as total kWh) has gone up since midnight. |
+| **Average per day** | The average of a daily figure over the days on record, for any one metric. See [Average per day](#average-per-day). |
 | **Highest today** | The highest value so far today (inputs are added first, for example every PV string for the day's peak solar power). It starts again at midnight, so the last value of each day is that day's peak. Use it for the [Daily peak and Histogram cards](/dashboard/cards#charts-and-tables). It starts from when you save it; earlier days have no peak. |
 | **On/Off from a limit** | Turns one input into **On** or **Off**, depending on whether it is past a limit you choose. See [On/Off metrics](#onoff-metrics). |
 
 Sums and averages can be shown split into their parts on cards. Switch a combined metric off if you
 want it to stop being calculated.
+
+### Average per day
+
+**Average per day** answers questions like "what is my average daily load?" or "how much solar do I make on a
+typical day?". Pick one metric (solar, load, grid, battery, generator, a voltage, anything) and say what each
+day's figure is:
+
+| Each day's figure is | Use it for |
+| --- | --- |
+| **The day's total** | A reading that counts up through the day and starts again at midnight, such as an energy-today metric or an inverter's daily kWh. The highest value of each day is that day's total. |
+| **Energy from power (kWh)** | A power reading, such as load power or solar power. Each day's kWh is worked out from it, and you say whether the power is in W or kW. |
+| **The day's average** | A reading you want the typical value of, such as battery voltage or temperature. |
+| **The day's highest** | The peak of each day, such as the highest solar power. |
+
+Then choose **Average over** every day on record, or the last number of days you give, and whether to
+**Include today so far**.
+
+- It works from the history the app already keeps, so the figure is right as soon as you save it. There is
+  nothing to wait for, and it covers days from before you made the metric.
+- Only complete days count. Today is left out unless you ask for it, and so is the first day on record if
+  its readings began more than an hour after midnight.
+- A day with no readings is left out; it is not counted as zero. A day with readings that say 0 (a
+  generator that did not run) does count.
+- Energy from power counts only what was recorded, so a day with gaps in the readings counts a little less.
+- The result changes once a day (every ten minutes if you include today). The metrics list shows how many days
+  it covers. Use it in a role or on any card, like any other metric.
 
 ### On/Off metrics
 
