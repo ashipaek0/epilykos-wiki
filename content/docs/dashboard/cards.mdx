@@ -51,6 +51,9 @@ and on very small cards the labels and title drop away instead of overlapping.
 | **Text metric** | One metric's current value as text |
 | **Grid status** | Whether the grid is on or off, the hours, a 24-hour timeline, and optionally costs and hours per day |
 | **Status list** | A dot per device or circuit that lights while its metric says it is on |
+| **System hero** | A title, a headline and a status pill beside a picture, with words that follow rules |
+| **Flow rows** | A row per destination with a bar and its value, and a word such as Idle when it is not flowing |
+| **Meter card** | A big value with a segmented bar against a target, and up to two lines of words |
 | **Generator status** | Whether the generator is running or off, how long it has run, a 24-hour timeline, and optionally costs and hours per day |
 | **Day totals** | Today's energy to and from the grid, consumption and solar, compared with the forecast |
 | **Savings** | What you've saved today, this week, month, year and in total |
@@ -76,6 +79,7 @@ always has. An image that fails to load is dropped, so a broken link never leave
 | **Half gauge, centre zero** | Zero at the top, filling to the right, or to the left for negative values |
 | **Ring gauge** | Up to three concentric rings, each filling for a metric, with the first two read out in the middle |
 | **Battery** | A battery that fills to the charge, with a charge scale, a current marker and small readings below |
+| **Speedometer** | A dial with a needle, a tag that lights near today's peak, and a line of words under it |
 | **Bar gauge** | Bars for several metrics, in rows or columns |
 | **Bar gauge, segmented** | LED-style segmented bars for several metrics, in rows or columns |
 | **History bars** | One metric's history as coloured vertical bars |
@@ -114,11 +118,71 @@ are the English `{on} of {total} on`, `On` and `Off`.
 All three scale with the card, so they work at any size, and they take the same colour, transparency and glass settings
 as the other cards.
 
+### System hero
+
+A small title, a headline and a status pill beside a picture, such as an illustration of your house. The headline
+and the pill come from the **States**: each row has a rule, a headline and a pill text, and the first row whose rule is
+true wins. Rules are the same as on the Status list: **When it says on, or is above 0**, **When above the limit** or
+**When below the limit**. A row with no metric always applies, so put it last as the fallback, for example
+"Waiting for the sun". **Picture** is a web address or a path starting with `/`; a picture that fails to load is
+dropped, and a narrow card leaves it out. Each state can have its own pill colour.
+
+### Speedometer
+
+A dial with a needle for one metric between **Lowest** and **Highest**. The reading is in the middle, with the highest
+beside it ("4.20 kW of 6.40"). The highest can come from a metric, such as your system size, which replaces the
+number while it has a reading. Under the dial there is a **tag** and a **line of words**:
+
+- The tag shows while the reading is at least a share of today's peak (85% unless you change it). Pick a metric that
+  holds today's peak, for example a **Highest today** [combined metric](/settings/metrics). With no peak metric, or no
+  tag text, the tag never shows.
+- The line can hold `{value}`, `{max}`, `{peak}`, `{pct}` (the reading as a percentage of the highest) and the
+  [extra readings](#words-on-the-new-cards), for example `{pct}% of system size`.
+
+### Flow rows
+
+A row per destination (or source) of energy: its label, its value and a bar. A row below a small limit shows a word
+such as **Idle** instead of its value, and its bar stays empty. The limit is in watts for a W or kW reading and in the
+metric's own unit for any other. A bar fills against the row's own highest value, or against the largest row when
+that is empty, so the rows compare with each other. **Count only positive values** (or only negative) follows one
+direction of a reading that goes both ways, such as battery power: a row that shows only the charging.
+
+### Meter card
+
+A label, a big value and a bar under it, with up to two lines of words below. The bar can follow the value itself or
+another metric, and fills between **Empty at** and **Full at**; **Full at** can be a metric, such as the forecast for
+today. It is made of segments (set **Segments** to 0 for one continuous bar) and can turn red and amber below the
+percentages you set. **Before the value** puts a currency or other sign in front. The lines can hold `{value}`, `{max}`,
+`{pct}` (how full the bar is) and the extra readings.
+
+Some things this makes easy:
+
+- **Made today:** the value is the day's solar energy, **Full at** is the `forecast_solar_today` metric, and the line is
+  `~{max} expected today`.
+- **Saved today:** the value is the `savings_today` metric with the currency in **Before the value**. Make the bar follow
+  a percentage metric of your own, with the line `{pct}% from your own power`.
+- **Battery:** the value is the charge, red below 20 and amber below 50, with extra readings for the power, the energy
+  stored and the capacity, and the line `{a} · {b} of {c}`.
+
+### Words on the new cards
+
+Every word on these cards is yours to set, so none is tied to a language. Where a card has words it also has up to
+three **extra readings**, called `{a}`, `{b}` and `{c}` in the order you list them: a number, such as the count of
+panels producing, or a text metric. Put them in a headline or a line, for example `All {a} panels producing`. An extra
+reading can put a `+` before a positive value, which suits a power that is charging when positive. A word that holds
+something else in braces is left as you wrote it. Speedometer, Flow rows and Meter card have a **Decimals** setting
+(0 to 3); left empty, the number of decimals follows the size of the value, as on the other cards.
+
 ### Remaining solar today
 
 Epilykos keeps a metric called `forecast_solar_remaining` (kWh): what is still expected from the forecast for the rest
 of today, counting the half hour in progress for the part that is left. Use it on a Metric card or a Text metric
 card for "Remaining solar today".
+
+Two more metrics are kept for these cards. `forecast_solar_today` (kWh) is what the forecast expects over the whole of
+today, for "of the expected" bars; it is worked out from a forecast that still has the morning in it, and kept
+through the day. `savings_today` is today's savings in the currency you set under
+[prices and savings](/settings/prices-and-savings), the same figure as the Savings card's today.
 
 The two bar gauges have a **Bars** section in their settings:
 
