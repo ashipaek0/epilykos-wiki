@@ -185,7 +185,7 @@ something else in braces is left as you wrote it. Speedometer, Flow rows and Met
 
 For a prepaid electricity meter: the units (kWh) left in big type, a bar of segments against the last recharge, the
 days left at your recent average, and four facts (used today, average a day, used since the last recharge, the price
-of the last recharge). It turns amber from the warning level you set and red when the meter is out. Tracking is set up
+of the last recharge). It turns red from the warning level you set, and when the meter is out. Tracking is set up
 under [Settings → Prepaid meter](/settings/prepaid-meter); until then the card shows a note.
 
 When you are signed in the card also has the buttons **Record recharge** and **Correct balance**, which only record
@@ -200,10 +200,12 @@ there is none. **Segments** and **Decimals** work as on the Meter card.
 
 ### Prepaid meter on the Grid card
 
-The [Grid status card](#values) can show the balance as one extra strip under everything else: **Show the prepaid
-meter balance on this card** in its settings. It shows the units left, the days left and a bar, and only while
-tracking is on and has a balance. The words are settings too, `{balance}`, `{days}` and `{avg}` stand for the numbers.
-With the option off, or tracking off, the card is as it always was.
+The [Grid status card](#values) can show the balance as plain text at its top right, level with the date: the units left,
+and under it the days left ("178 units left", "≈ 50 days at 3.5 units a day"). Turn on **Show the prepaid meter balance
+on this card** in its settings. There is no bar. The text is quiet while all is well, turns red from the warning level
+you set in [Settings → Prepaid meter](/settings/prepaid-meter), and reads "Out of units" in red at 0. It only appears
+while tracking is on and has a balance. The words are settings too: `{balance}`, `{days}` and `{avg}` stand for the
+numbers. With the option off, or tracking off, the card is as it always was.
 
 ### Remaining solar today
 
