@@ -50,6 +50,7 @@ and on very small cards the labels and title drop away instead of overlapping.
 | **Multi-value list** | Rows of labels, values and units |
 | **Text metric** | One metric's current value as text |
 | **Grid status** | Whether the grid is on or off, the hours, a 24-hour timeline, and optionally costs and hours per day |
+| **Status list** | A dot per device or circuit that lights while its metric says it is on |
 | **Generator status** | Whether the generator is running or off, how long it has run, a 24-hour timeline, and optionally costs and hours per day |
 | **Day totals** | Today's energy to and from the grid, consumption and solar, compared with the forecast |
 | **Savings** | What you've saved today, this week, month, year and in total |
@@ -73,6 +74,8 @@ always has. An image that fails to load is dropped, so a broken link never leave
 | **Configurable gauge** | A dial you can configure fully, with coloured bands and history |
 | **Half gauge** | One value on a semicircle |
 | **Half gauge, centre zero** | Zero at the top, filling to the right, or to the left for negative values |
+| **Ring gauge** | Up to three concentric rings, each filling for a metric, with the first two read out in the middle |
+| **Battery** | A battery that fills to the charge, with a charge scale, a current marker and small readings below |
 | **Bar gauge** | Bars for several metrics, in rows or columns |
 | **Bar gauge, segmented** | LED-style segmented bars for several metrics, in rows or columns |
 | **History bars** | One metric's history as coloured vertical bars |
@@ -80,6 +83,39 @@ always has. An image that fails to load is dropped, so a broken link never leave
 | **Threshold bar** | One value against coloured bands |
 
 These work with any metric.
+
+### Ring gauge
+
+Pick up to three metrics. Each gets a ring, the first on the outside, and fills from the **lowest** to the
+**highest** value you give it, so a 5 kW array wants a highest of 5000 (W). The first two metrics are read out in the
+middle, with their labels; a third is listed under the dial. An optional icon (an icon name, an emoji or an image
+address) sits above the first reading, and **Show the empty ring behind each one** turns the faint track on or off.
+Each ring has its own colour. A typical set is solar on the outer ring and consumption inside it.
+
+### Battery
+
+The battery fills to the **charge** metric, with a 0 to 100% scale beside it and the charge in big type below.
+The fill is red at or below one limit (20% by default), amber at or below another (50%) and green above, or one
+colour of your own. Give it a **current** metric and a marker on a vertical track shows the battery charging
+(above zero) or discharging (below), with the amps under the charge; **Marker range** sets what the ends of the
+track mean, 100 A by default. Up to four **small readings** run along the bottom, for example the inside and
+outside temperature.
+
+### Status list
+
+One row per device, circuit or appliance, each with a metric. A row's dot lights while it is on: the metric says
+on (or true, yes, active, running), or is above 0. For a power reading choose **On when above the limit**, such as a
+boiler above 50 W. **Show how many are on** adds "3 of 6 on" to the title, and **Show each row's value** puts the
+reading beside the name. A row with no reading yet shows an empty dot. Each row can have its own dot colour.
+
+All three scale with the card, so they work at any size, and they take the same colour, transparency and glass settings
+as the other cards.
+
+### Remaining solar today
+
+Epilykos keeps a metric called `forecast_solar_remaining` (kWh): what is still expected from the forecast for the rest
+of today, counting the half hour in progress for the part that is left. Use it on a Metric card or a Text metric
+card for "Remaining solar today".
 
 The two bar gauges have a **Bars** section in their settings:
 
