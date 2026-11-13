@@ -1,0 +1,68 @@
+---
+title: Prepaid meter
+description: Keep a running balance of the units on a prepaid electricity meter.
+icon: Zap
+---
+
+**Settings → Prepaid meter** is for a grid supply on a prepaid meter, where a token adds units to the meter and the
+meter counts them down. One unit is one kWh. It is off by default: until you switch it on, nothing appears on the
+dashboard, nothing is counted and nothing is stored.
+
+## What Epilykos does, and what you do
+
+Epilykos cannot buy a token, load one, or read the meter. It has no connection to either. You do those things by hand,
+and the buttons only **record** what you did:
+
+- **Record recharge**: after you have bought and loaded a token, enter the units it gave. You can also enter what you
+  paid, and the price per unit is worked out.
+- **Correct balance**: read the number off the meter and type it in. You can do this at any time, whenever the
+  estimate has drifted from the meter. Epilykos sets the balance to your number, and it can learn from the difference.
+- **Undo last entry**: takes back the latest recharge or correction, if you entered it by mistake.
+
+Between those, Epilykos works out the balance itself. It takes the grid energy it measures off the balance:
+
+> balance = last reading you gave + units you recorded since − grid energy used since
+
+The first time, enter what the meter shows now (**Set the balance**) so there is a number to count down from.
+
+## What it counts
+
+The energy comes from the **daily grid import** counter (the metric mapped to that role on the
+[Metrics](/settings/metrics) page). If there is no such counter, it uses the grid import power instead. If neither is
+mapped, the page says so.
+
+The meter and your inverter never agree exactly, so the balance is an estimate. When you correct it, Epilykos can use
+the difference to work out how much the meter counts for each kWh it measures, so later estimates drift less. The
+page shows what the last correction found, and the box **Use this to improve later estimates** in the dialog turns
+that off for one correction.
+
+## Warnings
+
+Both are optional:
+
+- **Warn when units left fall to**: a number of kWh.
+- **Warn when days left fall to**: days left is the balance divided by your average grid use over the last 7 days.
+
+When the balance reaches either level, Epilykos raises the event **Prepaid meter low**, and **Prepaid meter out of
+units** when it reaches 0. They do nothing until you add an [event rule](/settings/notifications) for them, so you choose
+where the message goes. Each is sent once, not on every poll, and again after the next recharge.
+
+## Who can see the balance
+
+The dashboard can be seen without signing in, so you choose:
+
+- **Everyone who can see the dashboard** (the default): the balance, days left and what was used are shown on the cards,
+  and published as metrics.
+- **Only me, when signed in**: the balance is kept out of the published metrics, and the cards show nothing to anyone
+  who is not signed in. Other cards and charts cannot show the balance either.
+
+Recharges, corrections, the list of entries and these settings always need you to be signed in, whichever you pick.
+
+## Where it shows
+
+- The [Prepaid meter card](/dashboard/cards#prepaid-meter): the units left, a bar, days left, facts, the latest entries and the buttons.
+- An optional strip on the [Grid status card](/dashboard/cards#prepaid-meter-on-the-grid-card).
+- The metrics `prepaid_balance` (kWh), `prepaid_days_left`, `prepaid_used_since_recharge` (kWh) and
+  `prepaid_cost_per_unit`, which any other card, chart or notification can use (unless the balance is private).
+
+The entries are kept like your other settings, so a backup and restore keeps them.

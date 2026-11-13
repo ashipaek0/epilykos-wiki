@@ -50,6 +50,7 @@ and on very small cards the labels and title drop away instead of overlapping.
 | **Multi-value list** | Rows of labels, values and units |
 | **Text metric** | One metric's current value as text |
 | **Grid status** | Whether the grid is on or off, the hours, a 24-hour timeline, and optionally costs and hours per day |
+| **Prepaid meter** | The units left on a prepaid electricity meter, days left, and buttons to record a recharge or correct the balance |
 | **Status list** | A dot per device or circuit that lights while its metric says it is on |
 | **System hero** | A title and a headline over a picture, with a status pill under it, all following rules |
 | **Flow rows** | A row per destination with a bar and its value, and a word such as Idle when it is not flowing |
@@ -179,6 +180,30 @@ panels producing, or a text metric. Put them in a headline or a line, for exampl
 reading can put a `+` before a positive value, which suits a power that is charging when positive. A word that holds
 something else in braces is left as you wrote it. Speedometer, Flow rows and Meter card have a **Decimals** setting
 (0 to 3); left empty, the number of decimals follows the size of the value, as on the other cards.
+
+### Prepaid meter
+
+For a prepaid electricity meter: the units (kWh) left in big type, a bar of segments against the last recharge, the
+days left at your recent average, and four facts (used today, average a day, used since the last recharge, the price
+of the last recharge). It turns amber from the warning level you set and red when the meter is out. Tracking is set up
+under [Settings → Prepaid meter](/settings/prepaid-meter); until then the card shows a note.
+
+When you are signed in the card also has the buttons **Record recharge** and **Correct balance**, which only record
+what you did by hand: Epilykos cannot buy a token or read the meter. **Undo last** takes back the latest entry. **Show
+the latest entries** adds a short history, shown with symbols and numbers only (`+` for a recharge, `=` for a
+correction). A short card gives up the entries first, then the facts. Everyone else sees only the figures, or nothing
+at all if you chose to keep the balance private.
+
+Every word is yours to set (the labels, the days-left line, the messages), with the English words as the default. The
+days-left line can hold `{days}`, `{avg}` and `{date}`; a part of it after a `·` that needs the date is left out when
+there is none. **Segments** and **Decimals** work as on the Meter card.
+
+### Prepaid meter on the Grid card
+
+The [Grid status card](#values) can show the balance as one extra strip under everything else: **Show the prepaid
+meter balance on this card** in its settings. It shows the units left, the days left and a bar, and only while
+tracking is on and has a balance. The words are settings too, `{balance}`, `{days}` and `{avg}` stand for the numbers.
+With the option off, or tracking off, the card is as it always was.
 
 ### Remaining solar today
 
