@@ -47,7 +47,7 @@ On Docker, `docker compose logs -f` shows the same log from the computer itself.
 | Savings look too low after choosing a generator option | The generator price is still 0; set it in [Prices and savings](/settings/prices-and-savings). |
 | The generator is missing from charts and costs | Map **Generator power** and **Daily generator energy** in [Metric roles](/settings/metrics#metric-roles). |
 | Daily totals roll over at the wrong time | The time zone is wrong. On Docker, set `TZ` or mount `/etc/localtime` (the first log lines show the active time zone). On EpilykosOS, use **Settings → System → Time and storage**. |
-| The battery percentage jumps around | If your inverter guesses the charge from the voltage, try the [battery estimate](/settings/metrics#battery-estimate). |
+| The battery percentage jumps around | If your inverter guesses the charge from the voltage, try the [Virtual Battery](/settings/virtual-battery). |
 
 ## Modbus
 

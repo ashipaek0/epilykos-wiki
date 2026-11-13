@@ -3,6 +3,7 @@
   "icon": "Settings",
   "pages": [
     "metrics",
+    "virtual-battery",
     "forecast-and-weather",
     "prices-and-savings",
     "prepaid-meter",

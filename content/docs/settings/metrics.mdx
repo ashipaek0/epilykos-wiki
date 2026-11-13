@@ -1,6 +1,6 @@
 ---
 title: Metrics
-description: Metric roles, the battery estimate, combined metrics and the list of every reading.
+description: Metric roles, combined metrics and the list of every reading.
 icon: Gauge
 ---
 
@@ -18,36 +18,6 @@ them in for you, and you can adjust them here at any time.
 
 [Core concepts](/getting-started/core-concepts#metric-roles) lists every role with typical metric
 names.
-
-## Battery estimate
-
-Some inverters have no link to the battery's BMS, so the battery percentage they show is only a guess
-based on voltage. If yours is one of them, Epilykos can keep a better count itself: it tracks the
-current flowing in and out of the battery through every inverter, and resets the charge to 100% each
-time the battery is full.
-
-Switch on **Count the battery's charge**, then fill in:
-
-| Field | What to enter |
-| --- | --- |
-| **Type** | The battery chemistry (LiFePO4 unless you choose otherwise). |
-| **System voltage** | 12, 24 or 48 V. Epilykos tells you what your inverters report. |
-| **Capacity (Ah)** | The whole bank, at the system voltage: two 200 Ah packs in parallel make 400 Ah. |
-| **Charge efficiency** | How much of the charge actually stays in the battery, from 0.5 to 1. |
-| **Cells in series** | Leave it empty to use the usual number for your voltage, or set it for other packs, such as 15 for some 48 V LiFePO4 batteries. |
-| **Battery current (+ while charging)** | The metric with the battery current, positive while charging. |
-| **Battery voltage** | The metric with the battery voltage. With more than one inverter, list them all, separated by commas, and they're averaged. |
-
-**Recognising a full battery:** set **Full at or above (V)**, **With the current settled within (A)**
-(meaning charging has tapered off to this or less) and **For (minutes)**. When all three are true at
-once, the charge is reset to 100%.
-
-**Resetting at low voltage** (optional): if the voltage drops to **Low voltage at or below (V)** while
-the load is light, the charge is set to **Means a charge of (%)**.
-
-You can also set the charge by hand. When the estimate first starts, it takes its starting point from
-the battery voltage. Switch on **Use it as Battery %** to have the estimate fill the battery SOC role
-in place of your inverter's own figure.
 
 ## Combined metrics
 

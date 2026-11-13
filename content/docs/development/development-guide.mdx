@@ -55,7 +55,7 @@ Sources ──► metric queue ──► one SQLite transaction ──► dashbo
 ```
 
 - **The polling cycle** (`services/PollingManager.js`) runs every 30 seconds and visits Home
-  Assistant, Modbus, Tuya, RS232, the battery estimate, combined metrics, history and grid status, in
+  Assistant, Modbus, Tuya, RS232, the virtual battery, combined metrics, history and grid status, in
   that order. Each one runs inside its own circuit breaker (`modules/circuitBreaker.js`): after five
   failures in a row the breaker opens, and it tries again 60 seconds later.
 - **Other sources keep their own time.** Dongles and Bluetooth devices are read at their own
