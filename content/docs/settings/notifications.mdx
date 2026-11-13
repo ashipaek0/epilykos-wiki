@@ -127,6 +127,8 @@ such as `source.*`:
 | `forecast.unavailable` | Solcast (for example because its daily allowance ran out) or Open-Meteo couldn't be reached. |
 | `backup.snapshot_failed` | The daily database snapshot couldn't be written. |
 | `backup.snapshot_overdue` | There's no recent automatic snapshot. |
+| `prepaid.low` | The [prepaid meter](/settings/prepaid-meter) balance fell to a warning level you set (units left, or days left). Sent once. |
+| `prepaid.out` | The prepaid meter balance reached 0. |
 | `update.available` | A newer Epilykos build is out. You're told once per build. |
 | `system.started` | Epilykos started, after an update, a reboot or a crash. |
 
