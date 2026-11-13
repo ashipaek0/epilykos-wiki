@@ -98,7 +98,7 @@ The battery fills to the **charge** metric, with a 0 to 100% scale beside it and
 The fill is red at or below one limit (20% by default), amber at or below another (50%) and green above, or one
 colour of your own. Give it a **current** metric and a marker on a vertical track shows the battery charging
 (above zero) or discharging (below), with the amps under the charge; **Marker range** sets what the ends of the
-track mean, 100 A by default. Up to four **small readings** run along the bottom, for example the inside and
+track mean, 100 A by default. The marker's labels and the amps use the unit of the current metric. Up to four **small readings** run along the bottom, for example the inside and
 outside temperature.
 
 ### Status list
@@ -107,6 +107,9 @@ One row per device, circuit or appliance, each with a metric. A row's dot lights
 on (or true, yes, active, running), or is above 0. For a power reading choose **On when above the limit**, such as a
 boiler above 50 W. **Show how many are on** adds "3 of 6 on" to the title, and **Show each row's value** puts the
 reading beside the name. A row with no reading yet shows an empty dot. Each row can have its own dot colour.
+Every word on the card is yours to set: the **count line** (write `{on}` and `{total}` where the numbers go, for
+example `{on} / {total} aktív`), and the words for **on** and **off** shown by a row that only says on or off. Left empty they
+are the English "{on} of {total} on", "On" and "Off".
 
 All three scale with the card, so they work at any size, and they take the same colour, transparency and glass settings
 as the other cards.
