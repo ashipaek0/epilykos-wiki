@@ -49,6 +49,43 @@ requests a day and keeps you within the free plan.
 
 Press **Test forecast** to check that it all works.
 
+### Solcast weather and irradiance
+
+Along with the solar forecast, Epilykos can ask Solcast for its weather and irradiance forecast for the
+same days. That's one extra request each time the forecast refreshes. Turn it off with **Also fetch Solcast
+weather and irradiance**. It's on by default, and it needs a Solcast plan that includes it. If your plan
+doesn't, the solar forecast carries on as before and the weather request is tried again once a day.
+
+What you get, for every half hour:
+
+- **Sun:** global, direct and diffuse irradiance (GHI, DNI, DHI) and tilted irradiance (GTI), each with a low
+  and high estimate, and the same for a clear sky.
+- **Sky:** cloud cover (with a low and high estimate), sun height and direction, and ground reflectivity.
+- **Air:** temperature (with the day's low and high), dew point, humidity, pressure and the water in the air.
+- **Wind:** speed at 10 m and 100 m, direction at both heights, and gusts.
+- **Rain and snow:** rain rate, snowfall rate, snow depth, snow water content, and how much snow is on the
+  panels and the ground.
+- **Other:** storm energy (CAPE), a weather type and air quality (PM2.5 and PM10).
+
+Where it shows up:
+
+- The **weather card** uses Solcast's own temperature, humidity, wind, gusts, cloud, rain, pressure and
+  irradiance for now, and lists direct and diffuse sun, dew point, water in the air, snow depth, storm
+  energy and air quality when Solcast sent them.
+- Each of the next days in the forecast also gets its lowest and highest temperature, rain total, strongest
+  wind and gust, average cloud, irradiance total and snowfall.
+- Every value for the current half hour is also kept as a metric named **solcast_** followed by the value
+  (for example `solcast_ghi`, `solcast_air_temp`, `solcast_wind_gust`, `solcast_pv_estimate`). Use them on any
+  card, in a chart, a notification or a [combined metric](/settings/metrics#combined-metrics).
+
+### Requests per day
+
+**Solcast requests per day** is what your plan allows each UTC day: 10 for a hobbyist account. Every request
+Epilykos makes to Solcast is counted. The solar forecast refreshes every 3 hours and always comes first. The
+weather request is made only when the day's allowance leaves room for the forecasts still due, so on a
+10-request plan you get the weather a couple of times a day and the forecast is never starved. A larger plan
+gets the weather with every refresh.
+
 ## When the forecast isn't available
 
 If Solcast's daily allowance runs out, or a provider can't be reached, Epilykos raises the **Solar
