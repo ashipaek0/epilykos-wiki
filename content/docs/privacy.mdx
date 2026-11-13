@@ -1,0 +1,63 @@
+---
+title: Privacy
+description: What Epilykos does and does not do with your data, including backups to Google Drive.
+icon: Shield
+---
+
+Epilykos is software you run yourself, on your own box or server. The project does not run a service that
+your readings are sent to, has no user accounts, and receives none of your data.
+
+*Last updated: 13 November 2026.*
+
+## What stays on your box
+
+Your readings, history, settings, layouts, saved passwords and tokens are stored in a database on the
+device where you installed Epilykos. They are not sent to the Epilykos project or to anyone else unless you
+choose to connect a service, as described below.
+
+## Services you choose to connect
+
+Epilykos talks to a service only when you set one up, and sends it only what that service needs. For
+example, your Solcast key and rooftop details go to Solcast for a forecast, a Telegram bot token goes to
+Telegram to send you a message, and your Home Assistant address and token go to your Home Assistant. Each of
+these is governed by that service's own privacy policy.
+
+Epilykos also checks for new versions from the project's public update feed. That request carries no
+personal data from your box, though the host of the feed (GitHub) sees it as it would any web request.
+
+The dashboard and settings pages load their fonts, scripts and styles from the box itself, and Epilykos
+includes no advertising or analytics trackers.
+
+## Backups to other places
+
+Epilykos can send a backup of your database to a folder you choose, and, if you connect it, to Google Drive.
+
+- **The copy is locked on your box before it leaves.** Epilykos encrypts the whole file with a passphrase
+  you choose. The passphrase is not sent anywhere and is not part of the file, so the storage provider sees
+  only encrypted data and the project cannot read it.
+- **Only the files Epilykos creates.** When you connect Google Drive, Epilykos asks for the permission that
+  lets it see only files it creates itself, in a folder called Epilykos. It cannot see, read or change any
+  of your other Drive files.
+- **What it does with Google Drive.** It uploads the encrypted backup, lists the backups in that folder so
+  you can restore one, downloads one when you restore, and deletes older backups to keep the number you
+  chose. It does nothing else with your Google account.
+- **Where the sign-in is kept.** The token Google gives your box is stored on your box, locked with the
+  box's own key. It is never sent to the project.
+- **No sharing and no advertising.** Information from your Google account is not shared with anyone,
+  not sold, and not used for advertising, profiling or to train any model.
+- **Stopping.** Switch the backup off in **Settings → Backup and restore** to stop all uploads. To
+  withdraw Epilykos's access to your Google account, remove it at
+  [myaccount.google.com/permissions](https://myaccount.google.com/permissions), then delete the Epilykos
+  folder in Drive if you no longer want the copies.
+
+## Your control
+
+You can export or delete your data at any time. A backup file is the whole database, and deleting the
+database or uninstalling Epilykos removes everything it holds. Nothing is retained by the project, because
+the project never receives it.
+
+## Contact and changes
+
+Questions about privacy can be raised as an issue on the
+[Epilykos project on GitHub](https://github.com/ashipaek0/Epilykos/issues). If this page changes, the date
+above changes with it.
