@@ -51,7 +51,7 @@ and on very small cards the labels and title drop away instead of overlapping.
 | **Text metric** | One metric's current value as text |
 | **Grid status** | Whether the grid is on or off, the hours, a 24-hour timeline, and optionally costs and hours per day |
 | **Status list** | A dot per device or circuit that lights while its metric says it is on |
-| **System hero** | A title, a headline and a status pill beside a picture, with words that follow rules |
+| **System hero** | A title and a headline over a picture, with a status pill under it, all following rules |
 | **Flow rows** | A row per destination with a bar and its value, and a word such as Idle when it is not flowing |
 | **Meter card** | A big value with a segmented bar against a target, and up to two lines of words |
 | **Generator status** | Whether the generator is running or off, how long it has run, a 24-hour timeline, and optionally costs and hours per day |
@@ -79,7 +79,7 @@ always has. An image that fails to load is dropped, so a broken link never leave
 | **Half gauge, centre zero** | Zero at the top, filling to the right, or to the left for negative values |
 | **Ring gauge** | Up to three concentric rings, each filling for a metric, with the first two read out in the middle |
 | **Battery** | A battery that fills to the charge, with a charge scale, a current marker and small readings below |
-| **Speedometer** | A dial with a needle, a tag that lights near today's peak, and a line of words under it |
+| **Speedometer** | A dial with a needle, a status in plain text that follows rules (such as near today's peak), and a line of words under it |
 | **Bar gauge** | Bars for several metrics, in rows or columns |
 | **Bar gauge, segmented** | LED-style segmented bars for several metrics, in rows or columns |
 | **History bars** | One metric's history as coloured vertical bars |
@@ -120,32 +120,39 @@ as the other cards.
 
 ### System hero
 
-A small title, a headline and a status pill beside a picture, such as an illustration of your house. The headline
-and the pill come from the **States**: each row has a rule, a headline and a pill text, and the first row whose rule is
-true wins. Rules are the same as on the Status list: **When it says on, or is above 0**, **When above the limit** or
-**When below the limit**. A row with no metric always applies, so put it last as the fallback, for example
-"Waiting for the sun". **Picture** is a web address or a path starting with `/`; a picture that fails to load is
-dropped, and a narrow card leaves it out. Each state can have its own pill colour.
+A small title and a headline over a picture, such as an illustration of your house, with a status pill under it: a
+dark pill with a dot in the state's colour. The headline and the pill come from the **States**: each row has a rule, a
+headline and a pill text, and the first row whose rule is true wins. Rules are the same as on the Status list:
+**When it says on, or is above 0**, **When above the limit** or **When below the limit**. A row with no metric always
+applies, so put it last as the fallback, for example "Waiting for the sun". **Picture** is a web address or a path
+starting with `/`; a picture that fails to load is dropped. **Layout** puts the picture under the words (the default) or
+beside them; a card too short for the picture under the words is drawn side by side, and a narrow side-by-side card
+leaves the picture out. Each state can have its own dot colour.
 
 ### Speedometer
 
-A dial with a needle for one metric between **Lowest** and **Highest**. The reading is in the middle, with the highest
-beside it ("4.20 kW of 6.40"). The highest can come from a metric, such as your system size, which replaces the
-number while it has a reading. Under the dial there is a **tag** and a **line of words**:
+A dial for one metric between **Lowest** and **Highest**, with both written at the ends of the arc. The reading is
+in the middle, with the highest beside it ("4.20 kW of 6.40"). The highest can come from a metric, such as your system
+size, which replaces the number while it has a reading. There are two lines of words:
 
-- The tag shows while the reading is at least a share of today's peak (85% unless you change it). Pick a metric that
-  holds today's peak, for example a **Highest today** [combined metric](/settings/metrics). With no peak metric, or no
-  tag text, the tag never shows.
-- The line can hold `{value}`, `{max}`, `{peak}`, `{pct}` (the reading as a percentage of the highest) and the
-  [extra readings](#words-on-the-new-cards), for example `{pct}% of system size`.
+- A **status** in plain text at the right of the title row. It follows the first of its rules that is true, so it can
+  say "Near today's peak" at that moment and something else the rest of the day. A rule is **Near today's peak** (the
+  reading is at least a share of the peak, 85% unless you change it), **At or above** or **Below** a share of the
+  highest value, or **Always**, the fallback to put last. For the peak, pick a metric that holds today's peak, for
+  example a **Highest today** [combined metric](/settings/metrics); without one, the near-peak rule is never true.
+- A **line under the dial**, with the percentage in the accent colour, for example `{pct}% of system size`.
+
+Both can hold `{value}`, `{max}`, `{peak}`, `{pct}` (the reading as a percentage of the highest) and the
+[extra readings](#words-on-the-new-cards).
 
 ### Flow rows
 
-A row per destination (or source) of energy: its label, its value and a bar. A row below a small limit shows a word
-such as **Idle** instead of its value, and its bar stays empty. The limit is in watts for a W or kW reading and in the
-metric's own unit for any other. A bar fills against the row's own highest value, or against the largest row when
-that is empty, so the rows compare with each other. **Count only positive values** (or only negative) follows one
-direction of a reading that goes both ways, such as battery power: a row that shows only the charging.
+A row per destination (or source) of energy, on one line: its label, a bar and its value. A row below a small limit
+shows a word such as **Idle** instead of its value, and its bar shrinks to a short grey stub. The limit is in watts for
+a W or kW reading and in the metric's own unit for any other. A bar fills against the row's own highest value, or
+against the largest row when that is empty, so the rows compare with each other. The first three bars are in the
+accent colour, the text colour and grey unless you pick colours. **Count only positive values** (or only negative)
+follows one direction of a reading that goes both ways, such as battery power: a row that shows only the charging.
 
 ### Meter card
 
