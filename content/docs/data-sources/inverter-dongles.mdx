@@ -113,6 +113,22 @@ BMS values, the arc-fault (AFCI) readings, and the inverter's settings, from its
 protection limits to its charging, discharging and export settings and battery alarms. Fetch the
 profile's entities on the dongle card and map the ones you want.
 
+### Inverter clock
+
+Both LuxPower profiles read the inverter's own clock. Fetch the profile's entities and you will find two
+extra ones beside the raw clock registers:
+
+| Entity | What it shows |
+| --- | --- |
+| **Inverter Time** | The inverter's date and time as text, for example `2026-11-13 14:05:09` |
+| **Inverter Clock Skew (ahead of the server)** | The difference in seconds between the inverter's clock and the clock of the computer running Epilykos |
+
+A positive skew means the inverter is ahead of the server; a negative one means it is behind. The inverter
+has no time zone of its own, so Epilykos reads its clock as local time in the server's time zone, and
+switches between summer and winter time with the server. A clock that has drifted matters because the
+inverter's charge and discharge time windows run on its own clock. Map the skew to a metric and add a
+[metric rule](/settings/notifications) if you want a warning when it drifts, with one rule above a minute or two and another below the same value as a negative number.
+
 You can change the battery charge limits, the charging and discharging currents and power limits,
 export to the grid, the grid charging, charge-first and forced-discharge settings and their time
 windows, and the output priority from the [Controls page](/dashboard/controls).
@@ -170,5 +186,20 @@ To connect to the same inverter with a cable instead, see
 | Checksum mismatch | The serial number is wrong | Type it exactly as it appears on the sticker; upper and lower case matter. |
 | No data | The wrong profile is selected | Pick the profile for your inverter: a Solarman stick is not a Felicity TCP dongle. |
 | Bluetooth device not found | It's out of range, or the manufacturer's app is connected | Move the adapter closer, close the app, and scan again. |
+| LuxPower dongle connects on port 8000, then resets | Another client holds the dongle, or the dongle has lost its network settings | See [LuxPower dongle connects and then resets](#luxpower-dongle-connects-and-then-resets) below. |
+
+### LuxPower dongle connects and then resets
+
+If the connection opens on port 8000 and the dongle drops it straight away, work through these in order:
+
+1. **Stop every other client.** The dongle serves one connection at a time. Close the LuxCloud app, turn off the Home Assistant LuxPower integration and any other tool that reads the same dongle, then wait a minute.
+2. **Check the Wi-Fi security on the dongle.** In the dongle's own web page, make sure the Wi-Fi encryption (E-WIFI ENC) matches your router. A mismatch can make it connect and then drop.
+3. **Reserve the dongle's IP address.** Give it a fixed address in your router (a DHCP reservation) so the address in Epilykos doesn't go stale.
+4. **Check both serial numbers.** Type the dongle serial and the inverter serial exactly as printed on their labels, 10 characters each.
+5. **Cold-start the dongle.** Switch the inverter's Wi-Fi dongle off, leave it for about 30 seconds, and plug it back in.
+
+If it still resets, try changing **Local Wi-Fi security** on the dongle card to **Require TLS-PSK** or
+**Try TLS, allow plain fallback**. Some newer dongle firmware wants it; we have not confirmed that it fixes
+this problem, so treat it as something to try, not a known fix.
 
 There's more in [Troubleshooting](/troubleshooting).
