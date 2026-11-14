@@ -52,6 +52,48 @@ If a snapshot fails, or there hasn't been a recent one, Epilykos raises the **Au
 failed** or **Automatic snapshot overdue** event; you can choose to be told in
 [Notifications](/settings/notifications).
 
+## Remote backup
+
+A backup that stays on the same card or disk does not help if the card fails or the box is stolen.
+**Remote backup** sends an encrypted copy of your latest snapshot to somewhere else, every week by
+default. It's off until you switch it on.
+
+Choose a **folder on this box**: a USB drive, a network share you have mounted, or a folder you mapped
+into Docker as a volume. Mount the drive first. Epilykos creates only the last folder of the path, so a
+drive that isn't mounted can't fill the card by accident. **Test folder** checks that it can write there,
+and warns you if the folder is on the same disk as Epilykos's own data. More destinations, starting with
+Google Drive, are planned.
+
+| Setting | What it does |
+| --- | --- |
+| **Passphrase** | Required. It locks the whole copy, history included, before it's written, so whoever holds the drive sees only noise. At least 8 characters. |
+| **How often** | Weekly or daily. Scheduled uploads start between 01:00 and 06:00. |
+| **Copies to keep** | 1, 2 or 4. A new copy is checked before an older one is deleted, so the folder briefly holds one more than you chose. |
+
+When you save a new passphrase, Epilykos asks you to confirm that you have kept it.
+
+<Callout type="warn" title="The passphrase can't be recovered">
+  It's stored on the box, locked with the box's key, but it isn't stored anywhere else. If you lose
+  both the box and the passphrase, the copies can't be opened by anyone. Keep it somewhere other than
+  the box. Changing it later doesn't re-lock older copies: they keep the passphrase they were made with
+  until newer copies replace them.
+</Callout>
+
+Once it's switched on you'll see when the last copy was sent, when the next one is due, and the copies
+held at the destination. Each copy has two buttons:
+
+- **Check copy** confirms the passphrase opens the copy and that its start is intact, without restoring anything.
+- **Restore…** downloads it, unlocks it and replaces everything on this box with it, like restoring a snapshot. Leave the passphrase empty to use the saved one, or type the one the copy was made with.
+
+**Back up now** takes a fresh snapshot and sends it straight away. If a copy fails, the earlier one stays
+where it is, Epilykos tries again after 30 minutes, then less often, and raises **Remote backup failed**
+(and **Remote backup overdue** if it goes much longer than your schedule). You can be told in
+[Notifications](/settings/notifications).
+
+Each upload is a full copy of your snapshot, because encrypted data can't be sent as changes. Check the
+size of your latest snapshot in **Automatic snapshots** and choose weekly if your connection is slow or
+metered.
+
 ## Database health
 
 **Database health and backups** shows when you last downloaded a backup, and the result of the last
