@@ -58,7 +58,7 @@ A backup that stays on the same card or disk does not help if the card fails or 
 **Remote backup** sends an encrypted copy of your latest snapshot to somewhere else, every week by
 default. It's off until you switch it on.
 
-Choose **Where to send it**:
+Choose **Where to send it**: a folder, a WebDAV server or Google Drive.
 
 - **Folder or drive on this box:** a USB drive, a network share you have mounted, or a folder you mapped
   into Docker as a volume. Mount the drive first. Epilykos creates only the last folder of the path, so a
@@ -86,7 +86,28 @@ yourself, paste its SHA-256 fingerprint in **Certificate fingerprint**. Only tha
 trusted, and a different one is refused. Find the fingerprint in your browser's certificate details, or run
 `openssl x509 -in cert.pem -noout -fingerprint -sha256`. Leave it empty for a normal https address.
 
-More destinations, starting with Google Drive, are planned.
+**Google Drive.** Choose **Google Drive** and press **Connect Google Drive…**. Epilykos shows a short code
+and an address. On any phone or computer, open the address, sign in to Google and enter the code; Epilykos
+waits and finishes by itself, so nothing needs to reach your box from the internet. Backups go in a folder
+called **Epilykos** in your Drive, which you can see and delete yourself.
+
+Epilykos asks Google for one permission only: to see and manage **the files it creates itself**. It can't
+see your other files, your email or anything else about your account. The sign-in is stored on the box,
+locked with the box's key, and is part of a downloaded backup like your other saved passwords. See
+[Privacy](/privacy) for the details.
+
+- A copy is sent in chunks, and Google's own checksum of the file is compared with Epilykos's before an older
+  copy is deleted.
+- If you use the same Drive for more than one Epilykos box, each box only ever deletes its own copies. Copies
+  from the other boxes are still listed, so you can restore them.
+- **Disconnect** tells Google that Epilykos no longer needs access, forgets the sign-in on the box and
+  switches off a Google Drive backup. Copies already in your Drive stay until you delete them. You can also
+  remove access at [myaccount.google.com/permissions](https://myaccount.google.com/permissions).
+- If Google ever withdraws the access (you removed it there, or it expired), the next backup fails with
+  "Google Drive access was removed or has expired", the earlier copy stays, and you press **Connect Google
+  Drive…** again.
+- If the card says Google Drive is **not set up in this build**, the copy of Epilykos you run doesn't include
+  the Google sign-in details. Use a current release.
 
 | Setting | What it does |
 | --- | --- |
