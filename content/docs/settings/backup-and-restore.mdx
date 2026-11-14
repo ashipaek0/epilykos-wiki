@@ -81,10 +81,13 @@ server reports it, because WebDAV has no standard checksum. **Check copy** and *
 file when you use them. Epilykos doesn't follow redirects: if the server redirects, it tells you the
 address to use instead.
 
-**A server with its own certificate.** Epilykos always checks certificates. If your server uses one you made
-yourself, paste its SHA-256 fingerprint in **Certificate fingerprint**. Only that exact certificate is then
-trusted, and a different one is refused. Find the fingerprint in your browser's certificate details, or run
-`openssl x509 -in cert.pem -noout -fingerprint -sha256`. Leave it empty for a normal https address.
+**A server with its own certificate.** Epilykos always checks certificates and never switches the check off. If
+your server uses a certificate you made yourself, paste the whole certificate (from `-----BEGIN CERTIFICATE-----`
+to `-----END CERTIFICATE-----`) in **Server certificate**. Epilykos then trusts only that certificate for this
+server, and a different one is refused. You can get it from your browser's certificate details (export it as PEM
+or Base64), or with
+`openssl s_client -connect nas.local:5006 </dev/null | openssl x509`. If your certificate is signed by a private
+authority of your own, paste that authority's certificate instead. Leave the box empty for a normal https address.
 
 **Google Drive.** Choose **Google Drive** and press **Connect Google Drive…**. Epilykos shows a short code
 and an address. On any phone or computer, open the address, sign in to Google and enter the code; Epilykos
