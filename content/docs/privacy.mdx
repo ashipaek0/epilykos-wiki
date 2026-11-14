@@ -30,25 +30,43 @@ includes no advertising or analytics trackers.
 
 ## Backups to other places
 
-Epilykos can send a backup of your database to a folder you choose, and, if you connect it, to Google Drive.
+Epilykos can send a backup of your database to a folder you choose, and, if you connect it, to your own
+Google Drive. The copy is locked on your box before it leaves: Epilykos encrypts the whole file with a
+passphrase you choose. The passphrase is not sent anywhere and is not part of the file, so the storage
+provider sees only encrypted data and the project cannot read it.
 
-- **The copy is locked on your box before it leaves.** Epilykos encrypts the whole file with a passphrase
-  you choose. The passphrase is not sent anywhere and is not part of the file, so the storage provider sees
-  only encrypted data and the project cannot read it.
-- **Only the files Epilykos creates.** When you connect Google Drive, Epilykos asks for the permission that
-  lets it see only files it creates itself, in a folder called Epilykos. It cannot see, read or change any
-  of your other Drive files.
-- **What it does with Google Drive.** It uploads the encrypted backup, lists the backups in that folder so
-  you can restore one, downloads one when you restore, and deletes older backups to keep the number you
-  chose. It does nothing else with your Google account.
-- **Where the sign-in is kept.** The token Google gives your box is stored on your box, locked with the
-  box's own key. It is never sent to the project.
-- **No sharing and no advertising.** Information from your Google account is not shared with anyone,
-  not sold, and not used for advertising, profiling or to train any model.
-- **Stopping.** Switch the backup off in **Settings → Backup and restore** to stop all uploads. To
-  withdraw Epilykos's access to your Google account, remove it at
+## Google user data
+
+This section applies only if you connect your Google account to back up to Google Drive. It is optional,
+and Epilykos works fully without it.
+
+- **What Epilykos asks for.** Permission to see and manage only the files Epilykos itself creates in your
+  Drive, in a folder called Epilykos. It does not ask to read your other files, your email, your contacts
+  or your calendar, and it cannot see them.
+- **What it accesses.** The encrypted backup files it created, and the Epilykos folder that holds them.
+  It does not read your name, email address or any other profile detail.
+- **How it uses it.** To upload an encrypted backup, to list the backups in that folder so you can choose
+  one to restore, to download the one you choose, and to delete older backups so only the number you chose
+  is kept. It does nothing else with your Google account.
+- **Where it is stored.** The sign-in token Google gives your box is stored on your own box, locked with
+  the box's own key. The backup files are stored in your own Google Drive. The project has no server and
+  receives neither.
+- **Sharing.** Information from your Google account is not shared with, sold to or given to anyone, and
+  the project does not receive it.
+- **Advertising and AI.** It is not used for advertising, profiling, or to develop or train any
+  generalised AI or machine-learning model.
+- **Human access.** Nobody at the project can read your Google data, because it never reaches us. The
+  backup files are encrypted, so even someone with access to your Drive sees only unreadable data.
+- **How long it is kept.** The sign-in token stays on your box until you disconnect Google Drive or delete
+  the box. Backup files stay in your Drive until Epilykos replaces them with newer ones, or you delete them.
+- **Stopping and deleting.** Switch remote backup off in **Settings → Backup and restore** to stop all
+  uploads. To withdraw Epilykos's access to your Google account, remove it at
   [myaccount.google.com/permissions](https://myaccount.google.com/permissions), then delete the Epilykos
   folder in Drive if you no longer want the copies.
+
+Epilykos's use and transfer to any other app of information received from Google APIs will adhere to the
+[Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy),
+including the Limited Use requirements.
 
 ## Your control
 
