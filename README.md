@@ -3,7 +3,7 @@
 Guides for installing, connecting and running [Epilykos](https://github.com/ashipaek0/Epilykos) and
 [EpilykosOS](https://github.com/ashipaek0/epilykos-os), built with [Fumapress](https://press.fumadocs.dev).
 
-Published at <https://ashipaek0.github.io/epilykos-wiki/>.
+Published at <https://epilykos.ashipaek0.com.ng/>.
 
 ## Run it locally
 
@@ -20,7 +20,7 @@ npm run dev                    # http://localhost:1337
   [Lucide](https://lucide.dev/icons) name) are optional.
 - Sidebar order comes from the `meta.json` next to the pages.
 - Images go in `public/images/` and are linked from the site root: `![What it shows](/images/name.webp)`.
-- Link pages from the site root too (`/settings/security`), never with `/epilykos-wiki/` in front.
+- Link pages from the site root too (`/settings/security`), never with a site prefix in front.
 - Describe what the Epilykos code on `main` does, with the names the app shows (**Settings → Network**).
 
 ## Supported hardware page
@@ -38,8 +38,8 @@ npm run gen:hardware -- ../Epilykos
 npm run types:check
 npm run lint
 npm run build                                   # fails on broken internal links
-BASE_PATH=/epilykos-wiki/ npm run build
-BASE_PATH=/epilykos-wiki/ npm run check:site    # serves the build like GitHub Pages and crawls it
+BASE_PATH=/ npm run build
+BASE_PATH=/ npm run check:site    # serves the build like GitHub Pages and crawls it
 ```
 
 ## Deploy

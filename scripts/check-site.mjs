@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Serves dist/public under BASE_PATH the way GitHub Pages does and crawls every internal link,
 // script, stylesheet and image reachable from the home page. Exits 1 on any non-200.
-// Usage: BASE_PATH=/epilykos-wiki/ npm run build && BASE_PATH=/epilykos-wiki/ npm run check:site
+// Usage: BASE_PATH=/ npm run build && BASE_PATH=/ npm run check:site
 import { readFile, stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
