@@ -13,7 +13,7 @@ import { createDocsLayoutPage } from "fumapress/layouts/docs";
 import { linkValidationPlugin } from "fumapress/plugins/link-validation";
 import { oramaSearchPlugin } from "fumapress/plugins/orama-search";
 
-// "/" locally, "/epilykos-wiki/" on GitHub Pages (set by the deploy workflow).
+// "/" locally and on the wiki domain (set by the deploy workflow).
 const basePath = process.env.BASE_PATH ?? "/";
 
 const docs = defineDocs({
