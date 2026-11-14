@@ -52,10 +52,10 @@ If a snapshot fails, or there hasn't been a recent one, Epilykos raises the **Au
 failed** or **Automatic snapshot overdue** event; you can choose to be told in
 [Notifications](/settings/notifications).
 
-## Off-box backup
+## Remote backup
 
 A backup that stays on the same card or disk does not help if the card fails or the box is stolen.
-**Off-box backup** sends an encrypted copy of your latest snapshot to somewhere else, every week by
+**Remote backup** sends an encrypted copy of your latest snapshot to somewhere else, every week by
 default. It's off until you switch it on.
 
 Choose a **folder on this box**: a USB drive, a network share you have mounted, or a folder you mapped
@@ -86,8 +86,8 @@ held at the destination. Each copy has two buttons:
 - **Restore…** downloads it, unlocks it and replaces everything on this box with it, like restoring a snapshot. Leave the passphrase empty to use the saved one, or type the one the copy was made with.
 
 **Back up now** takes a fresh snapshot and sends it straight away. If a copy fails, the earlier one stays
-where it is, Epilykos tries again after 30 minutes, then less often, and raises **Off-box backup failed**
-(and **Off-box backup overdue** if it goes much longer than your schedule). You can be told in
+where it is, Epilykos tries again after 30 minutes, then less often, and raises **Remote backup failed**
+(and **Remote backup overdue** if it goes much longer than your schedule). You can be told in
 [Notifications](/settings/notifications).
 
 Each upload is a full copy of your snapshot, because encrypted data can't be sent as changes. Check the
