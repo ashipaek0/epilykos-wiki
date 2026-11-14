@@ -58,22 +58,46 @@ A backup that stays on the same card or disk does not help if the card fails or 
 **Remote backup** sends an encrypted copy of your latest snapshot to somewhere else, every week by
 default. It's off until you switch it on.
 
-Choose a **folder on this box**: a USB drive, a network share you have mounted, or a folder you mapped
-into Docker as a volume. Mount the drive first. Epilykos creates only the last folder of the path, so a
-drive that isn't mounted can't fill the card by accident. **Test folder** checks that it can write there,
-and warns you if the folder is on the same disk as Epilykos's own data. More destinations, starting with
-Google Drive, are planned.
+Choose **Where to send it**:
+
+- **Folder or drive on this box:** a USB drive, a network share you have mounted, or a folder you mapped
+  into Docker as a volume. Mount the drive first. Epilykos creates only the last folder of the path, so a
+  drive that isn't mounted can't fill the card by accident.
+- **WebDAV server:** Nextcloud, ownCloud, Synology, a Hetzner Storage Box and other servers that speak
+  WebDAV. Fill in the **Server address**, a **Folder** (created inside that address if it's missing, but
+  only that last folder), your **Username** and an **App password**. For Nextcloud, use the WebDAV address
+  from its Files settings, and make an app password for this box in its security settings instead of using
+  your main password.
+
+**Test connection** checks that Epilykos can sign in and write there. For a folder it also warns you if the
+folder is on the same disk as Epilykos's own data, which wouldn't survive that disk failing. For a WebDAV
+address that starts with `http://` it warns that the password travels unencrypted, so use `https://` unless
+the server is on your own network. The backup itself is always locked, either way.
+
+A WebDAV copy is stored as several parts of about 32 MB and a small record, so servers and proxies that limit
+the size of a request still accept it. The record is written last, which means a copy that was cut short is
+never listed, and the next run clears its leftover parts. A copy is checked by the size of every part as the
+server reports it, because WebDAV has no standard checksum. **Check copy** and **Restore** check the whole
+file when you use them. Epilykos doesn't follow redirects: if the server redirects, it tells you the
+address to use instead.
+
+**A server with its own certificate.** Epilykos always checks certificates. If your server uses one you made
+yourself, paste its SHA-256 fingerprint in **Certificate fingerprint**. Only that exact certificate is then
+trusted, and a different one is refused. Find the fingerprint in your browser's certificate details, or run
+`openssl x509 -in cert.pem -noout -fingerprint -sha256`. Leave it empty for a normal https address.
+
+More destinations, starting with Google Drive, are planned.
 
 | Setting | What it does |
 | --- | --- |
-| **Passphrase** | Required. It locks the whole copy, history included, before it's written, so whoever holds the drive sees only noise. At least 8 characters. |
+| **Passphrase** | Required. It locks the whole copy, history included, before it's written, so whoever holds the drive or the server sees only noise. At least 8 characters. |
 | **How often** | Weekly or daily. Scheduled uploads start between 01:00 and 06:00. |
-| **Copies to keep** | 1, 2 or 4. A new copy is checked before an older one is deleted, so the folder briefly holds one more than you chose. |
+| **Copies to keep** | 1, 2 or 4. A new copy is checked before an older one is deleted, so the destination briefly holds one more than you chose. |
 
 When you save a new passphrase, Epilykos asks you to confirm that you have kept it.
 
 <Callout type="warn" title="The passphrase can't be recovered">
-  It's stored on the box, locked with the box's key, but it isn't stored anywhere else. If you lose
+  It's stored on the box, locked with the box's key, along with the WebDAV password, but it isn't stored anywhere else. If you lose
   both the box and the passphrase, the copies can't be opened by anyone. Keep it somewhere other than
   the box. Changing it later doesn't re-lock older copies: they keep the passphrase they were made with
   until newer copies replace them.
