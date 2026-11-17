@@ -7,7 +7,7 @@ icon: Shield
 Epilykos is software you run yourself, on your own box or server. The project does not run a service that
 your readings are sent to, has no user accounts, and receives none of your data.
 
-*Last updated: 13 November 2026.*
+*Last updated: 17 November 2026.*
 
 ## What stays on your box
 
@@ -24,6 +24,11 @@ these is governed by that service's own privacy policy.
 
 Epilykos also checks for new versions from the project's public update feed. That request carries no
 personal data from your box, though the host of the feed (GitHub) sees it as it would any web request.
+
+On Windows, the installer build checks the project's public GitHub releases instead, and downloads a newer
+installer from there when you choose to update. Those requests also carry nothing about your install, and
+GitHub sees them as it would any web request. If you tick the optional Tailscale box when installing,
+Windows' own package manager (winget) downloads Tailscale; that is between your PC and its sources.
 
 The dashboard and settings pages load their fonts, scripts and styles from the box itself, and Epilykos
 includes no advertising or analytics trackers.
