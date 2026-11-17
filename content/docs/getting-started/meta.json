@@ -3,6 +3,7 @@
   "pages": [
     "install-epilykos-os",
     "install-docker",
+    "install-windows",
     "first-run-setup",
     "core-concepts"
   ]

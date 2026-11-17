@@ -1,0 +1,64 @@
+---
+title: Install on Windows
+description: Download the Epilykos installer for Windows. It runs Epilykos as a Windows service, with Bluetooth and Tailscale support.
+icon: Monitor
+---
+
+<Callout title="Beta">
+  Epilykos for Windows is a beta. Network sources, serial adapters and Bluetooth are supported, but it
+  has had less real-world use than the Raspberry Pi image and Docker.
+</Callout>
+
+## Download
+
+Download `Epilykos-Setup-<version>.exe` from the
+[latest release on GitHub](https://github.com/ashipaek0/Epilykos/releases/latest) (look under
+**Assets**). Every release lists a SHA-256 checksum next to the file. It needs 64-bit Windows 10 or
+later.
+
+Run it, accept the prompt for administrator rights, and finish the wizard. When it ends, Epilykos is
+running as a Windows service and the dashboard is at [http://localhost:3000/](http://localhost:3000/). It starts again by
+itself when the PC starts.
+
+## Code signing
+
+Free code signing provided by [SignPath.io](https://signpath.io/), certificate by
+[SignPath Foundation](https://signpath.org/). Installers are built only by the project's public
+[GitHub Actions workflow](https://github.com/ashipaek0/Epilykos/blob/main/.github/workflows/windows-package.yml)
+and signed from there. Until a release says it is signed, Windows SmartScreen may warn about an
+unknown publisher: choose **More info**, then **Run anyway**, after checking the checksum.
+
+## What the installer sets up
+
+- **Epilykos**, with its own copy of Node.js and Python (used for Bluetooth and Tuya), in
+  `C:\Program Files\Epilykos`.
+- **Your data** (database, keys, backups) in `C:\ProgramData\Epilykos`. Updates and uninstalling never
+  delete it. Delete that folder yourself to remove everything.
+- **A Windows service** named *Epilykos*, listening on port 3000.
+- **Windows Firewall** (optional, ticked by default): lets other devices on your *private* networks open
+  the dashboard.
+- **Tailscale** (optional, off by default): installs the Tailscale app with the Windows Package
+  Manager, for remote access.
+- **cloudflared**, for Cloudflare Tunnel.
+
+## Differences from Docker and the Pi image
+
+- **Bluetooth** uses the PC's own Bluetooth adapter. Batteries and modules should work as on Linux, but
+  Windows services are more restricted than desktop programs; if a Bluetooth device does not appear,
+  open an issue with the log (Settings → Logs).
+- **Serial adapters** appear as `COM` ports (for example `COM3`). Pick one from the list in the source's
+  settings.
+- **Remote access with Tailscale** uses the Tailscale app on the PC. If you are already signed in to
+  Tailscale, Epilykos keeps your sign-in and device name, and turning remote access off only removes
+  what Epilykos shares.
+- **The time zone** is the Windows time zone. Daily totals follow it.
+- **Updates** come from Settings → Updates: it checks GitHub's releases, verifies the download against
+  its checksum, installs it and restarts. Your data is kept.
+
+## Privacy
+
+Epilykos keeps your readings on your PC. For updates it makes a plain request to GitHub's releases to
+see whether a newer version exists, and sends nothing about your install. You can turn the daily check
+off in Settings → Updates.
+
+Next: [First-run setup](/getting-started/first-run-setup/).
