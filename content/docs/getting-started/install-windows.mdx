@@ -13,20 +13,22 @@ icon: Monitor
 
 Download `Epilykos-Setup-<version>.exe` from the
 [latest release on GitHub](https://github.com/ashipaek0/Epilykos/releases/latest) (look under
-**Assets**). Every release lists a SHA-256 checksum next to the file. It needs 64-bit Windows 10 or
+**Assets**). Every release has a SHA-256 checksum next to the file. It needs 64-bit Windows 10 or
 later.
 
 Run it, accept the prompt for administrator rights, and finish the wizard. When it ends, Epilykos is
 running as a Windows service and the dashboard is at [http://localhost:3000/](http://localhost:3000/). It starts again by
 itself when the PC starts.
 
-## Code signing
+## Is it safe to run?
 
-Free code signing provided by [SignPath.io](https://signpath.io/), certificate by
-[SignPath Foundation](https://signpath.org/). Installers are built only by the project's public
+The installer is **not code-signed yet**, so Windows SmartScreen may warn about an unknown publisher the
+first time you run it. Installers are built only by the project's public
 [GitHub Actions workflow](https://github.com/ashipaek0/Epilykos/blob/main/.github/workflows/windows-package.yml)
-and signed from there. Until a release says it is signed, Windows SmartScreen may warn about an
-unknown publisher: choose **More info**, then **Run anyway**, after checking the checksum.
+and attached to the release it builds for. To check yours is the one that was built, compare its
+SHA-256 with the checksum shown on the release page (and in the `.sha256` file next to it): in
+PowerShell, run `Get-FileHash .\Epilykos-Setup-<version>.exe`. If they match, choose **More info**, then
+**Run anyway**.
 
 ## What the installer sets up
 
