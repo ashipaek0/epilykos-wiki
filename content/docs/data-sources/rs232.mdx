@@ -99,5 +99,5 @@ To read the same inverter over Bluetooth instead, see
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
 | Permission denied | Epilykos isn't allowed to use the serial port | Add the `dialout` group, as described above. |
-| No ports found | The adapter is unplugged, or not passed into the container | Check `ls /dev/ttyUSB*` and reseat the cable. On Docker, check the `devices:` lines. |
+| No ports found | The adapter is unplugged, or not passed into the container | Check `ls /dev/ttyUSB*` and reseat the cable. On Docker, check the `devices:` lines. On Windows, check the adapter appears under *Ports (COM & LPT)* in Device Manager, and install its CH340 or FTDI driver if it doesn't. |
 | Read timeout | The baud rate doesn't match | Use the profile's speed: 2400 for Voltronic, 9600 for SolaX, 19200 for VE.Direct. |

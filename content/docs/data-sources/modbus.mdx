@@ -62,7 +62,7 @@ In **Settings → Sources**, add a **Modbus device** and give it a name.
 Choose how it connects and fill in the details:
 
 - **TCP**: the host name or IP address, and the port (usually 502).
-- **Serial**: the serial port (for example `/dev/ttyUSB0`), and the baud rate, data bits, parity and
+- **Serial**: the serial port (for example `/dev/ttyUSB0`, or `COM3` on Windows), and the baud rate, data bits, parity and
   stop bits from your inverter's manual.
 
 Then set the **Unit ID**. Most inverters use 1; the Victron profile uses 100 by default.
@@ -92,5 +92,5 @@ Press **Test Modbus** to check that it reads, then **Save changes**.
 | Timeout | The unit ID is wrong | Most inverters use unit ID 1; your inverter's manual will say. |
 | No data on the dashboard | The registers aren't mapped | Press **Load Profile Registers** and make sure every register has a metric name. |
 | CRC or checksum errors | The baud rate doesn't match | Match it to the inverter: 9600 for most, 2400 for Voltronic. |
-| Port not found | The USB adapter is unplugged, or its driver is missing | Check `ls /dev/ttyUSB*`, and install the CH340 or FTDI driver if needed. |
+| Port not found | The USB adapter is unplugged, or its driver is missing | Check `ls /dev/ttyUSB*` (on Windows, *Ports (COM & LPT)* in Device Manager), and install the CH340 or FTDI driver if needed. |
 | Permission denied | Epilykos isn't allowed to use the serial port | On Docker, add `dialout` under `group_add:`. Without Docker, run `sudo usermod -a -G dialout $USER`, then log out and back in. |

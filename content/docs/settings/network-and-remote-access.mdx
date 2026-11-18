@@ -54,6 +54,12 @@ app switches to it automatically when you're out.
 address, not just your own devices. That means anyone who finds it can reach your sign-in page, so
 Epilykos asks for your admin password first, and the password must be at least 12 characters long.
 
+**On Windows,** Epilykos uses the Tailscale app on the PC rather than running its own copy (tick
+the Tailscale box in the installer, or install it from [tailscale.com](https://tailscale.com/download)
+yourself). If the PC is already signed in to Tailscale, **Connect with Tailscale** just shares
+Epilykos through it, and keeps your sign-in and the PC's name. **Turn off remote access** only stops
+sharing Epilykos; it does not sign the PC out of Tailscale.
+
 Under the hood, the Epilykos image includes the latest stable Tailscale. It only starts when you
 switch remote access on, and it runs inside Epilykos itself, so you don't need to change the compose
 file or grant any extra permissions. Its state is kept in `data/tailscale/`, which isn't part of the
@@ -92,7 +98,7 @@ Because the address can be reached from anywhere, connecting asks for your admin
 be at least 12 characters long. For an extra layer of protection, add Cloudflare Access to the
 hostname so visitors have to sign in to Cloudflare first.
 
-`cloudflared` only runs inside Epilykos while the tunnel is on. The token is stored encrypted, handed
+`cloudflared` (bundled with the Windows installer too) only runs inside Epilykos while the tunnel is on. The token is stored encrypted, handed
 to `cloudflared` without appearing on its command line, and hidden in the logs and the diagnostics
 file. **Turn off tunnel** stops it and forgets the token.
 

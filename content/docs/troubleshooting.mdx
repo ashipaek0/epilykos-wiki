@@ -80,6 +80,17 @@ into the container.
 | No data | The wrong profile is selected | Pick the profile for your inverter: a Solarman stick is not a Felicity TCP dongle. |
 | No data from a Growatt stick (Docker) | Port 5279 isn't published | Add `- "5279:5279"` under `ports:` and run `docker compose up -d`. |
 
+## Windows
+
+| What you see | What to do |
+| --- | --- |
+| Nothing answers on port 3000 | Open the **Services** app and check that *Epilykos* is running (start it if not). Then open `http://localhost:3000/` on the same PC. |
+| Another device can't open the dashboard | The installer's firewall option only covers *private* networks. In **Windows Security → Firewall**, check the network is set to Private, or re-run the installer with the firewall box ticked. |
+| Where are the logs and data? | Data is in `C:\ProgramData\Epilykos\data`, the app's log files in `C:\ProgramData\Epilykos\logs`, and the service's own output in `C:\ProgramData\Epilykos\service-logs`. **Settings → Logs** shows the same log in the browser. |
+| Windows warns about an "unknown publisher" | The installer isn't code-signed yet. See [Install on Windows](/getting-started/install-windows#is-it-safe-to-run). |
+| Daily totals roll over at the wrong time | Epilykos follows the Windows time zone. Change it in **Settings → Time & language** and restart the *Epilykos* service. |
+| A Bluetooth scan finds nothing | Check Bluetooth is switched on in Windows and the adapter is close to the battery. Windows services are more limited than desktop programs; if it still finds nothing, report it with the log (**Settings → Logs**) on [GitHub](https://github.com/ashipaek0/Epilykos/issues). |
+
 ## Bluetooth
 
 | What you see | What to do |
