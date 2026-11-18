@@ -43,6 +43,18 @@ PowerShell, run `Get-FileHash .\Epilykos-Setup-<version>.exe`. If they match, ch
   Manager, for remote access.
 - **cloudflared**, for Cloudflare Tunnel.
 
+## Managing it
+
+- **Open the dashboard:** the *Epilykos dashboard* shortcut in the Start menu, or `http://localhost:3000/`.
+- **Start, stop or restart:** the **Services** app (the service is called *Epilykos*). Settings → System
+  has no Restart button on Windows.
+- **Update:** Settings → Updates, or download the newer installer and run it over the old one. Your data
+  is kept.
+- **Uninstall:** **Settings → Apps → Installed apps → Epilykos**. Your data stays in
+  `C:\ProgramData\Epilykos`; delete that folder to remove it too.
+- **Another port:** Epilykos listens on port 3000. To change it, set a `PORT` value for the service
+  (the file `C:\Program Files\Epilykos\service\EpilykosService.xml`), then restart the service.
+
 ## Differences from Docker and the Pi image
 
 - **Bluetooth** uses the PC's own Bluetooth adapter. Batteries and modules should work as on Linux, but
