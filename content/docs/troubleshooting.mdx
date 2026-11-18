@@ -85,6 +85,7 @@ into the container.
 | What you see | What to do |
 | --- | --- |
 | Nothing answers on port 3000 | Open the **Services** app and check that *Epilykos* is running (start it if not). Then open `http://localhost:3000/` on the same PC. |
+| Restart in Settings → System does nothing | It needs version 1.3.3 or later. On an older version, restart the *Epilykos* service from the **Services** app. |
 | Another device can't open the dashboard | The installer's firewall option only covers *private* networks. In **Windows Security → Firewall**, check the network is set to Private, or re-run the installer with the firewall box ticked. |
 | Where are the logs and data? | Data is in `C:\ProgramData\Epilykos\data`, the app's log files in `C:\ProgramData\Epilykos\logs`, and the service's own output in `C:\ProgramData\Epilykos\service-logs`. **Settings → Logs** shows the same log in the browser. |
 | Windows warns about an "unknown publisher" | The installer isn't code-signed yet. See [Install on Windows](/getting-started/install-windows#is-it-safe-to-run). |

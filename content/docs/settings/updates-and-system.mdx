@@ -47,7 +47,7 @@ properly, the box switches back to the previous one by itself.
 
 ## System
 
-**Settings → System** appears on Docker and EpilykosOS. On Windows, restart Epilykos from the Windows **Services** app (the service is called *Epilykos*) or by restarting the PC.
+**Settings → System** appears on Docker, EpilykosOS and the Windows installer (version 1.3.3 and later).
 
 ### Restart
 
@@ -56,6 +56,9 @@ properly, the box switches back to the previous one by itself.
 - **On Docker with the socket mounted**, Docker restarts the container.
 - **On Docker without the socket**, Epilykos stops, and the container's restart policy
   (`restart: unless-stopped` in the compose file) starts it again.
+- **On Windows**, Epilykos asks Windows to stop and start the *Epilykos* service, which takes under a
+  minute. If that fails, Epilykos keeps running and the log says why; restart the service from the
+  **Services** app instead.
 
 ### EpilykosOS only
 
