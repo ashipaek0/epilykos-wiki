@@ -1,0 +1,34 @@
+---
+title: Dashboard presets
+description: Ready-made dashboards you can download and import into the layout editor.
+icon: Palette
+---
+
+A preset is a finished dashboard saved as a small JSON file. Download it, import it, and you have a
+good-looking starting point to adjust, instead of an empty grid.
+
+## Use a preset
+
+1. Download the preset's JSON file from its page.
+2. Open the [layout editor](/dashboard/editor) (`/editor`, signed in).
+3. Press **Import / export → Import from file…** and choose the file.
+4. Choose **Append** to add it next to your own dashboards. (**Replace** swaps all of yours for it, so
+   only pick that on a fresh install. You can undo either right after.)
+5. Open the new dashboard from the dashboard list and adjust it.
+
+A preset only holds layout and style: it never contains your readings, passwords or addresses. Cards that
+show a reading use the usual metric names (such as `pv_total_power`), so they fill in once you've set up
+the [metric roles](/getting-started/core-concepts#metric-roles). A card whose metric you don't have simply
+shows nothing until you point it at one.
+
+## Presets
+
+| Preset | Good for |
+| --- | --- |
+| [Solar house](/presets/solar-house) | A wall display or tablet: a picture of the house with live solar and load, weather, forecast and savings around it. |
+
+## Share your own
+
+Made a dashboard you like? In the editor, open it and choose **Import / export → Export this dashboard**.
+That file is all a preset is. If you'd like it listed here, send it with a screenshot through the
+[contributing guide](/development/contributing).
