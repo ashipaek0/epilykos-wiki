@@ -26,6 +26,7 @@ downloads a small file listing the latest builds; nothing about your installatio
 | **Docker, with the Docker socket mounted** | **Update now** asks for your admin password, downloads the new image and restarts Epilykos on it, keeping your settings, volumes and devices. If the new version doesn't report that it's healthy within three minutes, the previous one is started again and the page tells you. |
 | **Docker, without the socket** | The page shows you the two commands to run: `docker compose pull`, then `docker compose up -d`. |
 | **Windows installer** | **Update now** asks for your admin password, downloads the new installer from the project's GitHub releases, checks it against the checksum GitHub publishes for it, then installs it and restarts Epilykos. Your data in `C:\ProgramData\Epilykos` is kept. It only offers releases that include a Windows installer. |
+| **Node.js from source** | The page tells you to run `git pull` and `npm ci --omit=dev`, then restart Epilykos (see [Run with Node.js](/getting-started/install-node#update)). It can't install the update itself. |
 | **EpilykosOS** | The box installs signed Epilykos releases itself, and goes back to the previous version if the new one isn't healthy. |
 
 The Docker socket gives Epilykos full control of Docker on that computer, so leave its line out of the

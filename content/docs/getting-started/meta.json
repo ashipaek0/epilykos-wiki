@@ -4,6 +4,7 @@
     "install-epilykos-os",
     "install-docker",
     "install-windows",
+    "install-node",
     "first-run-setup",
     "core-concepts"
   ]

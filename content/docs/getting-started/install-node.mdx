@@ -1,0 +1,156 @@
+---
+title: Run with Node.js
+description: Clone Epilykos, run it with Node.js, and keep it running in the background with pm2 or systemd.
+icon: Terminal
+---
+
+Epilykos is a Node.js app, so you can run it straight from its source: no Docker, no installer. This
+suits a Linux server or a Mac you already look after. On a Raspberry Pi, [EpilykosOS](/getting-started/install-epilykos-os)
+is easier, and on Windows the [installer](/getting-started/install-windows) is.
+
+## What you need
+
+- **Node.js 26** (the LTS release). It's the version the Docker image and the Windows installer use.
+  Get it from [nodejs.org](https://nodejs.org/en/download), or with `nvm install 26`.
+- **Git**.
+- **Optional extras**, only if you use them:
+  - Bluetooth batteries and inverter modules: Python 3.12 or newer, BlueZ running (Linux), and
+    `pip install -r modules/ble/requirements.txt` from inside the Epilykos folder.
+  - Tuya devices: `pip install tinytuya tuya-device-sharing-sdk "qrcode[pil]"`.
+  - Remote access: install [Tailscale](https://tailscale.com/download) and/or `cloudflared` yourself. Epilykos
+    looks for `tailscale`, `tailscaled` and `cloudflared` on the `PATH`.
+
+## Install
+
+```bash
+git clone --depth 1 https://github.com/ashipaek0/Epilykos.git
+cd Epilykos
+npm ci --omit=dev
+```
+
+<Callout title="npm may warn about install scripts">
+  Recent npm versions print `3 packages have install scripts not yet covered by allowScripts`. That's
+  fine: the database and serial-port modules ship ready-made binaries for Linux, macOS and Windows, so
+  nothing needs compiling. If your npm is older and starts compiling and fails, install your system's
+  build tools (`build-essential python3` on Debian and Ubuntu), or use Node.js 26.
+</Callout>
+
+## Start it
+
+```bash
+node server.js
+```
+
+When you see `Energy dashboard running on port 3000`, open `http://localhost:3000/setup` in a browser on
+the same computer. From another PC or phone on your network, open `http://<this computer's IP>:3000/setup`
+instead (on Linux, `hostname -I` shows the address). The [setup wizard](/getting-started/first-run-setup)
+walks you through the password, your equipment and a first dashboard.
+
+Press `Ctrl+C` to stop it; it shuts down cleanly. To use another port, or to set the admin password up
+front instead of in the wizard:
+
+```bash
+PORT=3002 SETTINGS_PASSWORD='choose-a-long-password' node server.js
+```
+
+The password has to be at least 12 characters for remote access to accept it. See
+[First-run setup](/getting-started/first-run-setup#password) for how the wizard treats it.
+
+## Keep it running in the background
+
+`node server.js` stops when you close the terminal. Use one of these to keep it running and start it
+again after a reboot.
+
+<Tabs items={["pm2", "systemd (Linux)"]}>
+<Tab value="pm2">
+
+pm2 works on Linux and macOS (on Windows, use the [installer](/getting-started/install-windows) instead). Run these from inside the Epilykos folder:
+
+```bash
+npm install -g pm2
+pm2 start server.js --name epilykos
+pm2 save
+pm2 startup
+```
+
+`pm2 startup` prints one command. Copy it and run it (it needs `sudo`), and Epilykos then starts by
+itself after a reboot. Day to day:
+
+```bash
+pm2 status                 # is it running?
+pm2 logs epilykos          # the live log
+pm2 restart epilykos       # after an update
+```
+
+</Tab>
+<Tab value="systemd (Linux)">
+
+Put the Epilykos folder somewhere permanent (these steps use `/opt/epilykos`) and give it its own user:
+
+```bash
+sudo useradd --system --home /opt/epilykos --shell /usr/sbin/nologin epilykos
+sudo git clone --depth 1 https://github.com/ashipaek0/Epilykos.git /opt/epilykos
+sudo chown -R epilykos:epilykos /opt/epilykos
+sudo -u epilykos npm ci --omit=dev --prefix /opt/epilykos
+```
+
+Create `/etc/systemd/system/epilykos.service`. Check where Node lives with `which node` and use that path
+on the `ExecStart` line:
+
+```ini title="/etc/systemd/system/epilykos.service"
+[Unit]
+Description=Epilykos energy dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=epilykos
+WorkingDirectory=/opt/epilykos
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+# USB serial adapters and Bluetooth need extra groups; uncomment the ones that exist on your system:
+# SupplementaryGroups=dialout bluetooth
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then start it and make it start at boot:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now epilykos
+journalctl -u epilykos -f          # the live log
+```
+
+</Tab>
+</Tabs>
+
+## Where your data is
+
+Everything Epilykos stores is in the `data` folder inside the Epilykos folder: the database
+(`energy.db`), its keys, and the automatic snapshots. `git pull` never touches it. Back that folder up,
+or use [Settings → Backup](/settings/backup-and-restore).
+
+## Update
+
+```bash
+cd Epilykos
+git pull
+npm ci --omit=dev
+pm2 restart epilykos               # or: sudo systemctl restart epilykos
+```
+
+Settings → Updates can tell you a newer version exists, but with a source install it can't install it for
+you, and Settings → System has no Restart button. Use the commands above.
+
+## What differs from Docker
+
+- **Tailscale and Cloudflare Tunnel aren't bundled.** Install them yourself, as listed under "What you need".
+- **Bluetooth and Tuya need their Python packages**, which the Docker image already contains.
+- **The time zone** is the computer's own (or the `TZ` environment variable).
+- **Updates** are manual, as above.
