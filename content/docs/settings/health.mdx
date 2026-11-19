@@ -1,0 +1,32 @@
+---
+title: Health
+description: A checklist of what is set up and what still needs doing, each with a button to the right place.
+icon: HeartPulse
+---
+
+**Settings → Health** lists what is and isn't set up. Each line says how it is going and has an **Open**
+button that takes you to the right section. It only reads your settings and the database: it never
+sends anything, and it changes nothing except which warnings you have hidden.
+
+Lines that need fixing come first, then warnings, then what is fine. The number next to **Health** in the
+settings menu is how many lines still need a look.
+
+## The checks
+
+| Check | What it looks at | Needs fixing when |
+| --- | --- | --- |
+| **Data source** | Whether a source is set up and when the newest reading arrived | No source, or the newest reading is more than 15 minutes old |
+| **Metric roles** | Whether solar, load, battery and grid roles are chosen | (A warning: none chosen, or solar or load missing) |
+| **Time zone** | The time zone Epilykos runs in | (A warning: it is UTC. Daily totals start at midnight UTC) |
+| **Location** | Whether a location is set for weather and forecast | (A warning: none, or 0, 0) |
+| **Automatic backups** | The newest snapshot | The last snapshot failed. A warning if there is none or it is over three days old |
+| **A copy off this device** | Whether a remote backup is on | (A warning: it isn't) |
+| **Two-step sign-in** | Whether the admin sign-in has a second step | (A warning: it hasn't) |
+| **Notifications** | Whether alerts have a channel or device to go to | (A warning: they are on with nowhere to go) |
+| **Disk space** | Free space where the database lives | Under 200 MB. A warning under 1 GB |
+
+## Hiding a warning
+
+A warning you don't need, such as the time zone on a system that really is on UTC, can be hidden with
+**Hide**. Hidden warnings stop counting, and **Show hidden** brings them back. A line that **needs
+fixing** can't be hidden, because it means something has stopped working.

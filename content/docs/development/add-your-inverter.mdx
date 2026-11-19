@@ -53,18 +53,29 @@ Each register has:
 | --- | --- |
 | `metric` | The name Epilykos uses: lower-case letters, digits and underscores, unique in the file. Reuse a name that exists where one fits (`pv_power`, `battery_soc`, `battery_voltage`, `battery_current`, `grid_voltage`, `grid_frequency`, `load_power`, `inverter_temp`), so cards and roles work without remapping. |
 | `address` | The register number **as the document gives it**. Check whether the document counts from 0 or from 1, and which of the two it means. |
-| `type` | `uint16` (0 to 65535), `int16` (can be negative, for example battery power), or `uint32` for a value that spans two registers. |
+| `type` | `uint16` (0 to 65535), `int16` (can be negative, for example battery power), `uint32` or `int32` for a value that spans two registers, or `uint64` for four. |
 | `scale` | What to multiply the raw number by. A register holding 5123 for 512.3 V has scale `0.1`. |
 | `unit` | `V`, `A`, `W`, `kW`, `VA`, `Wh`, `kWh`, `Hz`, `%`, `°C` and so on, or `""` for none. |
 | `label` | The name people see. |
 
-## Limits today
+## Reading modes
 
-Epilykos reads **holding registers** (Modbus function 03), one block at a time, up to 32 in a row. A device
-that only publishes values as **input registers** (function 04) can't be read yet. Many documents show a
-"Read function code" column; check it. A 32-bit value that is split across two registers is read when the
-high word comes first and the type is `uint32`. If your document says otherwise, say so in the issue and
-we'll look at supporting it.
+A profile can say how its registers are read:
+
+| Setting | Where | What it does |
+| --- | --- | --- |
+| `function` | The profile, or one register | `"holding"` (function 03, the default) or `"input"` (function 04). Many documents have a "read function code" column: check it. Holding and input registers are separate, so the same number can appear in both. |
+| `wordOrder` | The profile, or `word_order` on one register | `"msw_first"` (the high word at the lower address, the default) or `"lsw_first"`, for a 32- or 64-bit value. |
+| `type` | One register | `uint16`, `int16`, `uint32`, `int32` or `uint64`. A 32-bit value covers two registers and a 64-bit one four, starting at the address you give; list only the first. |
+
+A value that needs a scale factor stored in another register (the SunSpec convention), a floating-point
+register, or a "no value" marker is not supported yet. If your document uses one, say so in the issue.
+
+Epilykos reads registers in blocks of up to 32, so a profile with hundreds of registers is read in a handful
+of requests. A Unit ID of 0 is treated as 1.
+
+**Addresses.** Use the register number the device expects on the wire. Some documents number registers
+from 1 and some from 0: if every value looks like its neighbour's, you are one off.
 
 ## Check it
 
