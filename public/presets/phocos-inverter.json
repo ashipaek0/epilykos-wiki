@@ -1,8 +1,8 @@
 {
   "dashboards": [
     {
-      "id": "main",
-      "name": "Main",
+      "id": "phocos-inverter",
+      "name": "Phocos inverter",
       "layout": [
         {
           "id": "b_overview",
@@ -27,7 +27,7 @@
               },
               {
                 "metric": "battery_energy",
-                "label": "Batt Energy Left / 30 kWh",
+                "label": "Battery energy left",
                 "unit": "Wh"
               },
               {
@@ -38,12 +38,11 @@
             ],
             "showWeather": true,
             "names": {
-              "grid": "PHCN",
+              "grid": "Grid",
               "battery": "Battery",
               "solar": "Solar",
-              "home": "Office use"
+              "home": "Home"
             },
-            "inverter_image": "https://i.postimg.cc/BQrq93HP/cmu5i3usj00roms3gas69xdv8.webp",
             "breakdown": "hover"
           },
           "transparent": true,
@@ -140,10 +139,7 @@
             "showCost": true,
             "showDailyHours": true,
             "dailyRange": 30,
-            "showPrepaid": true,
-            "prepaidLeft": "[balance] units left",
-            "prepaidOut": "Out of  units",
-            "prepaidDays": "= {days} days at {avg} units a day"
+            "showPrepaid": false
           },
           "transparent": true,
           "bgColor": "",
@@ -236,7 +232,7 @@
             "bgColor": "",
             "fontColor": "",
             "fontSize": "",
-            "title": "Savings since 26 October 2026",
+            "title": "Savings",
             "showToday": true,
             "showWeek": true,
             "showMonth": true,
@@ -500,5 +496,5 @@
       ]
     }
   ],
-  "activeDashboard": "main"
+  "activeDashboard": "phocos-inverter"
 }

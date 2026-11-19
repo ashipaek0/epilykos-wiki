@@ -1,8 +1,8 @@
 {
   "dashboards": [
     {
-      "id": "db_1794389899021",
-      "name": "New dashboard",
+      "id": "solar-house",
+      "name": "Solar house",
       "layout": [
         {
           "id": "b_1794391462572_kv3fnt",
@@ -251,7 +251,7 @@
             "bgColor": "",
             "fontColor": "",
             "fontSize": "",
-            "title": " Since 24 October 2026",
+            "title": "Savings",
             "showToday": true,
             "showWeek": true,
             "showMonth": true,
@@ -283,5 +283,5 @@
       }
     }
   ],
-  "activeDashboard": "db_1794389899021"
+  "activeDashboard": "solar-house"
 }
