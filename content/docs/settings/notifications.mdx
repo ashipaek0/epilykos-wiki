@@ -145,6 +145,31 @@ A scheduled report arrives at a set time on the weekdays you choose. It can be:
 
 Scheduled reports are sent during quiet hours too.
 
+## The bell and where alerts lead
+
+When you are signed in, a **bell** in the dashboard header lists what Epilykos has alerted about, newest
+first. It is the same alerts that go to your phone, Telegram and the rest, so you can catch up on what you
+missed. The bell is only for a signed-in admin: visitors never see it.
+
+- A number on the bell counts the alerts you haven't read.
+- Each alert shows its severity and how long ago it happened.
+- **Click an alert** to mark it read and go to the page it is about: a grid or generator alert opens the
+  dashboard, a source or MQTT alert opens Settings → Sources, a backup alert opens Backup and restore,
+  an update opens Updates, and so on. Anything without a page of its own opens the dashboard.
+- **Mark all read** clears the count, and **Clear** empties the list. The bell keeps the latest 200
+  alerts.
+- Alerts held back by quiet hours still appear in the bell, so nothing is lost while the phone stays quiet.
+
+Tapping an alert on a phone or computer opens the same page. On Telegram, Discord, ntfy and webhooks the
+message carries a link to it instead, using the [dashboard address for links](#general).
+
+### Related alerts share a thread
+
+Alerts about the same thing are grouped, so you see the latest state and not a pile of old ones. "Grid
+restored" replaces "Grid outage" on a device's screen, and in the bell the outage is marked **Resolved**.
+It works the same for the generator, a data source going offline and coming back, and MQTT disconnecting
+and reconnecting. Grid outage and generator alerts also include the battery level.
+
 ## Quiet hours and history
 
 During **quiet hours**, everything except critical alerts waits until they're over. Every message that
