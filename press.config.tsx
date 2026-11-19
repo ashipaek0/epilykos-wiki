@@ -12,6 +12,7 @@ import { Image } from "fumapress/image";
 import { createDocsLayoutPage } from "fumapress/layouts/docs";
 import { linkValidationPlugin } from "fumapress/plugins/link-validation";
 import { oramaSearchPlugin } from "fumapress/plugins/orama-search";
+import { YouTube } from "./src/components/YouTube";
 
 // "/" locally and on the wiki domain (set by the deploy workflow).
 const basePath = process.env.BASE_PATH ?? "/";
@@ -103,6 +104,7 @@ const config = defineConfig({
           Steps,
           Tab,
           Tabs,
+          YouTube,
           a: createRelativeLink(await this.getLoader(), page),
           img: (props) => <ImageZoom {...(props as any)} />,
         };
