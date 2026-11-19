@@ -1,0 +1,110 @@
+---
+title: Add your inverter
+description: Write a profile for an inverter Epilykos doesn't support yet, check it, and share it.
+icon: Cpu
+---
+
+Epilykos reads an inverter through a **profile**: one JSON file that lists the registers to read, with a
+name, a scale and a unit for each. If your inverter's maker publishes a register document, you can write a
+profile without touching any code, and everyone with that model benefits.
+
+This page is for **Modbus** inverters (RS-485 or Modbus-TCP). The WiFi and Bluetooth dongles have their own
+profiles; ask on the [issue form](https://github.com/ashipaek0/Epilykos/issues/new?template=new-inverter.yml)
+if that's what you have.
+
+## What you need
+
+- The maker's **register document** (often called the *Modbus protocol* or *communication protocol*). Don't
+  guess register numbers from memory or from another model: a wrong register shows a wrong number on your
+  dashboard with nothing to say it is wrong.
+- Your inverter connected to Epilykos, to test it. See [Modbus](/data-sources/modbus).
+- A copy of the Epilykos code to check the file (Node.js installed): see the
+  [Development guide](/development/development-guide).
+
+## What a profile looks like
+
+```json
+{
+  "name": "Example Hybrid Inverter (Modbus RTU)",
+  "connection": "rtu",
+  "defaultUnitId": 1,
+  "status": "unverified",
+  "source": "Example Corp Modbus protocol V1.2, tables 3 and 4",
+  "registers": [
+    {"metric": "pv_voltage", "address": 1, "type": "uint16", "scale": 0.1, "unit": "V", "label": "PV Input Voltage"},
+    {"metric": "pv_power", "address": 3, "type": "uint32", "scale": 1.0, "unit": "W", "label": "PV Input Power"},
+    {"metric": "battery_power", "address": 20, "type": "int16", "scale": 1.0, "unit": "W", "label": "Battery Power"}
+  ]
+}
+```
+
+| Field | What it means |
+| --- | --- |
+| `name` | What people see in the profile list. Make and model, and the protocol version if there is one. |
+| `connection` | `rtu` for an RS-485 port, `tcp` for a built-in Modbus-TCP port. |
+| `defaultUnitId` | The Modbus address most units of this model use, from 1 to 247. Usually 1. |
+| `status` | Optional. `unverified` until someone with the hardware confirms it, then `verified`. `community` for one from a user. |
+| `source` | Optional. Which document the registers came from, so the next person can check. |
+| `registers` | One entry per value to read. |
+
+Each register has:
+
+| Field | What it means |
+| --- | --- |
+| `metric` | The name Epilykos uses: lower-case letters, digits and underscores, unique in the file. Reuse a name that exists where one fits (`pv_power`, `battery_soc`, `battery_voltage`, `battery_current`, `grid_voltage`, `grid_frequency`, `load_power`, `inverter_temp`), so cards and roles work without remapping. |
+| `address` | The register number **as the document gives it**. Check whether the document counts from 0 or from 1, and which of the two it means. |
+| `type` | `uint16` (0 to 65535), `int16` (can be negative, for example battery power), or `uint32` for a value that spans two registers. |
+| `scale` | What to multiply the raw number by. A register holding 5123 for 512.3 V has scale `0.1`. |
+| `unit` | `V`, `A`, `W`, `kW`, `VA`, `Wh`, `kWh`, `Hz`, `%`, `°C` and so on, or `""` for none. |
+| `label` | The name people see. |
+
+## Limits today
+
+Epilykos reads **holding registers** (Modbus function 03), one block at a time, up to 32 in a row. A device
+that only publishes values as **input registers** (function 04) can't be read yet. Many documents show a
+"Read function code" column; check it. A 32-bit value that is split across two registers is read when the
+high word comes first and the type is `uint32`. If your document says otherwise, say so in the issue and
+we'll look at supporting it.
+
+## Check it
+
+From a copy of the Epilykos code:
+
+```bash
+npm run check:profile -- profiles/My-Inverter.json
+```
+
+It prints one line per problem, such as a duplicate metric name, an address out of range, a missing unit, or
+a 32-bit value that overlaps the register next to it. **Fix every error.** Warnings are things for a reviewer
+to look at, such as an unusual scale.
+
+## Try it on the real inverter
+
+1. Put the file in the `profiles` folder of your Epilykos and restart it. (On Docker, copy it into the
+   container's `/app/profiles`, or mount it there, and restart.)
+2. In **Settings → Sources**, add a **Modbus** source, pick your profile, set the Unit ID and connection, and
+   press **Load Profile Registers**. See [Modbus](/data-sources/modbus).
+3. Compare each reading with the inverter's own display or app. A few to check with care:
+   - **Battery power and current:** is the sign right when charging versus discharging?
+   - **Energy totals:** is the unit Wh or kWh, and is the scale right?
+   - **Anything that reads 0 or 65535:** usually the wrong address, a function 04 register, or a missing sign.
+4. Fix what's wrong and check again. Note what you verified.
+
+## Share it
+
+1. Open a [new-inverter issue](https://github.com/ashipaek0/Epilykos/issues/new?template=new-inverter.yml)
+   so there is one place to talk about it. It helps to say which firmware you tested.
+2. Open a pull request with your file in `profiles/`, using the
+   [profile template](https://github.com/ashipaek0/Epilykos/compare?template=profile.md). Set `status` to
+   `unverified` or `verified`, and `source` to the document name and version.
+3. Don't include passwords, serial numbers or your own addresses in the file or the pull request.
+
+If you can't write the file yourself, open the issue anyway with the link to the register document. A
+document plus someone who can test it is most of the work.
+
+## Good to know
+
+- **Unit ID.** If every read fails, the Unit ID is the first thing to check, then the baud rate and parity.
+- **Different firmware, different registers.** Some makers move registers between versions. Put the version
+  in `name` and `source`.
+- **Don't copy from another maker's map.** Models that look alike often differ in a few important registers.
