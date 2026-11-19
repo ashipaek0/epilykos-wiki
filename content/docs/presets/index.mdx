@@ -9,12 +9,15 @@ good-looking starting point to adjust, instead of an empty grid.
 
 ## Use a preset
 
-1. Download the preset's JSON file from its page.
-2. Open the [layout editor](/dashboard/editor) (`/editor`, signed in).
-3. Press **Import / export → Import from file…** and choose the file.
-4. Choose **Append** to add it next to your own dashboards. (**Replace** swaps all of yours for it, so
-   only pick that on a fresh install. You can undo either right after.)
-5. Open the new dashboard from the dashboard list and adjust it.
+**In the app (quickest):** open the [layout editor](/dashboard/editor) (`/editor`, signed in), press
+**Import / export → Browse presets…**, pick one and press **Add dashboard**. It is added next to your own
+dashboards, and you can undo it right after. The gallery needs Epilykos 1.3.5 or newer.
+
+**From a file:** download the preset's JSON file from its page, then in the editor choose
+**Import / export → Import from file…**. Choose **Append** to add it next to your own dashboards.
+(**Replace** swaps all of yours for it, so only pick that on a fresh install.)
+
+Either way, open the new dashboard from the dashboard list and adjust it.
 
 A preset only holds layout and style: it never contains your readings, passwords or addresses. Cards that
 show a reading use the usual metric names (such as `pv_total_power`), so they fill in once you've set up
@@ -23,10 +26,12 @@ shows nothing until you point it at one.
 
 ## Presets
 
+{/* presets:start */}
 | Preset | Good for |
 | --- | --- |
-| [Phocos inverter](/presets/phocos-inverter) | A Phocos Any-Grid system on a computer or phone: flow diagram, totals, forecast, peak solar, charts and tables. |
-| [Solar house](/presets/solar-house) | A wall display or tablet: a picture of the house with live solar and load, weather, forecast and savings around it. |
+| [Solar house](/presets/solar-house) | A picture of the house with live solar and load, plus weather, forecast, power rings, battery and savings around it. Suits a wall display or tablet. |
+| [Phocos inverter](/presets/phocos-inverter) | A full-width system overview for a Phocos Any-Grid: live flow diagram, daily totals, forecast, peak solar, charts and tables. |
+{/* presets:end */}
 
 ## Share your own
 
