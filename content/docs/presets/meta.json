@@ -3,6 +3,7 @@
   "icon": "Palette",
   "pages": [
     "index",
-    "solar-house"
+    "solar-house",
+    "phocos-inverter"
   ]
 }
