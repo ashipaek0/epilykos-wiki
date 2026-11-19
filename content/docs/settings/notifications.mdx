@@ -109,6 +109,36 @@ number of minutes. You can fine-tune it with:
 - **Remind me every (minutes)** for as long as it lasts;
 - a cooldown, so you aren't told about the same thing over and over.
 
+### Several-metric rules
+
+Some problems only matter when two or three things are true together: the battery is low **and** tomorrow's
+sun looks poor, or the load is high **while** the battery is under half. Choose **Several metrics** when adding a
+rule, then:
+
+1. Add **two or three conditions**. Each is a metric, a comparison (above, below, equals, has not updated for)
+   and a value. Each numeric condition can have its own **resolve margin**.
+2. Choose whether **all** of them must be true, or **any** one of them.
+3. Set **For at least (minutes)** to ignore brief spikes, and choose whether to be told when it is back to
+   normal and whether to be reminded while it lasts. It works like a metric rule, including the wait before
+   alerting again.
+
+If one of the metrics stops updating, that condition counts as unknown. It never fires or clears the rule
+by itself: with **all**, any other condition that is false still keeps it quiet, and an alert that has already
+fired stays active until the data says otherwise.
+
+**Combined alerts** in the rule picker has three ready-made ones to start from, each with its thresholds
+open to edit:
+
+| Template | Fires when |
+| --- | --- |
+| Battery low and poor sun | The battery is under 30% and today's solar forecast is under 5 kWh |
+| Heavy load on a low battery | The load is over 3000 W while the battery is under 50% |
+| Inverter fault | A fault or warning metric is anything but 0 |
+
+The alert text names each condition and the readings now, for example *"battery_soc is below 30 % and
+forecast_solar_today is below 5 kWh. Now: battery_soc 24 %, forecast_solar_today 3.2 kWh."* A custom message
+can use `{rule}`, `{value}` (the readings) and `{conditions}`.
+
 ### Event rules
 
 An event rule waits for something to happen. It can watch one event, or a whole group with a wildcard

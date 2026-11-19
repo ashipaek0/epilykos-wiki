@@ -4,9 +4,60 @@ description: Show your Epilykos metrics as sensors in Home Assistant.
 icon: House
 ---
 
-This guide does the opposite of the [Home Assistant source](/data-sources/home-assistant): it puts your
-Epilykos metrics **into** Home Assistant as sensors. Every sensor is named **Epilykos …**, so they sort
-together and are easy to find.
+Epilykos can put its metrics **into** Home Assistant as sensors. There are two ways. If you have an MQTT
+broker (most people do: the Mosquitto add-on), use the first, which needs nothing copied or restarted. If
+you don't, use the [script method](#without-an-mqtt-broker).
+
+## With an MQTT broker (recommended)
+
+Epilykos sends its readings to the broker Home Assistant is connected to, and Home Assistant adds them as
+sensors by itself, grouped under one **Epilykos** device. Each sensor gets a unit and a device class that fit
+(power, energy, voltage, battery and so on), so they work with the Energy dashboard and in automations.
+
+<Steps>
+<Step>
+
+**Check Home Assistant's MQTT.** In Home Assistant, **Settings → Devices & services** should list the
+**MQTT** integration. If not, add it and point it at your broker.
+
+</Step>
+<Step>
+
+**Open Settings → Home Assistant in Epilykos.** Enter the broker address, for example
+`mqtt://192.168.0.10:1883`, and the username and password if the broker has them. **Test connection** checks
+you can reach it.
+
+</Step>
+<Step>
+
+**Choose the metrics.** **Only the metrics chosen as roles** (solar, load, battery, grid and the like) is a tidy
+start. **Every metric** publishes everything Epilykos reads, which can be hundreds of sensors.
+
+</Step>
+<Step>
+
+**Switch it on and Save.** The status line shows how many sensors were published. They appear in Home
+Assistant under **Settings → Devices & services → MQTT → Epilykos**.
+
+</Step>
+</Steps>
+
+### Good to know
+
+- **Values are sent when they change**, and at most every 10 seconds per metric. Sensors keep their last value
+  if Home Assistant restarts.
+- **If Epilykos stops,** its sensors show as *unavailable* in Home Assistant, instead of showing an old value.
+- **A metric you stop publishing or delete** has its sensor removed from Home Assistant.
+- **Remove from Home Assistant** clears every sensor Epilykos published and switches this off. It works even
+  when publishing is off, as long as the broker address is saved.
+- **The broker password** is stored encrypted and is never shown again. Leave the field empty to keep it.
+- **Discovery prefix** is `homeassistant` unless you changed it in Home Assistant's MQTT settings.
+- This is separate from [using Home Assistant as a data source](/data-sources/home-assistant).
+
+## Without an MQTT broker
+
+This method reads Epilykos over your network from Home Assistant, with a small script that writes the
+sensor list. Every sensor is named **Epilykos …**, so they sort together and are easy to find.
 
 Home Assistant reads Epilykos over your network every 30 seconds. Nothing is installed on Epilykos.
 
@@ -15,14 +66,14 @@ Epilykos shares its metrics without a password, so anyone on your network can re
 at home. Don't open Epilykos to the internet to do this.
 </Callout>
 
-## What you need
+### What you need
 
 - Epilykos running, with its address and port, for example `http://192.168.0.101:3000`.
 - Home Assistant on the same network, and a way to edit its files (the **File editor** or **Studio Code
   Server** add-on, or Samba).
 - Python 3 on any computer on your network, to make the sensor list. Most computers already have it.
 
-## Set it up
+### Set it up
 
 <Steps>
 <Step>
@@ -122,13 +173,13 @@ Add any of them to a dashboard, or use them in automations and the Energy dashbo
 </Step>
 </Steps>
 
-## Adding more metrics later
+### Adding more metrics later
 
 When you add a new metric in Epilykos, run `python3 epilykos_to_ha.py` again, copy the new
 `epilykos_rest.yaml` over the old one, and restart Home Assistant. Your existing sensors keep their
 history.
 
-## Good to know
+### Good to know
 
 - **Units come from Epilykos.** A metric that has no unit in Epilykos has none in Home Assistant. To
   give one a unit, add a `unit_of_measurement:` line to its block in `epilykos_rest.yaml`. Running the
@@ -138,7 +189,7 @@ history.
 - **How often:** change `scan_interval: 30` in the file to read more or less often.
 - **Many sensors:** all of them come from one request, so a long list doesn't slow Epilykos down.
 
-## If it doesn't work
+### If it doesn't work
 
 | What you see | What to do |
 | --- | --- |

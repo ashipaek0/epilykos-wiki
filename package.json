@@ -7,6 +7,7 @@
     "types:check": "tsc --noEmit",
     "lint": "oxlint",
     "gen:hardware": "node scripts/gen-hardware.mjs",
+    "gen:presets": "node scripts/gen-presets.mjs",
     "check:site": "node scripts/check-site.mjs"
   },
   "private": true,
