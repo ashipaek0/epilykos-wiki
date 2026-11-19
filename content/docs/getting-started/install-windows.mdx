@@ -28,6 +28,10 @@ Run it, accept the prompt for administrator rights, and finish the wizard. When 
 running as a Windows service and the dashboard is at [http://localhost:3000/](http://localhost:3000/). It starts again by
 itself when the PC starts.
 
+**From another PC or phone** on your home network, open `http://<this PC's IP address>:3000/` instead. To
+find the address, open **Command Prompt** and run `ipconfig`: it's the *IPv4 Address* under your Wi-Fi or
+Ethernet adapter. This needs the installer's **firewall** option, which is ticked by default.
+
 ## Is it safe to run?
 
 The installer is **not code-signed yet**, so Windows SmartScreen may warn about an unknown publisher the
