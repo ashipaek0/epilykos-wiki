@@ -1,0 +1,57 @@
+---
+title: Phocos inverter
+description: A full-width system overview for a Phocos Any-Grid, with a live flow diagram, daily totals, forecast, peak solar, charts and tables.
+icon: Cpu
+---
+
+![The Phocos inverter dashboard: a flow diagram with the grid, battery, solar and load around the inverter, daily energy totals, the solar forecast and a peak solar chart](/images/preset-phocos-inverter.webp)
+
+A plain, readable dashboard for a Phocos Any-Grid system, laid out as a single column that fills the
+screen. It starts with the live picture (grid, battery, solar and load around the inverter) and scrolls
+down through the day's totals, the forecast, peak solar, the energy and power charts and daily and monthly
+tables. It works well on a desktop browser, and the single column also reads well on a phone.
+
+**[Download phocos-inverter.json](/presets/phocos-inverter.json)**
+
+Then follow [Use a preset](/presets#use-a-preset).
+
+## What's on it
+
+- **System overview** with the flow diagram, the weather, and three extra readings: inverter mode, battery
+  energy left and battery voltage.
+- **Energy totals:** from the grid, consumption, solar, battery in and battery out.
+- **Solar forecast** and **Peak solar** (the best power of each day, over 90 days).
+- **Grid** card with a timeline, cost and daily hours, plus the prepaid meter line.
+- **Daily energy chart**, **Energy of the day** and flows tabs, **Savings** and a **Power chart** with
+  statistics.
+- **Daily** and **monthly tables** of load, solar and grid use.
+
+## What it needs
+
+It expects the metrics a [Phocos Any-Grid profile](/data-sources/supported-hardware) provides:
+
+| Card | Metric |
+| --- | --- |
+| Inverter mode | `inv2_operating_mode_label` |
+| Battery voltage and energy | `battery_voltage`, `battery_energy` |
+| Power chart | `load_total_power`, `pv_total_power`, `inv1_battery_net_power`, `grid_import` |
+| Daily energy chart | `daily_solar`, `daily_grid_import`, `daily_consumption` |
+
+The overview, totals, grid, savings and table cards use your
+[metric roles](/getting-started/core-concepts#metric-roles), so set those first. Weather and forecast need
+[Forecast and weather](/settings/forecast-and-weather), and savings and cost need
+[Prices and savings](/settings/prices-and-savings).
+
+## Make it yours
+
+This preset was made for one site, so change these to match yours:
+
+- **Names:** the overview calls the grid "PHCN" and the load "Office use". Open the card and rename them.
+- **Battery size:** the "Batt Energy Left / 30 kWh" label assumes a 30 kWh battery. Edit the label.
+- **Inverter picture:** it loads from an image site. Replace it in the overview card's settings, or
+  clear it.
+- **Titles:** "Savings since 26 October 2026" should become your own start date.
+- **Prepaid line:** the Grid card's prepaid wording is only used if you have the
+  [prepaid meter](/settings/prepaid-meter) set up.
+- **Inverter numbers:** the `inv1_` and `inv2_` metrics exist only for the units you have. Point a card at
+  one that exists.
