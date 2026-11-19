@@ -2,6 +2,7 @@
   "title": "Development",
   "pages": [
     "development-guide",
-    "contributing"
+    "contributing",
+    "add-your-inverter"
   ]
 }
