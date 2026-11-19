@@ -1,0 +1,48 @@
+---
+title: Solar house
+description: A picture of the house with live solar and load beside weather, forecast, power rings, battery and savings.
+icon: House
+---
+
+![The Solar house dashboard: a house with solar panels in the middle, weather top left, the solar forecast and power rings on the right, and savings along the bottom](/images/preset-solar-house.webp)
+
+A clean, mostly-transparent dashboard built around a background picture. The numbers float over the
+house, and everything else sits at the edges so the picture stays the focus. It suits a wall display or a
+tablet in landscape.
+
+**[Download solar-house.json](/presets/solar-house.json)**
+
+Then follow [Use a preset](/presets#use-a-preset).
+
+## What's on it
+
+- **Weather** (top left): temperature, feels like, humidity, wind, rain, UV, pressure, sunrise and sunset.
+- **Solar forecast** (top right): today's expected energy, with tomorrow and the days after.
+- **Solar** and **Load** (over the house): energy so far today.
+- **Power rings** (right): production and consumption right now.
+- **Battery** (bottom right): state of charge.
+- **Savings** (bottom): today, this week, this month and this year.
+
+## What it needs
+
+| Card | Metric or setting |
+| --- | --- |
+| Solar | `pv_energy_today` |
+| Load | `load_energy_today` |
+| Power rings | `pv_total_power` and `load_total_power` (both scaled 0–8000 W) |
+| Battery | `battery_soc_estimate` (the [Virtual Battery](/settings/metrics) estimate) |
+| Weather and forecast | A location and forecast source in [Forecast and weather](/settings/forecast-and-weather) |
+| Savings | [Prices and savings](/settings/prices-and-savings) set up |
+
+If your metrics are named differently, open the card in the editor and choose yours. If you have a real
+battery state of charge, use that for the Battery card instead of the estimate.
+
+## Make it yours
+
+- **Background picture:** the preset points at a picture hosted on an image site, so it loads from there.
+  To use your own, open **Dashboard style…** and change the background image.
+- **Ring scale:** the rings assume a system up to 8 kW. Open the ring card and change **max** to suit
+  yours.
+- **Savings title:** it reads "Since 24 October 2026". Change the title to your own start date.
+- **Layout:** it uses a fine, free-placement grid with overlap and *Scale to screen width* on, so it keeps
+  its shape on different screens. See [Layout grid](/dashboard/editor#layout-grid) to change that.

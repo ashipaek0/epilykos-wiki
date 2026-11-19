@@ -1,0 +1,8 @@
+{
+  "title": "Dashboard presets",
+  "icon": "Palette",
+  "pages": [
+    "index",
+    "solar-house"
+  ]
+}
