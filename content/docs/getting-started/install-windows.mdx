@@ -67,6 +67,28 @@ PowerShell, run `Get-FileHash .\Epilykos-Setup-<version>.exe`. If they match, ch
 - **Another port:** Epilykos listens on port 3000. To change it, set a `PORT` value for the service
   (the file `C:\Program Files\Epilykos\service\EpilykosService.xml`), then restart the service.
 
+## Forgot the password?
+
+From version 1.3.7, the installer adds **Reset Epilykos admin password** to the Start menu. Open it, accept
+the administrator prompt, type a new password twice (12 or more characters; nothing shows as you type) and
+it restarts the service. Two-step sign-in is switched off at the same time, in case you lost the
+authenticator too; turn it back on in Settings → Security.
+
+From a command prompt you can add `--keep-two-step` (leave two-step on) or `--no-restart`:
+
+```
+"C:\Program Files\Epilykos\epilykos-reset-password.cmd" --keep-two-step
+```
+
+It needs an administrator account on the PC, the same as editing the files by hand. If the service has a
+`SETTINGS_PASSWORD` setting in `EpilykosService.xml`, the command refuses, because that setting overrides the
+saved password. Remove it, restart the service, and run the reset again.
+
+<Callout title="Older versions">
+  Before 1.3.7 there is no command. In an administrator PowerShell, run the steps in
+  [Security](/settings/security#forgotten-password-on-windows).
+</Callout>
+
 ## Differences from Docker and the Pi image
 
 - **Bluetooth** uses the PC's own Bluetooth adapter. Batteries and modules should work as on Linux, but

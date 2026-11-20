@@ -29,7 +29,7 @@ On Docker, `docker compose logs -f` shows the same log from the computer itself.
 | --- | --- |
 | The wizard says Epilykos is already set up, but you never chose a password | Someone else got there first. See [If someone else set the password first](/getting-started/first-run-setup#if-someone-else-set-the-password-first). |
 | `SETTINGS_PASSWORD` in a `.env` file is ignored (Docker) | The compose file doesn't pass `.env` into the container. Put the password under `environment:` instead; see [Install with Docker](/getting-started/install-docker). |
-| You've forgotten the password | On EpilykosOS, see [Password and factory reset](/epilykos-os/password-and-reset). On Docker, set `SETTINGS_PASSWORD` under `environment:`. |
+| You've forgotten the password | On EpilykosOS, see [Password and factory reset](/epilykos-os/password-and-reset). On Docker, set `SETTINGS_PASSWORD` under `environment:`. On Windows, use **Reset Epilykos admin password** in the Start menu ([details](/getting-started/install-windows#forgot-the-password)). |
 | A two-step code is never accepted | Compare the box's clock with your phone's (the error message shows the box's time). Use a recovery code, or see [Locked out of two-step sign-in](/settings/security#locked-out-of-two-step-sign-in). |
 | Settings won't save | Your session has probably expired; sign out and sign back in. |
 | Remote access won't switch on | Your admin password is shorter than 12 characters. Set a longer one; see [Security](/settings/security). |
