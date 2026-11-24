@@ -1,0 +1,68 @@
+---
+title: Automations
+description: Let Epilykos switch devices and change settings for you when something is true.
+icon: Zap
+---
+
+Automations change your devices for you. Turn a switch on or off, or set a value, when something is
+true: the battery is full, the sun is out, it's night.
+
+Open **Automations** from the menu on the [Controls page](/dashboard/controls). You need to be signed in.
+
+## How one works
+
+An automation says what things should look like **while** its conditions are true, and, if you want,
+what they should look like when they aren't.
+
+> **When** battery is above 90% for 5 minutes, **then** turn on the geyser. **Otherwise** turn it off.
+
+Conditions can be a reading (battery %, solar watts, a forecast number) or a time of day. Use all of
+them, or any one of them.
+
+An action can be several steps. Put them in one automation and they run in order, and go back together
+in "otherwise".
+
+## What you can change
+
+The same things you can change on the Controls page: switches, numbers and choices on Tuya, Home
+Assistant, MQTT, inverters and batteries. When you add a device, its settings show up here too. Raw
+register writes are not available.
+
+## Starting one
+
+1. Unlock with your password (top of the page).
+2. Choose **New automation**, fill it in, **Save**. It starts turned off.
+3. Press **Test now** to see what it would do right now. Nothing is sent.
+4. Turn it on.
+
+## Good to know
+
+- **It works even when "Allow device changes" is off.** That switch is for you pressing buttons.
+  Automations are the exception, and every change they make is written to the change log.
+- **No data, no action.** If a reading is missing or older than the limit you set (15 minutes to
+  start), the automation waits.
+- **It only writes when it has to.** If the device already matches, nothing is sent. If it doesn't, it
+  tries again, up to four times, then tells you.
+- **It keeps things the way you said.** If you change a setting by hand while its automation is
+  running, it puts it back within a few minutes. To change it yourself, press **Take over** (for an
+  hour, or until you resume).
+- **Pause all** stops every automation at once. Starting again needs your password.
+- **Tuya** switches can look right until the next poll, even if the plug ignored the command.
+- **It is not protection.** If the grid drops and a switch fails, nothing else steps in. Your
+  inverter's own low-battery cut-off is what protects the battery.
+
+## Ideas
+
+- **Water heater on spare sun:** battery above 90% and solar above 1500 W for 5 minutes → water heater
+  on. Otherwise off.
+- **Cheap-rate charging:** between 23:00 and 05:00 → turn on grid charging, set charge amps to 60.
+  Otherwise grid charging off, amps back to 20.
+- **Save the grid on sunny days:** forecast for tomorrow above 25 kWh → turn off grid use in the
+  inverter.
+- **Night pump:** between 18:00 and 20:00 on weekdays → pump on.
+
+## If it didn't run
+
+Open **Logs** at the bottom of the page. It lists every change and every failure with the reason.
+
+A card that says *Waiting for data* is missing a reading: check the metric exists and is updating.
