@@ -171,6 +171,10 @@ a real unit. So that you know how much to trust each reading, every field is lab
 | `derived` / `estimated` | Worked out by Epilykos: PV power, net battery power and estimated grid power. |
 | `unverified` | The fault bytes. |
 
+The inverter doesn't report its grid power, so look for **Grid Power (estimated, + import)** in the
+field list: AC output, plus what goes into the battery, minus PV power. Positive is power from the grid.
+Conversion losses aren't counted.
+
 Settings that have a fixed list of choices are shown with the names the inverter's display and app
 use, such as charger priority **CSO / SNU / OSO** and output priority **USB / SUB / SBU**; behind the
 scenes, it's the matching number that gets sent.

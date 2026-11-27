@@ -78,6 +78,15 @@ the charger priority, shown as CSO, SNU or OSO, and the battery type), the facto
 charging currents you can choose from, the inverter's date and time, its serial number, and the
 firmware versions of its main board, display and Bluetooth module.
 
+### Grid power
+
+The inverter doesn't report how much power it takes from the grid, so Epilykos works it out on every
+read from the power balance: AC output, plus what goes into the battery, minus PV power. It appears in
+the field list as **Grid Power (estimated, + import)** (`CALC:1`), next to **Battery Net Power
+(+ charging)** (`CALC:0`). Positive means power coming from the grid; negative means more is being made
+than used. It's an estimate: conversion losses aren't counted, so expect it to be off by the
+inverter's own losses, typically a few tens of watts.
+
 ### Several inverters in parallel
 
 If you run up to nine inverters in parallel, each one's readings get their own prefix, from
