@@ -10,6 +10,7 @@
     "appearance",
     "uploads",
     "notifications",
+    "influxdb",
     "network-and-remote-access",
     "security",
     "logs",

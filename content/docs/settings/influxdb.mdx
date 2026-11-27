@@ -1,0 +1,104 @@
+---
+title: InfluxDB
+description: Bring in the history you already keep in InfluxDB, and keep writing new readings to it.
+icon: Database
+---
+
+If you already keep your readings in **InfluxDB** (for example through Home Assistant's InfluxDB integration), Epilykos
+can use it. **Settings → InfluxDB** does three things:
+
+- **Imports your history**, so the dashboard's charts, daily totals, reports and savings cover the months or years you
+  already have.
+- **Writes new readings** to your InfluxDB from the moment you connect it, so it keeps growing and your Grafana
+  dashboards keep working.
+- **Fills gaps** after Epilykos restarts, from whatever was written to InfluxDB while it was off.
+
+InfluxDB **2.x** and **1.x** are supported. InfluxDB 3 is not.
+
+## What you need
+
+- Your InfluxDB's address on your network, with its port, for example `http://192.168.1.60:8086`.
+- **2.x:** the organisation, the bucket, and an API token that can **read and write** that bucket.
+- **1.x:** the database name, and the user name and password if it has sign-in turned on. The retention policy can
+  stay empty for the default.
+
+<Callout title="Your own network">
+Epilykos connects to InfluxDB on your network (addresses such as `192.168.x.x` or `10.x.x.x`). It refuses the address of
+the Epilykos machine itself (`127.0.0.1`, `localhost`). If InfluxDB runs on the same computer as Epilykos, use that
+computer's network address instead.
+</Callout>
+
+## Set it up
+
+<Steps>
+<Step>
+
+**Connect.** In **Settings → InfluxDB → Connection**, choose the version, enter the address and the details above, and
+press **Save**. Epilykos tests the connection first and saves only if it works. The token or password is stored
+encrypted and is never shown again; leave the field empty to keep it.
+
+</Step>
+<Step>
+
+**Say where each metric is.** Under **Metrics to read**, each row says where one Epilykos metric's history is in
+InfluxDB: the **measurement**, the **field**, and any **tag filters** (`name=value`). **Scale** multiplies the stored
+value, for example `1000` if InfluxDB has kW and Epilykos uses W.
+
+You don't have to type these. **Browse series** lists everything in your InfluxDB with a number in the last 30 days,
+whatever wrote it (Telegraf, Node-RED, Solar Assistant, your own scripts or Home Assistant): each series' measurement,
+field and tags, with its latest reading and a filter box. Tick the ones you want and press **Add the ticked series**.
+Each gets a suggested name, and the ones that match a metric Epilykos already has come ticked. Series already in the
+table show as *already listed*.
+
+If your data comes from Home Assistant, **Find Home Assistant sensors** is a shortcut for the same thing: it lists only
+the sensors in the layout Home Assistant's InfluxDB integration writes, named after their entity.
+
+Rename any rows you like, then press **Save metrics**.
+
+</Step>
+<Step>
+
+**Import the history.** Under **Import history**, press **Check what would be imported**. It shows how far back each
+metric goes and how much room the copy needs. Press **Start the import**. It runs in the background, a week at a time,
+with a progress bar; you can leave the page, and it carries on after a restart.
+
+</Step>
+</Steps>
+
+### How the import works
+
+- History is copied at **5-minute detail** (average, lowest and highest of each 5 minutes). That is what Epilykos keeps
+  for anything older than 30 days anyway.
+- **Readings Epilykos already has are never replaced.** Where both have the same 5 minutes, Epilykos keeps its own. So
+  running the import again is safe; it only adds what is missing.
+- If a metric can't be read (its series was removed, the token lost access), it is skipped and the others carry on. The
+  list under the progress bar says which.
+- Imported days also count in **Prices and savings**, at the prices you have set now. Days already counted keep their
+  value.
+- For daily totals of past days to appear, map your **daily energy** metrics too (the ones your metric roles use for
+  solar, load and grid energy), not only the power ones.
+
+## Writing new readings
+
+New readings go into one measurement, **`epilykos`** unless you change it, with the Epilykos metric name as the
+**`metric`** tag and the reading in the **`value`** field. They never mix with series another program writes. In
+InfluxDB a mapped metric therefore has its old series up to the day you connected, and the `epilykos` one after.
+
+By default only the mapped metrics are written. Turn on **Send every reading** to write everything Epilykos reads.
+
+If InfluxDB can't be reached, nothing is lost: Epilykos writes from its own copy of the readings and catches up once
+InfluxDB answers again (up to 30 days back). The **Writing new readings** card shows how many readings were written and up
+to when, or why it isn't writing.
+
+## Filling gaps
+
+After the history has been imported, Epilykos reads again from InfluxDB a minute after it starts, and then once a day,
+the time since it last did. If Home Assistant kept writing to InfluxDB while Epilykos was off, those readings fill the
+hole. Again, readings Epilykos already has are left as they are.
+
+## Good to know
+
+- **Disconnect** stops reading from and writing to InfluxDB. Readings already copied stay, and so does the metric list.
+- The connection's token or password is included in [backups](/settings/backup-and-restore) like your other saved
+  passwords, and protected by the backup passphrase if you use one.
+- Text and on/off readings are not written to InfluxDB; numbers only.
