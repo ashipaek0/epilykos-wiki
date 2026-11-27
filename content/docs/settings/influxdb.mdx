@@ -44,8 +44,16 @@ encrypted and is never shown again; leave the field empty to keep it.
 InfluxDB: the **measurement**, the **field**, and any **tag filters** (`name=value`). **Scale** multiplies the stored
 value, for example `1000` if InfluxDB has kW and Epilykos uses W.
 
-If your data comes from Home Assistant, press **Find Home Assistant sensors**. Epilykos lists the sensors it finds and
-ticks the ones that match a metric it already has. Rename any before you add them, then press **Save metrics**.
+You don't have to type these. **Browse series** lists everything in your InfluxDB with a number in the last 30 days,
+whatever wrote it (Telegraf, Node-RED, Solar Assistant, your own scripts or Home Assistant): each series' measurement,
+field and tags, with its latest reading and a filter box. Tick the ones you want and press **Add the ticked series**.
+Each gets a suggested name, and the ones that match a metric Epilykos already has come ticked. Series already in the
+table show as *already listed*.
+
+If your data comes from Home Assistant, **Find Home Assistant sensors** is a shortcut for the same thing: it lists only
+the sensors in the layout Home Assistant's InfluxDB integration writes, named after their entity.
+
+Rename any rows you like, then press **Save metrics**.
 
 </Step>
 <Step>
